@@ -1,47 +1,24 @@
-import { React } from "../common";
-import { useRef } from "react";
-import Sign from "../components/Sign";
+import { React, styled, Routes, Route } from '../common';
+import LoginBox from '../components/LoginBox';
+import SignBox from '../components/SignBox';
+
+const Container = styled.div`
+  position: absolute;
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`;
 
 function Home() {
-  const errorRef = useRef();
-
-  const idRef = useRef(),
-    passwordRef = useRef(),
-    passwordCheckRef = useRef(),
-    emailRef = useRef(),
-    phoneRef = useRef();
-
-  const isCurrent = (someRef, callback) => {
-    if (idRef.current) callback();
-  };
-
-  const submitHandler = () => {
-    const setErrorStr = (str) => {
-      isCurrent(errorRef, () => {
-        errorRef.current.innerText = str;
-      });
-    };
-
-    isCurrent(idRef, () => {
-      idRef.current.value = "하하하하";
-    });
-    setErrorStr("아이디가 중복됩니다.");
-  };
-
   return (
-    <Sign
-      title="Sign Up"
-      keys={[
-        { id: idRef },
-        { password: passwordRef },
-        { "password check": passwordCheckRef },
-        { "e-mail": emailRef },
-        { phone: phoneRef },
-      ]}
-      errorRef={errorRef}
-      submit={"Confirm"}
-      OnClick={submitHandler}
-    />
+    <Container>
+      <Routes>
+        <Route path="/" element={<LoginBox />} />
+        <Route path="/sign" element={<SignBox />} />
+      </Routes>
+    </Container>
   );
 }
 

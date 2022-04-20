@@ -1,10 +1,19 @@
-import { React, ReactDOM } from "./common";
+import { React, ReactDOM, SWRConfig } from './common';
 
-import App from "./routers/App";
+import fetcher from './api/fetcher';
 
-const root = ReactDOM.createRoot(document.getElementById("root"));
+import App from './routers/App';
+
+const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
-    <App />
+    <SWRConfig
+      value={{
+        fetcher,
+        suspense: true,
+      }}
+    >
+      <App />
+    </SWRConfig>
   </React.StrictMode>
 );
