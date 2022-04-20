@@ -4,6 +4,8 @@ const ca = "0x5FbDB2315678afecb367f032d93F642f64180aa3";
 // ERC20 JSON Interface
 const erc20ABI = [
   // Read-Only Functions
+
+  "function name() public view virtual override returns (string memory)",
   "function balanceOf(address owner) view returns (uint256)",
   "function decimals() view returns (uint8)",
   "function symbol() view returns (string)",
@@ -16,11 +18,11 @@ const erc20ABI = [
   "event Transfer(address indexed from, address indexed to, uint amount)",
 ];
 
-class HPFactory {
+class HPFT {
   provider: ethers.providers.InfuraProvider;
 
-  constructor(network: string, apiKey: string) {
-    this.provider = new ethers.providers.InfuraProvider(network, apiKey);
+  constructor(provider: ethers.providers.InfuraProvider) {
+    this.provider = provider;
   }
 
   /**
@@ -30,17 +32,19 @@ class HPFactory {
    * @returns
    */
 
-  async mintToken(
+  async mintTo(
     privateKey: ethers.utils.BytesLike,
     to: string,
     activity: number
   ) {
+    // 수정
     const wallet = new ethers.Wallet(privateKey);
     const signer = wallet.connect(this.provider);
 
     const contract = new ethers.Contract(ca, erc20ABI, signer);
+    //
 
-    const result = await contract.mintToken(to);
+    const result = await contract.mintTo(to);
     return result;
   }
 
@@ -65,4 +69,4 @@ class HPFactory {
   }
 }
 
-export default HPFactory;
+export default HPFT;
