@@ -5,7 +5,7 @@ import * as lightwallet from "eth-lightwallet";
  * @param {string} pwd user password
  * @return {Promise} object of address and privateKey
  */
-const createWallet = (pwd: string): any => {
+const createWallet = (pwd: string): Promise<any> => {
   return new Promise((resolve, reject) => {
     let secretSeed: string = lightwallet.keystore.generateRandomSeed();
 
