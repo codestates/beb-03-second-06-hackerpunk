@@ -4,20 +4,22 @@ import {
   BrowserRouter,
   Routes,
   Route,
-  styled,
-} from "../common";
+  Background,
+} from '../common';
 
-import Home from "../pages/Home";
-import Contents from "../pages/Contents";
+import Home from '../pages/Home';
+import Contents from '../pages/Contents';
 
 function App() {
   return (
-    <BrowserRouter>
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/contents" element={<Contents />} />
-      </Routes>
-    </BrowserRouter>
+    <Background>
+      <BrowserRouter>
+        <Routes>
+          <Route path="*" element={<Home />} />
+          <Route path="/contents" element={<Contents />} />
+        </Routes>
+      </BrowserRouter>
+    </Background>
   );
 }
 
