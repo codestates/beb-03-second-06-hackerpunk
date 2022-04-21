@@ -2,44 +2,64 @@
 pragma solidity ^0.8.7;
 
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
-import "@openzeppelin/contracts/access/Ownable.sol";
+import "@openzeppelin/contracts/access/AccessControl.sol";
+import "@openzeppelin/contracts/token/ERC20/utils/TokenTimelock.sol";
+import "./HPTimeLock.sol";
 
-contract HP is ERC20, Ownable {
+contract HP is ERC20, AccessControl {
+    uint256 public constant initalSupply = 1000e18;
+    bool public initialised = false;
+
+    HPTimeLock tokenLock;
+
     uint256 public _attendanceReward;
+    uint256 public _signupReward;
 
-    struct DonateRecord {
-        address from;
-        address to;
-        uint256 amount;
-    }
+    bytes32 public constant MINTER_ROLE = keccak256("MINTER_ROLE");
+    bytes32 public constant MINTER_ROLE_ADMIN = keccak256("MINTER_ROLE_ADMIN");
 
     constructor() ERC20("HackerPunk Token", "HP") {
+        _grantRole(DEFAULT_ADMIN_ROLE, msg.sender);
+        _grantRole(MINTER_ROLE_ADMIN, msg.sender);
+        _grantRole(MINTER_ROLE, msg.sender);
+
+        _setRoleAdmin(MINTER_ROLE, MINTER_ROLE_ADMIN);
         _attendanceReward = 1e18;
     }
 
-    function attendanceMint(address recipient) public onlyOwner returns (bool) {
+    function init(HPTimeLock tokenLock_) public onlyRole(DEFAULT_ADMIN_ROLE) {
+        require(initialised == false, "already initialised");
+        _mint(msg.sender, initalSupply);
+        tokenLock = tokenLock_;
+        initialised = true;
+    }
+
+    function setAttendanceReward(uint256 attendanceReward) public onlyRole(DEFAULT_ADMIN_ROLE) {
+        _attendanceReward = attendanceReward;
+    }
+
+    function setSignupReward(uint256 signupReward) public onlyRole(DEFAULT_ADMIN_ROLE) {
+        _signupReward = signupReward;
+    }
+
+    function signupMint(address recipient) public {
+        _mint(recipient, _signupReward);
+    }
+
+    function attendanceMint(address recipient) public {
         _mint(recipient, _attendanceReward);
-        return true;
     }
 
-    function attendanceMintBatch(address[] calldata recipients) public onlyOwner returns (bool) {
+    function attendanceMintBatch(address[] calldata recipients) public {
         for (uint256 i = 0; i < recipients.length; i++) {
-            _mint(recipients[i], _attendanceReward);
+            attendanceMint(recipients[i]);
         }
-        return true;
     }
 
-    function donateBatch(DonateRecord[] calldata dr) public onlyOwner returns (bool) {
-        for (uint256 i = 0; i < dr.length; i++) {
-            uint256 donation;
-            if (dr[i].amount % 2 == 1) {
-                donation = (dr[i].amount - 1) / 2;
-            } else {
-                donation = dr[i].amount / 2;
-            }
-            _transfer(dr[i].from, dr[i].to, donation);
-            _burn(dr[i].from, dr[i].amount - donation);
-        }
+    function donate(uint256 articleId, address donator, address writer, uint256 amount) public returns (bool) {
+        transferFrom(donator, address(tokenLock), amount);
+        tokenLock.lock(articleId, donator, writer, amount);
+
         return true;
     }
 }
