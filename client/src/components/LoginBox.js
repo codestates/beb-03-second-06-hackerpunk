@@ -1,4 +1,5 @@
 import { React, styled, useNavigate, useInput } from "../common";
+import LogoSrc from "../common/media/logo.gif";
 
 const Container = styled.div`
   display: flex;
@@ -18,8 +19,10 @@ const InnerContainer = styled.div`
   align-items: flex-end;
 `;
 
-const Title = styled.h1`
-  font-size: 2.6rem;
+const Logo = styled.img`
+  width: 200px;
+  height: 00px;
+  margin: 15px;
 `;
 
 const Label = styled.label``;
@@ -53,7 +56,7 @@ function LoginBox() {
 
   return (
     <Container>
-      <Title>Log In</Title>
+      <Logo src={LogoSrc} />
       <InnerContainer>
         <Label>
           ID
