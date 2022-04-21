@@ -1,4 +1,5 @@
 import { ethers } from "ethers";
+<<<<<<< HEAD
 export class HP {
     provider: ethers.providers.BaseProvider;
     wallet: ethers.Wallet;
@@ -52,6 +53,15 @@ export const setProvider: (network: string, provider: string, key: string) => et
  * @method: returns address and privateKey
  * @param {string} pwd user password
  * @return {Promise} object of address, privateKey and mnemonic
+=======
+export default HPFT;
+export default HPNFT;
+export const setProvider: (network: string, apiKey: string) => ethers.providers.InfuraProvider;
+/**
+ * @method: returns address and privateKey
+ * @param {string} pwd user password
+ * @return {Promise} object of address and privateKey
+>>>>>>> e158476 (test001)
  */
 export const createWallet: (pwd: string) => Promise<any>;
 
