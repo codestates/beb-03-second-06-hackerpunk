@@ -1,9 +1,11 @@
 const mongoose = require('mongoose');
+
 const contentSchema = new mongoose.Schema({
-    no: Number,
+    no: String,
     author: String,
     title: String,
-    date: Number,
-    views: Number
+    date: String,
+    views: String
 });
+
 module.exports = mongoose.model('Content', contentSchema);
