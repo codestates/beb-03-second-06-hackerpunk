@@ -1,4 +1,4 @@
-import { React, styled, useNavigate, useInput } from '../common';
+import { React, styled, useNavigate, useInput } from "../common";
 
 const Container = styled.div`
   display: flex;
