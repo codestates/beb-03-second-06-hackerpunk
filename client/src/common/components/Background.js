@@ -1,4 +1,4 @@
-import { styled } from '..';
+import { styled } from "..";
 
 export default styled.div`
   position: absolute;
@@ -11,5 +11,6 @@ export default styled.div`
   justify-content: center;
   align-items: center;
   color: whitesmoke;
-  background-color: black;
+  background: center/ cover
+    url("https://cdn.pixabay.com/photo/2014/05/27/23/32/matrix-356024_960_720.jpg");
 `;

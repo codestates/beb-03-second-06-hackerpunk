@@ -1,4 +1,4 @@
-import { React, styled, useNavigate, useInput } from '../common';
+import { React, styled, useNavigate, useInput } from "../common";
 
 const Container = styled.div`
   display: flex;
@@ -31,6 +31,14 @@ const Input = styled.input`
 const Button = styled.button`
   width: 6rem;
   height: 2.5rem;
+  font-size: 1em;
+  margin: 1em;
+  padding: 0.25em 1em;
+  border: 2px solid white;
+  color: white;
+  background-color: black;
+  border-radius: 3px;
+  display: block;
 `;
 
 function LoginBox() {
@@ -40,7 +48,7 @@ function LoginBox() {
   const navigate = useNavigate();
 
   const submit = () => {
-    navigate('/contents');
+    navigate("/contents");
   };
 
   return (
@@ -48,11 +56,11 @@ function LoginBox() {
       <Title>Log In</Title>
       <InnerContainer>
         <Label>
-          id
+          ID
           <Input {...inputId} />
         </Label>
         <Label>
-          pw
+          PW
           <Input {...inputPassword} />
         </Label>
       </InnerContainer>
