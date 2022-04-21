@@ -1,6 +1,6 @@
-node_modules/
-cache/
-artifacts/
-.parcel-cache/
-.env/
+node_modules
+cache
+artifacts
+.parcel-cache
+.env
 .DS_Store
