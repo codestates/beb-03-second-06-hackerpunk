@@ -1,6 +1,6 @@
-import HPFT from "../lib/HPFT";
-import HPNFT from "../lib/HPNFT";
+import { HP } from "../lib/HP";
+import { HPA } from "../lib/HPA";
 import { setProvider } from "../lib/provider";
 import { createWallet } from "../lib/wallet";
 
-export { HPFT, HPNFT, setProvider, createWallet };
+export { HP, HPA, setProvider, createWallet };
