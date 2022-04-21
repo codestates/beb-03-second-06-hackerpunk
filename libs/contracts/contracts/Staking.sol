@@ -4,6 +4,7 @@ pragma solidity ^0.8.7;
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import "@openzeppelin/contracts/token/ERC721/utils/ERC721Hoder.sol";
 
 interface IRewardToken is IERC20 {
     function mint(address to, uint256 amount) external;
@@ -40,7 +41,7 @@ contract HPAStakingSystem is Ownable {
         return stakers[owner].tokenIds;
     }
 
-    function  stake(uint256 tokenId) public {
+    function stake(uint256 tokenId) public {
         _stake(msg.sender, tokenId);
     }
 
