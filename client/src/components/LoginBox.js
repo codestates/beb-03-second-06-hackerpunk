@@ -10,6 +10,8 @@ import {
   Div,
 } from '../common';
 
+import LogoSrc from "../assets/hplogo.gif";
+
 const Container = styled(Div)`
   width: 40%;
   flex-direction: column;
@@ -23,9 +25,11 @@ const InnerContainer = styled(Div)`
   margin: 2rem 0;
 `;
 
-const Title = styled.h1`
-  color: whitesmoke;
-  font-size: 2.6rem;
+
+const Logo = styled.img`
+  width: 28rem;
+  height: 18rem;
+  margin: 15px;
 `;
 
 const Label = styled.label``;
@@ -59,7 +63,7 @@ function LoginBox() {
 
   return (
     <Container>
-      <Title>Log In</Title>
+      <Logo src={LogoSrc} />
       <InnerContainer>
         <Label>
           <span>ID</span>
