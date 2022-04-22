@@ -11,6 +11,7 @@ export default styled.div`
   justify-content: center;
   align-items: center;
   color: whitesmoke;
-  background: center/ cover
-    url("https://cdn.pixabay.com/photo/2014/05/27/23/32/matrix-356024_960_720.jpg");
+  background-color: black;
+  /* background: center/ cover
+    url("https://cdn.pixabay.com/photo/2014/05/27/23/32/matrix-356024_960_720.jpg"); */
 `;
