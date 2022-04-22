@@ -1,21 +1,27 @@
-import { React, styled, useNavigate, useInput } from "../common";
+import {
+  React,
+  useState,
+  styled,
+  useFetch,
+  useInput,
+  useNavigate,
+  useErrorBang,
+  Button,
+  Input,
+  Div,
+} from '../common';
 
-const Container = styled.div`
-  display: flex;
+const Container = styled(Div)`
+  width: 40%;
   flex-direction: column;
-  height: 14rem;
   justify-content: space-between;
-  align-items: center;
+  height: 14rem;
 `;
 
-const InnerContainer = styled.div`
-  display: flex;
+const InnerContainer = styled(Div)`
   flex-direction: column;
-  height: 100%;
-  width: 100%;
+  justify-content: space-between;
   margin: 2rem 0;
-  justify-content: space-evenly;
-  align-items: flex-end;
 `;
 
 const Title = styled.h1`
@@ -24,13 +30,12 @@ const Title = styled.h1`
 
 const Label = styled.label``;
 
-const Input = styled.input`
-  margin: 4px 2px;
-`;
-
-const Button = styled.button`
-  width: 6rem;
-  height: 2.5rem;
+const ToLogIn = styled.span`
+  font-size: 0.9rem;
+  text-decoration: underline;
+  &:hover {
+    color: rgba(210, 220, 220, 0.9);
+  }
 `;
 
 function SignBox() {
@@ -39,7 +44,29 @@ function SignBox() {
     [passwordRe, inputPasswordRe] = useInput(),
     [email, inputEmail] = useInput();
 
-  const submit = () => {};
+  const errorbang = useErrorBang();
+
+  const [submit, setSubmit] = useState(false);
+  const onSubmit = () => {
+    /* -----validating------ */
+    if (password !== passwordRe) {
+      errorbang(`Form error`, `Password(re) is different from the password`);
+    }
+    /* --------------------- */
+    setSubmit(true);
+  };
+
+  const { data } = useFetch({
+    key: 'sign',
+    args: { data: { id, password } },
+    condition: submit,
+  });
+
+  const navigate = useNavigate();
+
+  if (data) {
+    navigate('/');
+  }
 
   return (
     <Container>
@@ -62,7 +89,8 @@ function SignBox() {
           <Input {...inputEmail} />
         </Label>
       </InnerContainer>
-      <Button onClick={submit}>Submit</Button>
+      <ToLogIn onClick={() => navigate('/')}>Log in</ToLogIn>
+      <Button onClick={onSubmit}>Submit</Button>
     </Container>
   );
 }

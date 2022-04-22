@@ -1,70 +1,77 @@
-import { React, styled, useNavigate, useInput } from "../common";
+import {
+  React,
+  styled,
+  useFetch,
+  useNavigate,
+  useState,
+  useInput,
+  Input,
+  Button,
+  Div,
+} from '../common';
 
-const Container = styled.div`
-  display: flex;
+const Container = styled(Div)`
+  width: 40%;
   flex-direction: column;
-  height: 14rem;
   justify-content: space-between;
-  align-items: center;
+  height: 14rem;
 `;
 
-const InnerContainer = styled.div`
-  display: flex;
+const InnerContainer = styled(Div)`
   flex-direction: column;
-  height: 100%;
-  width: 100%;
-  margin: 2rem 0;
   justify-content: space-between;
-  align-items: flex-end;
+  margin: 2rem 0;
 `;
 
 const Title = styled.h1`
+  color: whitesmoke;
   font-size: 2.6rem;
 `;
 
 const Label = styled.label``;
 
-const Input = styled.input`
-  margin: 4px 2px;
-`;
-
-const Button = styled.button`
-  width: 6rem;
-  height: 2.5rem;
-  font-size: 1em;
-  margin: 1em;
-  padding: 0.25em 1em;
-  border: 2px solid white;
-  color: white;
-  background-color: black;
-  border-radius: 3px;
-  display: block;
+const ToSignIn = styled.span`
+  font-size: 0.9rem;
+  text-decoration: underline;
+  &:hover {
+    color: rgba(210, 220, 220, 0.9);
+  }
 `;
 
 function LoginBox() {
   const [id, inputId] = useInput(),
     [password, inputPassword] = useInput();
 
+  const [submit, setSubmit] = useState(false);
+  const onSubmit = () => setSubmit(true);
+
+  const { data } = useFetch({
+    key: 'login',
+    args: { data: { id, password } },
+    condition: submit,
+  });
+
   const navigate = useNavigate();
 
-  const submit = () => {
-    navigate("/contents");
-  };
+  if (data) {
+    navigate('/contents');
+  }
 
   return (
     <Container>
       <Title>Log In</Title>
       <InnerContainer>
         <Label>
-          ID
+          <span>ID</span>
           <Input {...inputId} />
         </Label>
         <Label>
-          PW
+          <span>PW</span>
           <Input {...inputPassword} />
         </Label>
       </InnerContainer>
-      <Button onClick={submit}>Submit</Button>
+      <ToSignIn onClick={() => navigate('/sign')}>Sign in</ToSignIn>
+      <Button onClick={onSubmit}>Submit</Button>
     </Container>
   );
 }

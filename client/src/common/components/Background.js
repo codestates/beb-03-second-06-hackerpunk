@@ -1,6 +1,7 @@
-import { styled } from "..";
+import { styled } from '..';
 
 export default styled.div`
+  z-index: -1;
   position: absolute;
   left: 0;
   top: 0;
@@ -11,6 +12,6 @@ export default styled.div`
   justify-content: center;
   align-items: center;
   color: whitesmoke;
-  background: center/ cover
-    url("https://cdn.pixabay.com/photo/2014/05/27/23/32/matrix-356024_960_720.jpg");
+  background: center / cover
+    url('https://cdn.pixabay.com/photo/2014/05/27/23/32/matrix-356024_960_720.jpg');
 `;
