@@ -23,6 +23,10 @@ app.use('/login', login_router);
 app.use('/register', register_router);
 app.use('/contents', contents_router);
 
+app.get('/test', (req, res) => {
+    res.status(200).json({message:'This is the test'});
+});
+
 app.get('/', (req, res) => {
     res.status(200).send('This is server homepage.');
 });

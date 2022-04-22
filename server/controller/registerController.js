@@ -4,6 +4,8 @@ const user = require('../models/user.js');
 const saltRounds = 10;
 
 const register = async (req, res) => {
+    
+
     const { id, password } = req.body;
     console.log('===========================================');
     console.log(`[register] id: ${id}, password: ${password}`);
