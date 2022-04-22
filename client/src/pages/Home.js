@@ -1,24 +1,41 @@
-import { React, styled, Routes, Route } from '../common';
+import {
+  React,
+  Routes,
+  Route,
+  useLocation,
+  LoadingBox,
+  AsyncBoundary,
+  ErrorNotice,
+} from '../common';
 import LoginBox from '../components/LoginBox';
 import SignBox from '../components/SignBox';
 
-const Container = styled.div`
-  position: absolute;
-  width: 100vw;
-  height: 100vh;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-`;
-
 function Home() {
+  const location = useLocation();
   return (
-    <Container>
+    <AsyncBoundary
+      fallback={
+        <LoadingBox
+          message={(() => {
+            switch (location.pathname) {
+              case '/':
+                return 'login...';
+              case '/sign':
+                return 'check your e-mail box';
+            }
+          })()}
+        />
+      }
+      errorFallback={(props) => <ErrorNotice {...props} />}
+      onReset={(e) => {
+        console.error(e);
+      }}
+    >
       <Routes>
         <Route path="/" element={<LoginBox />} />
         <Route path="/sign" element={<SignBox />} />
       </Routes>
-    </Container>
+    </AsyncBoundary>
   );
 }
 

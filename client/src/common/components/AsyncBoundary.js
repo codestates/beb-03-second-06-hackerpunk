@@ -1,5 +1,4 @@
-import { Suspense } from '..';
-import { ErrorBoundary } from 'react-error-boundary';
+import { Suspense, ErrorBoundary } from '..';
 
 function AsyncBoundary({
   children,

@@ -1,6 +1,7 @@
-import { styled } from "..";
+import { styled } from '..';
 
 export default styled.div`
+  z-index: -1;
   position: absolute;
   left: 0;
   top: 0;

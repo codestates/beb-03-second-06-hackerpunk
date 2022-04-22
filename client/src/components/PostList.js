@@ -1,9 +1,9 @@
-import { React, styled, useSWR } from '../common';
-
-const Container = styled.div``;
+import { React, styled, useFetch } from '../common';
 
 function PostList() {
-  const { data } = useSWR('postList');
+  const { data } = useFetch({
+    key: 'postList',
+  });
   return (
     <>
       {data.map(({ userId, id, title, body }) => {
