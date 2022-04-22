@@ -1,5 +1,5 @@
 import { React, styled, useNavigate, useInput } from "../common";
-import LogoSrc from "../common/media/logo.gif";
+import LogoSrc from "../assets/hplogo.gif";
 
 const Container = styled.div`
   display: flex;
@@ -20,8 +20,8 @@ const InnerContainer = styled.div`
 `;
 
 const Logo = styled.img`
-  width: 200px;
-  height: 00px;
+  width: 28rem;
+  height: 18rem;
   margin: 15px;
 `;
 
