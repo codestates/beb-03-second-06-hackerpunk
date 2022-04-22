@@ -1,6 +1,6 @@
 const { expect } = require("chai");
 
-describe("Token Setting", function () {
+describe("Token", function () {
   let factory;
   let hpcont;
   let owner;
@@ -43,34 +43,6 @@ describe("Token Setting", function () {
         .add(addr3Balance);
 
       expect(total.eq(ethers.utils.parseEther("4.0"))).to.equal(true);
-    });
-
-    it("donateBatch Test", async function () {
-      let arr = [owner.address, addr1.address, addr2.address, addr3.address];
-      await hpcont.attendanceMintBatch(arr);
-
-      let donateRecordsArray = [
-        {
-          from: addr1.address,
-          to: owner.address,
-          amount: 1000000000000000000n,
-        },
-        {
-          from: addr2.address,
-          to: owner.address,
-          amount: 1000000000000000000n,
-        },
-        {
-          from: addr3.address,
-          to: owner.address,
-          amount: 1000000000000000000n,
-        },
-      ];
-
-      await hpcont.donateBatch(donateRecordsArray);
-      const balance = await hpcont.balanceOf(owner.address);
-
-      expect(balance.eq(ethers.utils.parseEther("2.5"))).to.equal(true);
     });
   });
 });
