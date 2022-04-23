@@ -16,7 +16,7 @@ const resolvers = ({ options = {}, state: { data } = {} } = {}) => {
       data,
       ...options,
     },
-    postList: {
+    posts: {
       url: 'https://jsonplaceholder.typicode.com/posts',
       method: 'get',
       nextMut(v) {

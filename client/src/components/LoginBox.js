@@ -10,7 +10,7 @@ import {
   Div,
 } from '../common';
 
-import LogoSrc from "../assets/hplogo.gif";
+import LogoSrc from '../assets/hplogo.gif';
 
 const Container = styled(Div)`
   width: 40%;
@@ -24,7 +24,6 @@ const InnerContainer = styled(Div)`
   justify-content: space-between;
   margin: 2rem 0;
 `;
-
 
 const Logo = styled.img`
   width: 28rem;
@@ -62,7 +61,13 @@ function LoginBox() {
   }
 
   return (
-    <Container>
+    <Container
+      initial={{
+        opacity: 0,
+      }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+    >
       <Logo src={LogoSrc} />
       <InnerContainer>
         <Label>

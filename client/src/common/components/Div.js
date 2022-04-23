@@ -1,6 +1,6 @@
-import { styled } from '..';
+import { motion, styled } from '..';
 
-const Div = styled.div`
+const Div = styled(motion.div)`
   width: 100%;
   height: 100%;
   margin: 0;

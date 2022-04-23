@@ -1,6 +1,6 @@
-import { styled } from '..';
+import { motion, styled } from '..';
 
-const SVG = styled.svg`
+const SVG = styled(motion.svg)`
   margin: auto;
   background: rgb(0, 0, 0, 0);
   display: block;

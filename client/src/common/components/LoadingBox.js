@@ -1,6 +1,6 @@
-import { React, styled, Spinner } from '..';
+import { React, motion, styled, Spinner } from '..';
 
-const Container = styled.div`
+const Container = styled(motion.div)`
   display: flex;
   flex-direction: column;
   height: 14rem;
@@ -8,7 +8,7 @@ const Container = styled.div`
   align-items: center;
 `;
 
-const InnerContainer = styled.div`
+const InnerContainer = styled(motion.div)`
   display: flex;
   flex-direction: column;
   height: 100%;
@@ -18,7 +18,7 @@ const InnerContainer = styled.div`
   align-items: flex-end;
 `;
 
-const Message = styled.h1`
+const Message = styled(motion.h1)`
   font-size: 2rem;
 `;
 
