@@ -1,3 +1,5 @@
+# 함수 설명
+
 ```
 struct DonationInfo
 ```
@@ -61,3 +63,11 @@ function release(uint256 articleId, address writer) public onlyOwner
 
 - 도네이션 토큰과 도네이터들을 기록하고 도네이션 상태를 완료로 바꾼다.
 - 도네이션 토큰을 글 작성자에게 전송한다.
+
+<br />
+
+# 함수 테스트
+
+```
+npx hardhat test
+```
