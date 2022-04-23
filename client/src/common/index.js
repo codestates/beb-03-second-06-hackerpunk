@@ -17,6 +17,7 @@ import {
 
 import { ErrorBoundary, useErrorHandler } from 'react-error-boundary';
 import { useDispatch, useSelector } from 'react-redux';
+import { motion, AnimatePresence } from 'framer-motion';
 import styled from 'styled-components';
 import useSWR, { SWRConfig } from 'swr';
 
@@ -77,4 +78,11 @@ export {
 };
 
 // Etc
-export { styled, SWRConfig, ErrorBoundary, useErrorHandler };
+export {
+  motion,
+  AnimatePresence,
+  styled,
+  SWRConfig,
+  ErrorBoundary,
+  useErrorHandler,
+};

@@ -6,7 +6,7 @@ const Container = styled(Div)`
   z-index: 999;
   position: absolute;
   right: 10vw;
-  top: 12vh;
+  top: 11vh;
   width: 11rem;
   height: 6rem;
   border: solid 1px whitesmoke;
@@ -45,7 +45,16 @@ const Token = styled.p`
 
 function Profile() {
   return (
-    <Container>
+    <Container
+      initial={{
+        y: -30,
+      }}
+      animate={{
+        x: 12,
+        y: 0,
+        scale: 1.1,
+      }}
+    >
       <InnerContainer>
         <Image src={LogoSrc} />
         <Address>3h5gEDDxMAPfvaYi5XLuf6Hn6HRANAu1</Address>

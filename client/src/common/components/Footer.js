@@ -1,17 +1,17 @@
-import { React, styled } from '..';
+import { React, motion, styled } from '..';
 
-const Container = styled.div`
+const Container = styled(motion.div)`
   position: absolute;
   left: 0;
   bottom: 0;
-  height: 5vh;
+  height: 3.6vh;
   width: 100vw;
   display: flex;
   justify-content: flex-start;
   align-items: center;
 `;
 
-const InnerContainer = styled.div`
+const InnerContainer = styled(motion.div)`
   height: 100%;
   width: 100%;
   display: flex;

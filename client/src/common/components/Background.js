@@ -1,6 +1,6 @@
-import { styled } from '..';
+import { motion, styled } from '..';
 
-export default styled.div`
+export default styled(motion.div)`
   z-index: -1;
   position: absolute;
   left: 0;

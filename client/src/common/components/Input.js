@@ -1,6 +1,6 @@
-import { styled } from '..';
+import { motion, styled } from '..';
 
-const Input = styled.input`
+const Input = styled(motion.input)`
   margin: 4px 2px;
 `;
 
