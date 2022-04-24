@@ -9,9 +9,9 @@ import {
   useNavigate,
   styled,
   Div,
-} from '../common';
+} from "../common";
 
-import Posts from './Posts';
+import Posts from "./Posts";
 
 const Container = styled(Div)`
   width: 70%;
@@ -42,7 +42,7 @@ function Board() {
         onReset={(e) => {
           // `try again button` was clicked
           console.error(e);
-          navigate('/');
+          navigate("/");
         }}
       >
         <Posts />
