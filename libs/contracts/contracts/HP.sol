@@ -21,13 +21,16 @@ contract HP is ERC20, AccessControl {
         _grantRole(MINTER_ROLE, msg.sender);
 
         _setRoleAdmin(MINTER_ROLE, MINTER_ROLE_ADMIN);
-        _attendanceReward = 1e18;
     }
 
     function init() public onlyRole(DEFAULT_ADMIN_ROLE) {
         require(initialised == false, "already initialised");
         _mint(msg.sender, initalSupply);
         initialised = true;
+    }
+
+    function grantMinterRole(address account) public {
+        grantRole(MINTER_ROLE, account);
     }
 
     function setAttendanceReward(uint256 attendanceReward) public onlyRole(DEFAULT_ADMIN_ROLE) {
