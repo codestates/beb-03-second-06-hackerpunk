@@ -1,4 +1,4 @@
-# 함수 설명
+# HPTimeLock 함수 설명
 
 ```
 struct DonationInfo

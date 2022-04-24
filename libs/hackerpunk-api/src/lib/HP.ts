@@ -1,78 +1,82 @@
 import { ethers } from "ethers";
 
-// const ca, abi
-
 class HP {
-  provider: ethers.providers.BaseProvider;
-  wallet: ethers.Wallet;
-  signer: ethers.Signer;
-  contractSigner: ethers.Contract;
-  contractProvider: ethers.Contract;
-
-  // Temporary
+  contract: ethers.Contract;
   contractAddress: string;
   abi: ethers.ContractInterface;
 
   constructor(
-    provider: ethers.providers.BaseProvider,
-    privateKey: ethers.utils.BytesLike,
+    signer: ethers.Signer,
     contractAddress: string,
     abi: ethers.ContractInterface
   ) {
-    this.provider = provider;
-    this.wallet = new ethers.Wallet(privateKey);
-    this.signer = this.wallet.connect(this.provider);
     this.contractAddress = contractAddress;
     this.abi = abi;
-
-    this.contractSigner = new ethers.Contract(
-      this.contractAddress,
-      this.abi,
-      this.signer
-    );
-    this.contractProvider = new ethers.Contract(
-      this.contractAddress,
-      this.abi,
-      this.provider
-    );
+    this.contract = new ethers.Contract(this.contractAddress, this.abi, signer);
   }
 
   /**
-   *
-   * @param address
-   * @returns
+   * @method change signer of contract
+   * @param signer
    */
-  async balanceOf(address: string): Promise<any> {
-    const result = await this.contractProvider.balanceOf(address);
-    return result;
+  async changeContractSigner(signer: ethers.Signer) {
+    this.contract = this.contract.connect(signer);
   }
 
   /**
-   * @param recipient token minted to
-   * @returns
+   * @method initial minting once, only admin
    */
-  async attendanceMint(recipient: string): Promise<any> {
-    const result = await this.contractSigner.attendanceMint(recipient);
-    return result;
+  async init() {
+    await this.contract.init();
   }
 
   /**
-   * @method mint at once, since tx fee
-   * @param recipients array token minted to
-   * @returns
+   * @method enable ExternalHP Contract to mint
    */
-  async attendanceMintBatch(recipients: string[]): Promise<any> {
-    const result = await this.contractSigner.attendanceMintBatch(recipients);
-    return result;
+  async grantMinterRole(contract: string) {
+    await this.contract.grantMinterRole(contract);
   }
 
   /**
-   * @param donateRecord array of donate record: { from, to, amount }
-   * @returns
+   * @method set signup token reward, only admin
    */
-  async donateBatch(donateRecord: object[]): Promise<any> {
-    const result = await this.contractSigner.donateBatch(donateRecord);
-    return result;
+  async setSignupReward(signupReward: number) {
+    await this.contract.setSignupReward();
+  }
+
+  /**
+   * @method set attendacne token reward, only admin
+   */
+  async setAttendanceReward(attendanceReward: number) {
+    await this.contract.setAttendanceReward();
+  }
+
+  /**
+   * @method mint token to reward signup, only minter
+   */
+  async signupMint(recipient: string) {
+    await this.contract.signupMint();
+  }
+
+  /**
+   * @method mint token to reward attendacne, only minter
+   */
+  async attendanceMint(recipient: string) {
+    await this.contract.attendacneMint();
+  }
+
+  /**
+   * @method mint token to reward users at once, only minter
+   */
+  async attendanceMintBatch(recipients: string[]) {
+    await this.contract.attendanceMintBatch();
+  }
+
+  /**
+   * @method check balance of user
+   */
+  async balanceOf(user: string): Promise<number> {
+    return await this.contract.balanceOf(user);
   }
 }
 

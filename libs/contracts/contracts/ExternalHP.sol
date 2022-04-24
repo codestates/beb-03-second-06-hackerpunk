@@ -26,8 +26,8 @@ contract ExternalHP is Ownable {
     }
 
     function regsiterExternal(address serverAccount) public payable {
-        require(msg.value == signupFee);
-        require(addressRecorder[serverAccount] == address(0x0));
+        require(msg.value == signupFee, "Invalid Fee");
+        require(addressRecorder[serverAccount] == address(0x0), "Already Registered");
         payable(owner()).transfer(msg.value);
         hp.signupMint(serverAccount);
 
