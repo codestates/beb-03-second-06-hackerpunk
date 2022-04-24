@@ -4,3 +4,4 @@ artifacts
 .parcel-cache
 .env
 .DS_Store
+remix-compiler.config.js

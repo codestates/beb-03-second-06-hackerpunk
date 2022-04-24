@@ -1,6 +1,6 @@
-import { HP } from "./lib/HP";
-import { HPA } from "./lib/HPA";
-import { setProvider } from "./lib/provider";
 import { createWallet } from "./lib/wallet";
+import { HP } from "./lib/HP";
+import { HPTimeLock } from "./lib/HPTimeLock";
+import { setProvider, setWallet, setSigner } from "./lib/provider";
 
-export { HP, HPA, setProvider, createWallet };
+export { HP, HPTimeLock, setProvider, setWallet, setSigner, createWallet };
