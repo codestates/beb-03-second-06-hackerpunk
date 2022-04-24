@@ -7,6 +7,7 @@ function $parcel$export(e, n, v, s) {
 
 $parcel$export(module.exports, "HP", () => $4f2d27e7bb08be92$export$2f4fd17aff4e7fc);
 $parcel$export(module.exports, "HPTimeLock", () => $c6d12b18f5e7b653$export$948472b202b3236b);
+$parcel$export(module.exports, "ExternalHP", () => $1bdf165e5fb3c2c0$export$7fb3e24a412a5622);
 $parcel$export(module.exports, "setProvider", () => $844002365fcdc02f$export$1572b3eade6662f9);
 $parcel$export(module.exports, "setWallet", () => $844002365fcdc02f$export$e61ca58b6d981800);
 $parcel$export(module.exports, "setSigner", () => $844002365fcdc02f$export$5e413b7d07c04d66);
@@ -142,6 +143,44 @@ class $c6d12b18f5e7b653$export$948472b202b3236b {
    * @method donation token released to writer after lock time, only owner
    */ async release(articleId, writer) {
         await this.contract.release(articleId, writer);
+    }
+}
+
+
+
+class $1bdf165e5fb3c2c0$export$7fb3e24a412a5622 {
+    constructor(signer, contractAddress, abi){
+        this.contractAddress = contractAddress;
+        this.abi = abi;
+        this.contract = new $8zHUo$ethers.ethers.Contract(this.contractAddress, this.abi, signer);
+    }
+    /**
+   * @method change signer of contract
+   * @param signer
+   */ async changeContractSigner(signer) {
+        this.contract = this.contract.connect(signer);
+    }
+    async signupFee() {
+        return await this.contract.signupFee();
+    }
+    /**
+   * @method onlyOwner
+   */ async getAllServerAccounts() {
+        return await this.contract.getAllServerAccounts;
+    }
+    /**
+   * @method onlyOwner
+   */ async setSignupFee(fee) {
+        await this.contract.setSignupFee(fee);
+    }
+    /**
+   * @method External account send transaction fee and get amount of HP token to be registered
+   * @param serverAccount
+   * @param fee signupfee
+   */ async registerExternal(serverAccount, fee) {
+        await this.contract.registerExternal(serverAccount, {
+            from: fee
+        });
     }
 }
 

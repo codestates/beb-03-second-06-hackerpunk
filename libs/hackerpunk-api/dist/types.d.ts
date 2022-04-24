@@ -83,6 +83,32 @@ export class HPTimeLock {
      */
     release(articleId: number, writer: string): Promise<void>;
 }
+export class ExternalHP {
+    contract: ethers.Contract;
+    contractAddress: string;
+    abi: ethers.ContractInterface;
+    constructor(signer: ethers.Signer, contractAddress: string, abi: ethers.ContractInterface);
+    /**
+     * @method change signer of contract
+     * @param signer
+     */
+    changeContractSigner(signer: ethers.Signer): Promise<void>;
+    signupFee(): Promise<number>;
+    /**
+     * @method onlyOwner
+     */
+    getAllServerAccounts(): Promise<string[]>;
+    /**
+     * @method onlyOwner
+     */
+    setSignupFee(fee: number): Promise<void>;
+    /**
+     * @method External account send transaction fee and get amount of HP token to be registered
+     * @param serverAccount
+     * @param fee signupfee
+     */
+    registerExternal(serverAccount: string, fee: number): Promise<void>;
+}
 /**
  * @param network default mainnet, can be url like http or wss
  * @param provider etherscan, infura, alchemy, etc...
