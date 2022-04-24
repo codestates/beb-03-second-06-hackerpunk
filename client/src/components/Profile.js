@@ -1,6 +1,5 @@
-import { React, styled, Div } from '../common';
-
-import LogoSrc from '../assets/hplogo.gif';
+import { React, motion, styled, Div, Logo } from '../common';
+import hp from '../api/hp';
 
 const Container = styled(Div)`
   z-index: 999;
@@ -21,7 +20,7 @@ const InnerContainer = styled(Div)`
   word-break: break-all;
 `;
 
-const Image = styled.img`
+const StyledLogo = styled(Logo)`
   width: 25%;
   height: 25%;
   border-radius: 50%;
@@ -43,21 +42,53 @@ const Token = styled.p`
   color: white;
 `;
 
+const ConnectWallet = styled(motion.span)`
+  position: absolute;
+  left: 42px;
+  top: -25px;
+  font-size: 0.75rem;
+`;
+
+// ---------- Animation ----------
+const Conatiner__Animate = {
+  initial: {
+    y: -30,
+  },
+  animate: {
+    x: 12,
+    y: 0,
+    scale: 1.1,
+  },
+};
+
+const ConnectWallet__Animate = {
+  whileHover: {
+    scale: 1.02,
+    color: 'rgba(150, 20, 20, 0.8)',
+    textDecoration: 'underline bisque dashed 1px',
+  },
+  whileTap: {
+    scale: 0.95,
+    color: 'rgb(0, 0, 0, 0)',
+    textDecoration: 'none',
+  },
+};
+// -------------------------------
+
 function Profile() {
+  const connectWallet = async () => {
+    await hp.connectToExternalWallet(
+      '0x90DdB069D1BFF5CEe2bFaA1Fe889990CB5F14f72'
+    );
+  };
   return (
-    <Container
-      initial={{
-        y: -30,
-      }}
-      animate={{
-        x: 12,
-        y: 0,
-        scale: 1.1,
-      }}
-    >
+    <Container {...Conatiner__Animate}>
+      <ConnectWallet {...ConnectWallet__Animate} onClick={connectWallet}>
+        ❕ Connect To External Wallet
+      </ConnectWallet>
       <InnerContainer>
-        <Image src={LogoSrc} />
-        <Address>3h5gEDDxMAPfvaYi5XLuf6Hn6HRANAu1</Address>
+        <StyledLogo />
+        <Address>0x90DdB069D1BFF5CEe2bFaA1Fe889990CB5F14f72</Address>
       </InnerContainer>
       <InnerContainer>
         <Span>Lv.99</Span>

@@ -13,7 +13,7 @@ const useInput = (middleware = (v) => v, initialValue = '') => {
     }
     setValue(retValue);
   };
-  return [value, { value, onChange }];
+  return [value, { value, onChange }, setValue];
 };
 
 export default useInput;

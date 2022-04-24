@@ -1,4 +1,4 @@
-import { React, styled, Div } from '../common';
+import { React } from '../common';
 import Profile from '../components/Profile';
 import Board from '../components/Board';
 

@@ -8,9 +8,8 @@ import {
   Input,
   Button,
   Div,
+  VideoLogo,
 } from '../common';
-
-import LogoSrc from '../assets/hplogo.gif';
 
 const Container = styled(Div)`
   width: 40%;
@@ -46,7 +45,9 @@ function LoginBox() {
     [password, inputPassword] = useInput();
 
   const [submit, setSubmit] = useState(false);
-  const onSubmit = () => setSubmit(true);
+  const onSubmit = () => {
+    setSubmit(true);
+  };
 
   const { data } = useFetch({
     key: 'login',
@@ -61,14 +62,8 @@ function LoginBox() {
   }
 
   return (
-    <Container
-      initial={{
-        opacity: 0,
-      }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-    >
-      <Logo src={LogoSrc} />
+    <Container>
+      <VideoLogo />
       <InnerContainer>
         <Label>
           <span>ID</span>
@@ -76,10 +71,16 @@ function LoginBox() {
         </Label>
         <Label>
           <span>PW</span>
-          <Input {...inputPassword} />
+          <Input type="password" {...inputPassword} />
         </Label>
       </InnerContainer>
-      <ToSignIn onClick={() => navigate('/sign')}>Sign in</ToSignIn>
+      <ToSignIn
+        onClick={() => {
+          navigate('/sign');
+        }}
+      >
+        Sign in
+      </ToSignIn>
       <Button onClick={onSubmit}>Submit</Button>
     </Container>
   );

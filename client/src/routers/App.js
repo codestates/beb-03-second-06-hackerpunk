@@ -6,22 +6,21 @@ import {
   Route,
   Background,
   Footer,
+  Div,
   styled,
+  AnimatePresence,
 } from '../common';
 
 import Home from '../pages/Home';
 import Contents from '../pages/Contents';
 
-const RootDiv = styled.div`
+const RootDiv = styled(Div)`
   z-index: 0;
   position: absolute;
   left: 0;
   top: 0;
   width: 100vw;
   height: 100vh;
-  display: flex;
-  justify-content: center;
-  align-items: center;
 `;
 
 function App() {
@@ -29,12 +28,14 @@ function App() {
     <RootDiv>
       <Background />
       <Footer />
-      <BrowserRouter>
-        <Routes>
-          <Route path="*" element={<Home />} />
-          <Route path="/contents" element={<Contents />} />
-        </Routes>
-      </BrowserRouter>
+      <AnimatePresence>
+        <BrowserRouter>
+          <Routes>
+            <Route path="*" element={<Home />} />
+            <Route path="/contents" element={<Contents />} />
+          </Routes>
+        </BrowserRouter>
+      </AnimatePresence>
     </RootDiv>
   );
 }
