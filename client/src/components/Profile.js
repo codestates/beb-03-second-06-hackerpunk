@@ -21,8 +21,8 @@ const InnerContainer = styled(Div)`
 `;
 
 const StyledLogo = styled(Logo)`
-  width: 25%;
-  height: 25%;
+  width: 30%;
+  height: 70%;
   border-radius: 50%;
   margin-right: 4px;
 `;
