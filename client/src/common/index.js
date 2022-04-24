@@ -30,6 +30,8 @@ import Footer from './components/Footer';
 import Button from './components/Button';
 import Input from './components/Input';
 import Div from './components/Div';
+import Logo from './components/Logo';
+import VideoLogo from './components/VideoLogo';
 
 import useInput from '../hooks/useInput';
 import useFetch from '../hooks/useFetch';
@@ -47,6 +49,8 @@ export {
   Button,
   Input,
   Div,
+  Logo,
+  VideoLogo,
 };
 
 // Hooks

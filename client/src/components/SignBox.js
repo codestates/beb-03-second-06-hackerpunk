@@ -99,18 +99,24 @@ function SignBox() {
         </Label>
         <Label>
           pw
-          <Input {...inputPassword} />
+          <Input type="password" {...inputPassword} />
         </Label>
         <Label>
           pw(re)
-          <Input {...inputPasswordRe} />
+          <Input type="password" {...inputPasswordRe} />
         </Label>
         <Label>
           email
-          <Input {...inputEmail} />
+          <Input type="email" {...inputEmail} />
         </Label>
       </InnerContainer>
-      <ToLogIn onClick={() => navigate('/')}>Log in</ToLogIn>
+      <ToLogIn
+        onClick={() => {
+          navigate('/');
+        }}
+      >
+        Log in
+      </ToLogIn>
       <Button onClick={onSubmit}>Submit</Button>
     </Container>
   );

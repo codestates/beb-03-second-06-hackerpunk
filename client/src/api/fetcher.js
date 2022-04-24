@@ -19,9 +19,13 @@ const resolvers = ({ options = {}, state: { data } = {} } = {}) => {
     posts: {
       url: 'https://jsonplaceholder.typicode.com/posts',
       method: 'get',
-      nextMut(v) {
-        console.log(v);
-        return v;
+      nextMut(list) {
+        return list.map(({ userId, id, title, body } = {}) => ({
+          userId: 'testman' + userId,
+          id,
+          title,
+          body,
+        }));
       },
       ...options,
     },
