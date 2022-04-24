@@ -40,8 +40,12 @@ contract HPTimeLock is Ownable {
         return _token;
     }
 
-    function _checkArticleStatus(uint256 _articleId) internal view returns (DonationStatus) {
+    function checkDonationStatus(uint256 _articleId) public view returns (DonationStatus) {
         return articleToDonationInfo[_articleId].donationStatus;
+    }
+
+    function getDonators(uint256 articleId) public view returns (address[] memory) {
+        return articleToDonationInfo[articleId].donators;
     }
 
     function getDonationBalance(uint256 articleId) public view returns (uint256) {
@@ -49,14 +53,14 @@ contract HPTimeLock is Ownable {
     }
 
     function donate(uint256 articleId, address donator, address writer, uint256 amount) public onlyOwner {
-        DonationStatus ds = _checkArticleStatus(articleId);
+        DonationStatus ds = checkDonationStatus(articleId);
         require(ds == DonationStatus.DonationStatus_NotStarted || ds == DonationStatus.DonationStatus_Proceeding, "Invalid status");
 
         uint256 balance = token().balanceOf(donator);
         require(balance >= amount, "Not enough balance");
         LockInfo storage lockInfo = articleToLockInfo[articleId];
         DonationInfo storage donationInfo = articleToDonationInfo[articleId];
-        if (_checkArticleStatus(articleId) == DonationStatus.DonationStatus_NotStarted) {
+        if (checkDonationStatus(articleId) == DonationStatus.DonationStatus_NotStarted) {
             donationInfo.donationStatus = DonationStatus.DonationStatus_Proceeding;
             donationInfo.writer = writer;
             lockInfo.writer = writer;
@@ -70,7 +74,7 @@ contract HPTimeLock is Ownable {
     }
 
     function revokeAll(uint256 articleId, address writer) public onlyOwner {
-        require(_checkArticleStatus(articleId) == DonationStatus.DonationStatus_Proceeding, "Invalid status");
+        require(checkDonationStatus(articleId) == DonationStatus.DonationStatus_Proceeding, "Invalid status");
 
         LockInfo storage lockInfo = articleToLockInfo[articleId];
         address[] storage _donators = lockInfo.donators;
@@ -85,7 +89,7 @@ contract HPTimeLock is Ownable {
         delete articleToLockInfo[articleId];
     }
     function revokeDonate(uint256 articleId, address donator) public onlyOwner {
-        require(_checkArticleStatus(articleId) == DonationStatus.DonationStatus_Proceeding, "Invalid status");
+        require(checkDonationStatus(articleId) == DonationStatus.DonationStatus_Proceeding, "Invalid status");
 
         LockInfo storage lockInfo = articleToLockInfo[articleId];
         uint256 amount = lockInfo.donations[donator];
