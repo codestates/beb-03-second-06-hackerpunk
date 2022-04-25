@@ -55,7 +55,7 @@ const ConnectWallet = styled(motion.div)`
 `;
 
 // ---------- Animation ----------
-const Conatiner__Animate = {
+const Container__Animate = {
   initial: {
     y: -30,
   },
@@ -109,7 +109,7 @@ function Profile() {
   };
   const [connectWalletHelper, setConnectWalletHelper] = useState('');
   return (
-    <Container {...Conatiner__Animate}>
+    <Container {...Container__Animate}>
       <ConnectWallet
         {...ConnectWallet__Animate}
         onClick={connectWallet}

@@ -44,6 +44,29 @@ const ToLogIn = styled.span`
   }
 `;
 
+// ---------- Animation ----------
+const Container__Animate = {
+  hidden: {
+    y: '-50vh',
+    opacity: 0,
+  },
+  visible: {
+    y: '0',
+    opacity: 1,
+    transition: {
+      duration: 0.1,
+      type: 'spring',
+      damping: 30,
+      stiffness: 400,
+    },
+  },
+  exit: {
+    y: '50vh',
+    opacity: 0,
+  },
+};
+// -------------------------------
+
 const memoId = {
     value: '',
   },
@@ -113,29 +136,13 @@ function SignBox() {
     navigate('/');
   }
 
-  const dropIn = {
-    hidden: {
-      y: '-50vh',
-      opacity: 0,
-    },
-    visible: {
-      y: '0',
-      opacity: 1,
-      transition: {
-        duration: 0.1,
-        type: 'spring',
-        damping: 30,
-        stiffness: 400,
-      },
-    },
-    exit: {
-      y: '50vh',
-      opacity: 0,
-    },
-  };
-
   return (
-    <Container variants={dropIn} initial="hidden" animate="visible" exit="exit">
+    <Container
+      variants={Container__Animate}
+      initial="hidden"
+      animate="visible"
+      exit="exit"
+    >
       <Title>Sign Up</Title>
       <InnerContainer>
         <Label>
