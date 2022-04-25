@@ -7,7 +7,7 @@ const Container = styled(motion.div)`
   height: 3.6vh;
   width: 100vw;
   display: flex;
-  justify-content: flex-start;
+  justify-content: center;
   align-items: center;
 `;
 
@@ -15,9 +15,9 @@ const InnerContainer = styled(motion.div)`
   height: 100%;
   width: 100%;
   display: flex;
-  justify-content: space-between;
+  justify-content: center;
   align-items: center;
-  font-size: 0.4rem;
+  font-size: 0.2rem;
   color: whitesmoke;
 `;
 

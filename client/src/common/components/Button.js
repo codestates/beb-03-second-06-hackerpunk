@@ -16,6 +16,7 @@ const StyledButton = styled(motion.button)`
 function Button(props) {
   return (
     <StyledButton
+      tabIndex="-1"
       whileHover={{ scale: 1.05, backgroundColor: 'rgba(10, 20, 20, 0.9)' }}
       whileTap={{ scale: 0.95 }}
       {...props}

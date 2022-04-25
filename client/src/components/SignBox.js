@@ -1,7 +1,8 @@
 import {
   React,
-  useState,
+  motion,
   styled,
+  useState,
   useFetch,
   useInput,
   useEffect,
@@ -36,12 +37,11 @@ const Title = styled.h1`
 
 const Label = styled.label``;
 
-const ToLogIn = styled.span`
+const ToLogIn = styled(motion.span)`
   font-size: 0.9rem;
   text-decoration: underline;
-  &:hover {
-    color: rgba(210, 220, 220, 0.9);
-  }
+  margin-top: 0.5rem;
+  opacity: 0.8;
 `;
 
 // ---------- Animation ----------
@@ -136,6 +136,10 @@ function SignBox() {
     navigate('/');
   }
 
+  const toLogin = () => {
+    navigate('/');
+  };
+
   return (
     <Container
       variants={Container__Animate}
@@ -148,12 +152,13 @@ function SignBox() {
         <Label>
           {/* ID */}
           <Input
-            placeholder="Input your ID here"
+            placeholder="Your ID Here"
             ref={focusIdRef}
             onEnter={onSubmit}
             maxLength={MAX_ID_LENGTH}
             {...inputId}
             required
+            tabIndex="1"
           />
         </Label>
         <Label>
@@ -166,6 +171,7 @@ function SignBox() {
             maxLength={MAX_PASSWORD_LENGTH}
             {...inputPassword}
             required
+            tabIndex="2"
           />
         </Label>
         <Label>
@@ -177,6 +183,7 @@ function SignBox() {
             maxLength={MAX_PASSWORD_LENGTH}
             {...inputPasswordRe}
             required
+            tabIndex="3"
           />
         </Label>
         <Label>
@@ -187,14 +194,27 @@ function SignBox() {
             onEnter={onSubmit}
             {...inputEmail}
             required
+            tabIndex="4"
           />
         </Label>
       </InnerContainer>
       <Button onClick={onSubmit}>Submit</Button>
       <ToLogIn
-        onClick={() => {
-          navigate('/');
+        onClick={toLogin}
+        onKeyDown={(e) => {
+          // Tab Looping
+          e.preventDefault();
+          if (e.key === 'Tab') {
+            focusId();
+          } else if (e.key === 'Enter') {
+            toLogin();
+          }
         }}
+        whileHover={{
+          color: 'rgba(200, 225, 200, 0.7)',
+          scale: 1.05,
+        }}
+        tabIndex="5"
       >
         Log in
       </ToLogIn>
