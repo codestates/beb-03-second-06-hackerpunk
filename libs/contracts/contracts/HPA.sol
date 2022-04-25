@@ -10,10 +10,18 @@ contract HPA is ERC721URIStorage, AccessControl {
     Counters.Counter private _tokenId;
 
     bytes32 public constant MINTER_ROLE = keccak256("MINTER_ROLE");
+    bytes32 public constant MINTER_ROLE_ADMIN = keccak256("MINTER_ROLE_ADMIN");
 
     constructor() ERC721("HackerPunk Article", "HPA") {
         _grantRole(DEFAULT_ADMIN_ROLE, msg.sender);
+        _grantRole(MINTER_ROLE_ADMIN, msg.sender);
         _grantRole(MINTER_ROLE, msg.sender);
+
+        _setRoleAdmin(MINTER_ROLE, MINTER_ROLE_ADMIN);
+    }
+    
+    function grantMinterRole(address account) public {
+        grantRole(MINTER_ROLE, account);
     }
 
     function safeMint(address to, string memory tokenURI) public onlyRole(MINTER_ROLE) {
@@ -23,7 +31,6 @@ contract HPA is ERC721URIStorage, AccessControl {
         _setTokenURI(tokenId, tokenURI);
     }
 
-    // The following functions are overrides required by Solidity.
     function supportsInterface(bytes4 interfaceId)
         public
         view

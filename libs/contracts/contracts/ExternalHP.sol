@@ -6,34 +6,77 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 
 contract ExternalHP is Ownable {
     HP hp;
-    uint256 public signupFee;
+    uint256[256] public signupFee; // signupFee according to credentialType(uint8)
 
-    mapping(address => address) addressRecorder;
-    address[] serverAccounts;
+    struct AddressInfo {
+        uint8 credentialType; // 후에 있을지도 모를 가입 타입의 여지를 주기 위해 불리언이 아닌 0~255를 줌
+        address externalAddress;
+    }
 
-    event Signup(address indexed serverAccount, address indexed externalAccount);
+    mapping(address => AddressInfo) addressRecorder;
+    address[] serverAddresses;
+
+    event Signup(address indexed serverAccount, address indexed externalAddress);
 
     constructor(HP _hp) {
         hp = _hp;
+        signupFee[1] = 0.001 ether; // 기본 타입
     }
 
     function getAllServerAccounts() public view onlyOwner returns (address[] memory) {
-        return serverAccounts;
+        return serverAddresses;
     }
 
-    function setSignupFee(uint256 _signupFee) public onlyOwner {
-        signupFee = _signupFee;
+    function setSignupFee(uint8 credentialType, uint256 _signupFee) public onlyOwner {
+        signupFee[credentialType] = _signupFee;
     }
 
-    function regsiterExternal(address serverAccount) public payable {
-        require(msg.value == signupFee, "Invalid Fee");
-        require(addressRecorder[serverAccount] == address(0x0), "Already Registered");
+    function registerAddress(address serverAddress) public onlyOwner {
+        AddressInfo storage addr = addressRecorder[serverAddress];
+
+        require(addr.credentialType == uint8(0), "already registered account");
+
+        addr.credentialType = 1;
+    }
+
+    function isRegistered(address serverAddress) public view returns (bool) {
+        return addressRecorder[serverAddress].credentialType != 0;
+    }
+
+    function getCredentialType(address serverAddress) public view returns (uint8) {
+        return addressRecorder[serverAddress].credentialType;
+    }   
+
+    function changeCredentialType(uint8 credentialType, address serverAddress) public payable {
+        AddressInfo storage addr = addressRecorder[serverAddress];
+        require(addr.externalAddress == msg.sender, "request account is invalid");
+
+        uint8 prevType = addr.credentialType;
+
+        if (signupFee[credentialType] > signupFee[prevType]) {
+            uint256 fee;
+            unchecked {
+                fee = signupFee[credentialType] - signupFee[prevType];
+            }
+            require(msg.value == fee, "Invalid Fee");
+            payable(owner()).transfer(msg.value);
+        } 
+        addr.credentialType = credentialType;
+    }
+
+    function signInAddress(address serverAddress) public payable {
+        AddressInfo storage addr = addressRecorder[serverAddress];
+
+        require(addr.credentialType > uint8(0), "not registered account");
+        require(addr.externalAddress == address(0x0), "already signed account");
+        require(msg.value == signupFee[1], "Invalid Fee");
+
+        addr.externalAddress = msg.sender;
+
         payable(owner()).transfer(msg.value);
-        hp.signupMint(serverAccount);
+        hp.signupMint(serverAddress);
+        serverAddresses.push(serverAddress);
 
-        addressRecorder[serverAccount] = msg.sender;
-        serverAccounts.push(serverAccount);
-
-        emit Signup(serverAccount, msg.sender);
+        emit Signup(serverAddress, msg.sender);
     }
 }

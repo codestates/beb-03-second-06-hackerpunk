@@ -137,6 +137,44 @@ class $b5c9f8736c9df79f$export$948472b202b3236b {
 
 
 
+class $97915d9b045fee21$export$7fb3e24a412a5622 {
+    constructor(signer, contractAddress, abi){
+        this.contractAddress = contractAddress;
+        this.abi = abi;
+        this.contract = new $hgUW1$ethers.Contract(this.contractAddress, this.abi, signer);
+    }
+    /**
+   * @method change signer of contract
+   * @param signer
+   */ async changeContractSigner(signer) {
+        this.contract = this.contract.connect(signer);
+    }
+    async signupFee() {
+        return await this.contract.signupFee();
+    }
+    /**
+   * @method onlyOwner
+   */ async getAllServerAccounts() {
+        return await this.contract.getAllServerAccounts;
+    }
+    /**
+   * @method onlyOwner
+   */ async setSignupFee(fee) {
+        await this.contract.setSignupFee(fee);
+    }
+    /**
+   * @method External account send transaction fee and get amount of HP token to be registered
+   * @param serverAccount
+   * @param fee signupfee
+   */ async registerExternal(serverAccount, fee) {
+        await this.contract.registerExternal(serverAccount, {
+            from: fee
+        });
+    }
+}
+
+
+
 const $24ea454e7ad63d7f$export$1572b3eade6662f9 = (network, provider, key)=>{
     if (network === undefined) return $hgUW1$ethers.getDefaultProvider();
     else {
@@ -161,5 +199,5 @@ const $24ea454e7ad63d7f$export$5e413b7d07c04d66 = (wallet, provider)=>{
 
 
 
-export {$6472a0cc883e062f$export$2f4fd17aff4e7fc as HP, $b5c9f8736c9df79f$export$948472b202b3236b as HPTimeLock, $24ea454e7ad63d7f$export$1572b3eade6662f9 as setProvider, $24ea454e7ad63d7f$export$e61ca58b6d981800 as setWallet, $24ea454e7ad63d7f$export$5e413b7d07c04d66 as setSigner, $c825517a4d31fba5$export$41bdf21621ec4e24 as createWallet};
+export {$6472a0cc883e062f$export$2f4fd17aff4e7fc as HP, $b5c9f8736c9df79f$export$948472b202b3236b as HPTimeLock, $97915d9b045fee21$export$7fb3e24a412a5622 as ExternalHP, $24ea454e7ad63d7f$export$1572b3eade6662f9 as setProvider, $24ea454e7ad63d7f$export$e61ca58b6d981800 as setWallet, $24ea454e7ad63d7f$export$5e413b7d07c04d66 as setSigner, $c825517a4d31fba5$export$41bdf21621ec4e24 as createWallet};
 //# sourceMappingURL=module.js.map

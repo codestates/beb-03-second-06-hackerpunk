@@ -1,7 +1,7 @@
 const { expect } = require("chai");
 const { ethers } = require("hardhat");
 
-describe("HPTimeLock", function () {
+describe("HPTimeLock", async function () {
   let hpcont;
   let hptlcont;
   let owner;
@@ -18,6 +18,8 @@ describe("HPTimeLock", function () {
 
     let hptlFactory = await ethers.getContractFactory("HPTimeLock");
     hptlcont = await hptlFactory.deploy(hpcont.address);
+
+    await hpcont.setAttendanceReward(1000000000000000000n);
   });
 
   describe("HPTimeLock Test", async function () {
@@ -34,7 +36,6 @@ describe("HPTimeLock", function () {
         .add(addr1Balance)
         .add(addr2Balance)
         .add(addr3Balance);
-
       expect(total.eq(ethers.utils.parseEther("4.0"))).to.equal(true);
     });
 
@@ -110,7 +111,7 @@ describe("HPTimeLock", function () {
       await hpcont.connect(addr3).approve(hptlcont.address, 100);
       await hptlcont.donate(1, addr3.address, writer.address, 100);
 
-      // this.timeout(2000);
+      this.timeout(4000);
 
       await hptlcont.revokeDonate(1, addr2.address);
 
