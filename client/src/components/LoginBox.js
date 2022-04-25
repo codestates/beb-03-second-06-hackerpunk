@@ -5,6 +5,7 @@ import {
   useNavigate,
   useState,
   useInput,
+  useFocus,
   Input,
   Button,
   Div,
@@ -24,12 +25,6 @@ const InnerContainer = styled(Div)`
   margin: 2rem 0;
 `;
 
-const Logo = styled.img`
-  width: 28rem;
-  height: 18rem;
-  margin: 15px;
-`;
-
 const Label = styled.label``;
 
 const ToSignIn = styled.span`
@@ -43,6 +38,8 @@ const ToSignIn = styled.span`
 function LoginBox() {
   const [id, inputId] = useInput(),
     [password, inputPassword] = useInput();
+
+  const [focusRef] = useFocus();
 
   const [submit, setSubmit] = useState(false);
   const onSubmit = () => {
@@ -67,11 +64,11 @@ function LoginBox() {
       <InnerContainer>
         <Label>
           <span>ID</span>
-          <Input {...inputId} />
+          <Input ref={focusRef} onEnter={onSubmit} {...inputId} />
         </Label>
         <Label>
           <span>PW</span>
-          <Input type="password" {...inputPassword} />
+          <Input type="password" onEnter={onSubmit} {...inputPassword} />
         </Label>
       </InnerContainer>
       <ToSignIn

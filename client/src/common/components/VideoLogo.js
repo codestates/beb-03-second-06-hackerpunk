@@ -7,14 +7,7 @@ const Container = styled(Div)``;
 function VideoLogo({ size = ['500', '300'] } = {}) {
   return (
     <Container>
-      <video
-        width={size[0]}
-        height={size[1]}
-        autoplay="true"
-        loop
-        muted
-        playsinline
-      >
+      <video width={size[0]} height={size[1]} autoPlay loop muted playsInline>
         <source src={hplogo} type="video/mp4" />
       </video>
     </Container>
