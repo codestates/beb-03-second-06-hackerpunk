@@ -13,9 +13,10 @@ const port = 4100;
 
 const login_router = require('./router/login');
 const register_router = require('./router/register');
-const auth_router = require('./router/auth')
+//const auth_router = require('./router/auth')
 const contents_router = require('./router/contents');
 const refresh_router = require('./router/refreshTokenReq');
+const confirm_router = require('./router/confirm');
 
 const printLog = (req, res, next) => {
     console.log(`requst method is ${req.method}, url is ${req.url}`);
@@ -40,9 +41,10 @@ app.use(printLog);
 
 app.use('/login', login_router);
 app.use('/register', register_router);
-app.use('/auth', auth_router);
+//app.use('/auth', auth_router);
 app.use('/contents', contents_router);
 app.use('/refresh', refresh_router);
+app.use('/confirm', confirm_router);
 
 app.get('/test', (req, res) => {
     res.status(200).json({message:'This is the test'});

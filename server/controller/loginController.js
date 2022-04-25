@@ -29,11 +29,11 @@ const login = (req, res) => {
                 console.log("Login Fail, no user");
                 return;
             }
-            else if (user.status == 'pending'){
-                res.status(401).json({message: "pending account. please verify your email"});
-                console.log("Attemping to login with pending account");
-                return;
-            }
+            // else if (user.status == 'pending'){
+            //     res.status(401).json({message: "pending account. please verify your email"});
+            //     console.log("Attemping to login with pending account");
+            //     return;
+            // }
             else {
                 bcrypt.compare(password, user.password)
                     .then((result) => {
