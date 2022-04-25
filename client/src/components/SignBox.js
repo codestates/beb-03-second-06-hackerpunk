@@ -15,7 +15,7 @@ import {
   MAX_PASSWORD_LENGTH,
   removeWhitespace,
   useFocus,
-} from '../common';
+} from "../common";
 
 const Container = styled(Div)`
   width: 40%;
@@ -45,10 +45,10 @@ const ToLogIn = styled.span`
 `;
 
 const memoId = {
-    value: '',
+    value: "",
   },
   memoEmail = {
-    value: '',
+    value: "",
   };
 
 function SignBox() {
@@ -90,18 +90,18 @@ function SignBox() {
       errorBang(`Validating`, `Password(re) is different from the password`);
     }
     try {
-      validate({ key: 'id', value: id });
-      validate({ key: 'password', value: password });
-      validate({ key: 'email', value: email });
+      validate({ key: "id", value: id });
+      validate({ key: "password", value: password });
+      validate({ key: "email", value: email });
       setSubmit(true);
-    } catch ({ message = '' }) {
-      errorBang('Validating', message);
+    } catch ({ message = "" }) {
+      errorBang("Validating", message);
     }
     setSubmit(true);
   };
 
   const { data } = useFetch({
-    key: 'sign',
+    key: "sign",
     args: { data: { id, password } },
     condition: submit,
   });
@@ -110,26 +110,26 @@ function SignBox() {
 
   if (data) {
     setSubmit(false);
-    navigate('/');
+    navigate("/");
   }
 
   const dropIn = {
     hidden: {
-      y: '-50vh',
+      y: "-50vh",
       opacity: 0,
     },
     visible: {
-      y: '0',
+      y: "0",
       opacity: 1,
       transition: {
         duration: 0.1,
-        type: 'spring',
+        type: "spring",
         damping: 30,
         stiffness: 400,
       },
     },
     exit: {
-      y: '50vh',
+      y: "50vh",
       opacity: 0,
     },
   };
@@ -139,8 +139,9 @@ function SignBox() {
       <Title>Sign Up</Title>
       <InnerContainer>
         <Label>
-          id
+          {/* ID */}
           <Input
+            placeholder="Input your ID here"
             ref={focusIdRef}
             onEnter={onSubmit}
             maxLength={MAX_ID_LENGTH}
@@ -149,8 +150,9 @@ function SignBox() {
           />
         </Label>
         <Label>
-          pw
+          {/* pw */}
           <Input
+            placeholder="Password"
             ref={focusPasswordRef}
             type="password"
             onEnter={onSubmit}
@@ -160,8 +162,9 @@ function SignBox() {
           />
         </Label>
         <Label>
-          pw(re)
+          {/* pw(re) */}
           <Input
+            placeholder="Confirm Password"
             type="password"
             onEnter={onSubmit}
             maxLength={MAX_PASSWORD_LENGTH}
@@ -170,18 +173,24 @@ function SignBox() {
           />
         </Label>
         <Label>
-          email
-          <Input type="email" onEnter={onSubmit} {...inputEmail} required />
+          {/* email */}
+          <Input
+            placeholder="E-mail Address"
+            type="email"
+            onEnter={onSubmit}
+            {...inputEmail}
+            required
+          />
         </Label>
       </InnerContainer>
+      <Button onClick={onSubmit}>Submit</Button>
       <ToLogIn
         onClick={() => {
-          navigate('/');
+          navigate("/");
         }}
       >
-        Log in
+        Log In
       </ToLogIn>
-      <Button onClick={onSubmit}>Submit</Button>
     </Container>
   );
 }

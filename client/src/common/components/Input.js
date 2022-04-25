@@ -1,7 +1,15 @@
-import { forwardRef, motion, styled } from '..';
+import { forwardRef, motion, styled } from "..";
 
 const StyledInput = styled(motion.input)`
-  margin: 4px 2px;
+  margin: 5px 2px;
+  width: 12rem;
+  height: 1.2rem;
+  opacity: 70%;
+  border: 1px solid whitesmoke;
+`;
+
+const Pholder = styled.text`
+  text-decoration-color: solid whitesmoke;
 `;
 
 function Input({ onEnter = (e) => e, ...props }, ref) {
