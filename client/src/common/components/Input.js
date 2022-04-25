@@ -8,7 +8,7 @@ function Input({ onEnter = (e) => e, ...props }, ref) {
   return (
     <StyledInput
       ref={ref}
-      onKeyUp={(e) => {
+      onKeyDown={(e) => {
         if (e.keyCode === 13) {
           e.preventDefault();
           onEnter(e);
