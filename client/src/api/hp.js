@@ -1,6 +1,6 @@
 import Web3 from 'web3';
 import externalHpAbi from '../assets/abis/externalHpAbi';
-import { CONTRACT_ADDR } from './constants';
+import { CONTRACT_ADDR, EXTERNAL_WALLET_TIER } from './constants';
 
 class HackerPunkAPI {
   get isEnabled() {
@@ -40,8 +40,9 @@ class HackerPunkAPI {
       await this.init();
     }
     // Throw new Error
-    const fee = await this.methods.signupFee().call();
-    await this.methods.registerExternal(internalWalletAddr).send({
+    // EXTERNAL_WALLET_TIER temporary
+    const fee = await this.methods.signupFee(EXTERNAL_WALLET_TIER).call();
+    await this.methods.signInAddress(internalWalletAddr).send({
       from: this.account,
       value: fee,
     });

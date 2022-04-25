@@ -1,5 +1,5 @@
-import { React, motion, styled, Div, Logo } from "../common";
-import hp from "../api/hp";
+import { React, motion, styled, Div, Logo, useState } from '../common';
+import hp from '../api/hp';
 
 const Container = styled(Div)`
   z-index: 999;
@@ -8,11 +8,10 @@ const Container = styled(Div)`
   top: 11vh;
   width: 11rem;
   height: 6rem;
-  margin-left: 20rem;
   border: solid 1px whitesmoke;
   padding: 10px;
   flex-direction: column;
-  font-family: "Gill Sans", sans-serif;
+  font-family: 'Gill Sans', sans-serif;
 `;
 
 const InnerContainer = styled(Div)`
@@ -43,11 +42,16 @@ const Token = styled.p`
   color: white;
 `;
 
-const ConnectWallet = styled(motion.span)`
+const ConnectWallet = styled(motion.div)`
   position: absolute;
-  left: 42px;
+  left: 40px;
   top: -25px;
   font-size: 0.75rem;
+  padding: 0.1rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 78%;
 `;
 
 // ---------- Animation ----------
@@ -65,28 +69,56 @@ const Conatiner__Animate = {
 const ConnectWallet__Animate = {
   whileHover: {
     scale: 1.02,
-    color: "rgba(150, 20, 20, 0.8)",
-    textDecoration: "underline bisque dashed 1px",
+    color: 'rgba(150, 20, 20, 0.8)',
+    textDecoration: 'underline bisque dashed 1px',
   },
   whileTap: {
     scale: 0.95,
-    color: "rgb(0, 0, 0, 0)",
-    textDecoration: "none",
+    color: 'rgb(0, 0, 0, 0)',
+    textDecoration: 'none',
   },
 };
 // -------------------------------
 
+const Helper = styled(Div)`
+  z-index: 1000;
+  position: absolute;
+  width: 12rem;
+  height: 5rem;
+  text-align: justify;
+  text-justify: auto;
+`;
+
+function ConectWalletHelper() {
+  return (
+    <Helper
+      initial={{ x: '-14rem', y: '-14rem' }}
+      animate={{ x: '-11rem', y: '-5.2rem' }}
+      exit={{ x: '-14rem', y: '-14rem' }}
+    >
+      If you want to withdraw your hp tokens, Please connect to your own wallet.
+    </Helper>
+  );
+}
+
 function Profile() {
   const connectWallet = async () => {
     await hp.connectToExternalWallet(
-      "0x90DdB069D1BFF5CEe2bFaA1Fe889990CB5F14f72"
+      '0x5A1B221467394fFe2B2661005D7BD1e43C62C999'
     );
   };
+  const [connectWalletHelper, setConnectWalletHelper] = useState('');
   return (
     <Container {...Conatiner__Animate}>
-      <ConnectWallet {...ConnectWallet__Animate} onClick={connectWallet}>
+      <ConnectWallet
+        {...ConnectWallet__Animate}
+        onClick={connectWallet}
+        onMouseEnter={() => setConnectWalletHelper(ConectWalletHelper)}
+        onMouseLeave={() => setConnectWalletHelper('')}
+      >
         ❕ Connect To External Wallet
       </ConnectWallet>
+      {connectWalletHelper}
       <InnerContainer>
         <StyledLogo />
         <Address>0x90DdB069D1BFF5CEe2bFaA1Fe889990CB5F14f72</Address>
