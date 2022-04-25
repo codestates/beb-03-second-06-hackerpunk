@@ -4,11 +4,17 @@ import {
   styled,
   useFetch,
   useInput,
+  useEffect,
   useNavigate,
   useErrorBang,
   Button,
   Input,
   Div,
+  validate,
+  MAX_ID_LENGTH,
+  MAX_PASSWORD_LENGTH,
+  removeWhitespace,
+  useFocus,
 } from '../common';
 
 const Container = styled(Div)`
@@ -38,21 +44,59 @@ const ToLogIn = styled.span`
   }
 `;
 
-function SignBox() {
-  const [id, inputId] = useInput(),
-    [password, inputPassword] = useInput(),
-    [passwordRe, inputPasswordRe] = useInput(),
-    [email, inputEmail] = useInput();
+const memoId = {
+    value: '',
+  },
+  memoEmail = {
+    value: '',
+  };
 
-  const errorbang = useErrorBang();
+function SignBox() {
+  const [id, inputId] = useInput({
+      initialValue: memoId,
+      middleware: removeWhitespace,
+    }),
+    [password, inputPassword] = useInput({ middleware: removeWhitespace }),
+    [passwordRe, inputPasswordRe] = useInput({ middleware: removeWhitespace }),
+    [email, inputEmail] = useInput({
+      initialValue: memoEmail,
+      middleware: removeWhitespace,
+    });
+
+  const [focusIdRef, focusId] = useFocus({ start: false });
+  const [focusPasswordRef, focusPassword] = useFocus({ start: false });
+
+  useEffect(() => {
+    if (memoId.value.length > 0) {
+      focusPassword();
+    } else {
+      focusId();
+    }
+  }, []);
+
+  const errorBang = useErrorBang();
 
   const [submit, setSubmit] = useState(false);
   const onSubmit = () => {
-    /* -----validating------ */
-    if (password !== passwordRe) {
-      errorbang(`Form error`, `Password(re) is different from the password`);
+    if (
+      id.length === 0 || //
+      password.length === 0 ||
+      passwordRe.length === 0 ||
+      email.length === 0
+    ) {
+      return;
     }
-    /* --------------------- */
+    if (password !== passwordRe) {
+      errorBang(`Validating`, `Password(re) is different from the password`);
+    }
+    try {
+      validate({ key: 'id', value: id });
+      validate({ key: 'password', value: password });
+      validate({ key: 'email', value: email });
+      setSubmit(true);
+    } catch ({ message = '' }) {
+      errorBang('Validating', message);
+    }
     setSubmit(true);
   };
 
@@ -65,6 +109,7 @@ function SignBox() {
   const navigate = useNavigate();
 
   if (data) {
+    setSubmit(false);
     navigate('/');
   }
 
@@ -95,19 +140,38 @@ function SignBox() {
       <InnerContainer>
         <Label>
           id
-          <Input {...inputId} />
+          <Input
+            ref={focusIdRef}
+            onEnter={onSubmit}
+            maxLength={MAX_ID_LENGTH}
+            {...inputId}
+            required
+          />
         </Label>
         <Label>
           pw
-          <Input type="password" {...inputPassword} />
+          <Input
+            ref={focusPasswordRef}
+            type="password"
+            onEnter={onSubmit}
+            maxLength={MAX_PASSWORD_LENGTH}
+            {...inputPassword}
+            required
+          />
         </Label>
         <Label>
           pw(re)
-          <Input type="password" {...inputPasswordRe} />
+          <Input
+            type="password"
+            onEnter={onSubmit}
+            maxLength={MAX_PASSWORD_LENGTH}
+            {...inputPasswordRe}
+            required
+          />
         </Label>
         <Label>
           email
-          <Input type="email" {...inputEmail} />
+          <Input type="email" onEnter={onSubmit} {...inputEmail} required />
         </Label>
       </InnerContainer>
       <ToLogIn
