@@ -43,6 +43,14 @@ contract ExternalHP is Ownable {
         return addressRecorder[serverAddress].credentialType != 0;
     }
 
+    function isAuthenticated(address serverAddress) public view returns (bool) {
+        return addressRecorder[serverAddress].externalAddress != address(0x0);
+    }
+
+    function checkExternalAuthenticated(address serverAddress, address externalAddress) public view returns (bool) {
+        return addressRecorder[serverAddress].externalAddress == externalAddress;
+    }
+
     function getCredentialType(address serverAddress) public view returns (uint8) {
         return addressRecorder[serverAddress].credentialType;
     }   
