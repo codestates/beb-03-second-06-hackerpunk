@@ -1,7 +1,8 @@
 import {
   React,
-  useState,
+  motion,
   styled,
+  useState,
   useFetch,
   useInput,
   useEffect,
@@ -15,7 +16,7 @@ import {
   MAX_PASSWORD_LENGTH,
   removeWhitespace,
   useFocus,
-} from "../common";
+} from '../common';
 
 const Container = styled(Div)`
   width: 40%;
@@ -36,19 +37,41 @@ const Title = styled.h1`
 
 const Label = styled.label``;
 
-const ToLogIn = styled.span`
+const ToLogIn = styled(motion.span)`
   font-size: 0.9rem;
   text-decoration: underline;
-  &:hover {
-    color: rgba(210, 220, 220, 0.9);
-  }
+  margin-top: 0.5rem;
+  opacity: 0.8;
 `;
 
+// ---------- Animation ----------
+const Container__Animate = {
+  hidden: {
+    y: '-50vh',
+    opacity: 0,
+  },
+  visible: {
+    y: '0',
+    opacity: 1,
+    transition: {
+      duration: 0.1,
+      type: 'spring',
+      damping: 30,
+      stiffness: 400,
+    },
+  },
+  exit: {
+    y: '50vh',
+    opacity: 0,
+  },
+};
+// -------------------------------
+
 const memoId = {
-    value: "",
+    value: '',
   },
   memoEmail = {
-    value: "",
+    value: '',
   };
 
 function SignBox() {
@@ -90,18 +113,18 @@ function SignBox() {
       errorBang(`Validating`, `Password(re) is different from the password`);
     }
     try {
-      validate({ key: "id", value: id });
-      validate({ key: "password", value: password });
-      validate({ key: "email", value: email });
+      validate({ key: 'id', value: id });
+      validate({ key: 'password', value: password });
+      validate({ key: 'email', value: email });
       setSubmit(true);
-    } catch ({ message = "" }) {
-      errorBang("Validating", message);
+    } catch ({ message = '' }) {
+      errorBang('Validating', message);
     }
     setSubmit(true);
   };
 
   const { data } = useFetch({
-    key: "sign",
+    key: 'sign',
     args: { data: { id, password } },
     condition: submit,
   });
@@ -110,43 +133,32 @@ function SignBox() {
 
   if (data) {
     setSubmit(false);
-    navigate("/");
+    navigate('/');
   }
 
-  const dropIn = {
-    hidden: {
-      y: "-50vh",
-      opacity: 0,
-    },
-    visible: {
-      y: "0",
-      opacity: 1,
-      transition: {
-        duration: 0.1,
-        type: "spring",
-        damping: 30,
-        stiffness: 400,
-      },
-    },
-    exit: {
-      y: "50vh",
-      opacity: 0,
-    },
+  const toLogin = () => {
+    navigate('/');
   };
 
   return (
-    <Container variants={dropIn} initial="hidden" animate="visible" exit="exit">
-      <Title>Sign up</Title>
+    <Container
+      variants={Container__Animate}
+      initial="hidden"
+      animate="visible"
+      exit="exit"
+    >
+      <Title>Sign Up</Title>
       <InnerContainer>
         <Label>
           {/* ID */}
           <Input
-            placeholder="Input your ID here"
+            placeholder="Your ID Here"
             ref={focusIdRef}
             onEnter={onSubmit}
             maxLength={MAX_ID_LENGTH}
             {...inputId}
             required
+            tabIndex="1"
           />
         </Label>
         <Label>
@@ -159,6 +171,7 @@ function SignBox() {
             maxLength={MAX_PASSWORD_LENGTH}
             {...inputPassword}
             required
+            tabIndex="2"
           />
         </Label>
         <Label>
@@ -170,6 +183,7 @@ function SignBox() {
             maxLength={MAX_PASSWORD_LENGTH}
             {...inputPasswordRe}
             required
+            tabIndex="3"
           />
         </Label>
         <Label>
@@ -180,14 +194,27 @@ function SignBox() {
             onEnter={onSubmit}
             {...inputEmail}
             required
+            tabIndex="4"
           />
         </Label>
       </InnerContainer>
       <Button onClick={onSubmit}>Submit</Button>
       <ToLogIn
-        onClick={() => {
-          navigate("/");
+        onClick={toLogin}
+        onKeyDown={(e) => {
+          // Tab Looping
+          e.preventDefault();
+          if (e.key === 'Tab') {
+            focusId();
+          } else if (e.key === 'Enter') {
+            toLogin();
+          }
         }}
+        whileHover={{
+          color: 'rgba(200, 225, 200, 0.7)',
+          scale: 1.05,
+        }}
+        tabIndex="5"
       >
         Log in
       </ToLogIn>

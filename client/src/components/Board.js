@@ -17,7 +17,8 @@ const Container = styled(Div)`
   width: 70%;
   height: 70%;
   /* margin-right: 20rem; */
-  border: 1px groove white;
+  border: 1px groove gray;
+  border-radius: 1px;
   display: flex;
   flex-direction: column;
   justify-content: flex-start;

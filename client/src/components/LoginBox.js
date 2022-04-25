@@ -1,5 +1,6 @@
 import {
   React,
+  motion,
   styled,
   useFetch,
   useEffect,
@@ -16,33 +17,33 @@ import {
   removeWhitespace,
   MAX_ID_LENGTH,
   MAX_PASSWORD_LENGTH,
-} from "../common";
+} from '../common';
 
 const Container = styled(Div)`
   width: 40%;
   flex-direction: column;
   justify-content: space-between;
-  height: 14rem;
+  height: 11.5rem;
 `;
 
 const InnerContainer = styled(Div)`
   flex-direction: column;
   justify-content: space-between;
   margin: 2rem 0;
+  margin-bottom: 1.85rem;
 `;
 
 const Label = styled.label``;
 
-const ToSignIn = styled.span`
+const ToSignIn = styled(motion.span)`
   font-size: 0.9rem;
   text-decoration: underline;
-  &:hover {
-    color: rgba(210, 220, 220, 0.9);
-  }
+  margin-top: 0.5rem;
+  opacity: 0.8;
 `;
 
 const memoId = {
-  value: "",
+  value: '',
 };
 
 function LoginBox() {
@@ -74,16 +75,16 @@ function LoginBox() {
       return;
     }
     try {
-      validate({ key: "id", value: id });
-      validate({ key: "password", value: password });
+      validate({ key: 'id', value: id });
+      validate({ key: 'password', value: password });
       setSubmit(true);
-    } catch ({ message = "" }) {
-      errorBang("Validating", message);
+    } catch ({ message = '' }) {
+      errorBang('Validating', message);
     }
   };
 
   const { data } = useFetch({
-    key: "login",
+    key: 'login',
     args: { data: { id, password } },
     condition: submit,
   });
@@ -91,8 +92,12 @@ function LoginBox() {
   const navigate = useNavigate();
 
   if (data) {
-    navigate("/contents");
+    navigate('/contents');
   }
+
+  const toSignIn = () => {
+    navigate('/sign');
+  };
 
   return (
     <Container>
@@ -102,12 +107,13 @@ function LoginBox() {
           {/* <span>ID</span> */}
           <Input
             type="text"
-            placeholder="ID here"
+            placeholder="ID Here"
             ref={FocusIdRef}
             onEnter={onSubmit}
             maxLength={MAX_ID_LENGTH}
             {...inputId}
             required
+            tabIndex="1"
           />
         </Label>
         <Label>
@@ -120,14 +126,27 @@ function LoginBox() {
             maxLength={MAX_PASSWORD_LENGTH}
             {...inputPassword}
             required
+            tabIndex="2"
           />
         </Label>
       </InnerContainer>
       <Button onClick={onSubmit}>Log in</Button>
       <ToSignIn
-        onClick={() => {
-          navigate("/sign");
+        onClick={toSignIn}
+        whileHover={{
+          color: 'rgba(200, 225, 200, 0.7)',
+          scale: 1.05,
         }}
+        onKeyDown={(e) => {
+          // Tab Looping
+          e.preventDefault();
+          if (e.key === 'Tab') {
+            focusId();
+          } else if (e.key === 'Enter') {
+            toSignIn();
+          }
+        }}
+        tabIndex="3"
       >
         Sign up
       </ToSignIn>
