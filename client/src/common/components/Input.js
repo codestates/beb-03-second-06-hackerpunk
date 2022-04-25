@@ -22,7 +22,7 @@ const StyledInput = styled(motion.input)`
   }
 `;
 
-function Input({ onEnter = (e) => e, ...props }, ref) {
+function Input({ onEnter = (e) => e, autoComplete = false, ...props }, ref) {
   return (
     <StyledInput
       ref={ref}
@@ -32,7 +32,7 @@ function Input({ onEnter = (e) => e, ...props }, ref) {
           onEnter(e);
         }
       }}
-      autoComplete="off"
+      autoComplete={autoComplete ? 'on' : 'new-password'}
       {...props}
     />
   );
