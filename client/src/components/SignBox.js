@@ -31,7 +31,7 @@ const InnerContainer = styled(Div)`
 `;
 
 const Title = styled.h1`
-  font-size: 2.3rem;
+  font-size: 2.4rem;
 `;
 
 const Label = styled.label``;
@@ -136,7 +136,7 @@ function SignBox() {
 
   return (
     <Container variants={dropIn} initial="hidden" animate="visible" exit="exit">
-      <Title>Sign Up</Title>
+      <Title>Sign up</Title>
       <InnerContainer>
         <Label>
           {/* ID */}
