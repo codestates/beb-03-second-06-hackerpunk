@@ -15,7 +15,8 @@ import Posts from "./Posts";
 
 const Container = styled(Div)`
   width: 70%;
-  height: 70%;
+  height: 90%;
+  margin-right: 20rem;
   border: 1px groove white;
   display: flex;
   flex-direction: column;
@@ -37,7 +38,7 @@ function Board() {
   return (
     <Container
       initial={{ opacity: 0, height: 0 }}
-      animate={{ opacity: 1, height: '70%' }}
+      animate={{ opacity: 1, height: "70%" }}
       exit={{ opacity: 0, height: 0 }}
     >
       <AsyncBoundary
