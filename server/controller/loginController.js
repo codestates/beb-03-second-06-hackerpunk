@@ -1,6 +1,14 @@
-const users = require('../models/user.js');
+const users = require('../models/user');
 const bcrypt = require('bcrypt');
-const saltRounds = 10;
+//const saltRounds = 10;
+
+//
+const {
+    generateAccessToken,
+    generateRefreshToken,
+    sendRefreshToken,
+    sendAccessToken
+} = require('./tokenFunc');
 
 const login = (req, res) => {
     const { id, password } = req.body;
@@ -21,6 +29,11 @@ const login = (req, res) => {
                 console.log("Login Fail, no user");
                 return;
             }
+            else if (user.status == 'pending'){
+                res.status(401).json({message: "pending account. please verify your email"});
+                console.log("Attemping to login with pending account");
+                return;
+            }
             else {
                 bcrypt.compare(password, user.password)
                     .then((result) => {
@@ -30,12 +43,13 @@ const login = (req, res) => {
                             return;
                         }
                         else {
-                            res.status(200).json({
-                                message : "Login Success",
-                                data: {
-                                    user: user
-                                }
-                            })
+                            const accessToken = generateAccessToken({'id': user.id});
+                            const refreshToken = generateRefreshToken({'id': user.id});
+
+                            sendRefreshToken(res, refreshToken);
+                            sendAccessToken(res, accessToken);
+
+                            //res.status(200).json({'id': user.id});
                             console.log("Login Success");
                             return;
                         }
