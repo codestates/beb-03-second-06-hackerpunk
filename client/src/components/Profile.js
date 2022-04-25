@@ -1,5 +1,5 @@
-import { React, motion, styled, Div, Logo } from '../common';
-import hp from '../api/hp';
+import { React, motion, styled, Div, Logo } from "../common";
+import hp from "../api/hp";
 
 const Container = styled(Div)`
   z-index: 999;
@@ -8,10 +8,11 @@ const Container = styled(Div)`
   top: 11vh;
   width: 11rem;
   height: 6rem;
+  margin-left: 20rem;
   border: solid 1px whitesmoke;
   padding: 10px;
   flex-direction: column;
-  font-family: 'Gill Sans', sans-serif;
+  font-family: "Gill Sans", sans-serif;
 `;
 
 const InnerContainer = styled(Div)`
@@ -64,13 +65,13 @@ const Conatiner__Animate = {
 const ConnectWallet__Animate = {
   whileHover: {
     scale: 1.02,
-    color: 'rgba(150, 20, 20, 0.8)',
-    textDecoration: 'underline bisque dashed 1px',
+    color: "rgba(150, 20, 20, 0.8)",
+    textDecoration: "underline bisque dashed 1px",
   },
   whileTap: {
     scale: 0.95,
-    color: 'rgb(0, 0, 0, 0)',
-    textDecoration: 'none',
+    color: "rgb(0, 0, 0, 0)",
+    textDecoration: "none",
   },
 };
 // -------------------------------
@@ -78,7 +79,7 @@ const ConnectWallet__Animate = {
 function Profile() {
   const connectWallet = async () => {
     await hp.connectToExternalWallet(
-      '0x90DdB069D1BFF5CEe2bFaA1Fe889990CB5F14f72'
+      "0x90DdB069D1BFF5CEe2bFaA1Fe889990CB5F14f72"
     );
   };
   return (

@@ -9,13 +9,14 @@ import {
   useNavigate,
   styled,
   Div,
-} from '../common';
+} from "../common";
 
-import Posts from './Posts';
+import Posts from "./Posts";
 
 const Container = styled(Div)`
   width: 70%;
-  height: 70%;
+  height: 90%;
+  margin-right: 20rem;
   border: 1px groove white;
   display: flex;
   flex-direction: column;
@@ -37,7 +38,7 @@ function Board() {
   return (
     <Container
       initial={{ opacity: 0, height: 0 }}
-      animate={{ opacity: 1, height: '70%' }}
+      animate={{ opacity: 1, height: "70%" }}
       exit={{ opacity: 0, height: 0 }}
     >
       <AsyncBoundary
@@ -47,7 +48,7 @@ function Board() {
         onReset={(e) => {
           // `try again button` was clicked
           console.error(e);
-          navigate('/');
+          navigate("/");
         }}
       >
         <Posts />
