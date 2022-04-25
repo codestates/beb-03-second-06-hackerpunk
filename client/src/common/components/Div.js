@@ -1,4 +1,4 @@
-import { motion, styled } from '..';
+import { motion, styled } from "..";
 
 const Div = styled(motion.div)`
   width: 100%;

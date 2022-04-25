@@ -16,7 +16,7 @@ import {
   removeWhitespace,
   MAX_ID_LENGTH,
   MAX_PASSWORD_LENGTH,
-} from '../common';
+} from "../common";
 
 const Container = styled(Div)`
   width: 40%;
@@ -42,7 +42,7 @@ const ToSignIn = styled.span`
 `;
 
 const memoId = {
-  value: '',
+  value: "",
 };
 
 function LoginBox() {
@@ -74,16 +74,16 @@ function LoginBox() {
       return;
     }
     try {
-      validate({ key: 'id', value: id });
-      validate({ key: 'password', value: password });
+      validate({ key: "id", value: id });
+      validate({ key: "password", value: password });
       setSubmit(true);
-    } catch ({ message = '' }) {
-      errorBang('Validating', message);
+    } catch ({ message = "" }) {
+      errorBang("Validating", message);
     }
   };
 
   const { data } = useFetch({
-    key: 'login',
+    key: "login",
     args: { data: { id, password } },
     condition: submit,
   });
@@ -91,7 +91,7 @@ function LoginBox() {
   const navigate = useNavigate();
 
   if (data) {
-    navigate('/contents');
+    navigate("/contents");
   }
 
   return (
@@ -99,8 +99,10 @@ function LoginBox() {
       <VideoLogo />
       <InnerContainer>
         <Label>
-          <span>ID</span>
+          {/* <span>ID</span> */}
           <Input
+            type="text"
+            placeholder="ID here"
             ref={FocusIdRef}
             onEnter={onSubmit}
             maxLength={MAX_ID_LENGTH}
@@ -109,9 +111,10 @@ function LoginBox() {
           />
         </Label>
         <Label>
-          <span>PW</span>
+          {/* <span>PW</span> */}
           <Input
             ref={FocusPasswordRef}
+            placeholder="Password"
             type="password"
             onEnter={onSubmit}
             maxLength={MAX_PASSWORD_LENGTH}
@@ -120,14 +123,14 @@ function LoginBox() {
           />
         </Label>
       </InnerContainer>
+      <Button onClick={onSubmit}>Log in</Button>
       <ToSignIn
         onClick={() => {
-          navigate('/sign');
+          navigate("/sign");
         }}
       >
-        Sign in
+        Sign up
       </ToSignIn>
-      <Button onClick={onSubmit}>Submit</Button>
     </Container>
   );
 }

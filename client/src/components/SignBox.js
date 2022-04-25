@@ -31,7 +31,7 @@ const InnerContainer = styled(Div)`
 `;
 
 const Title = styled.h1`
-  font-size: 2.6rem;
+  font-size: 2.4rem;
 `;
 
 const Label = styled.label``;
@@ -146,8 +146,9 @@ function SignBox() {
       <Title>Sign Up</Title>
       <InnerContainer>
         <Label>
-          id
+          {/* ID */}
           <Input
+            placeholder="Input your ID here"
             ref={focusIdRef}
             onEnter={onSubmit}
             maxLength={MAX_ID_LENGTH}
@@ -156,8 +157,9 @@ function SignBox() {
           />
         </Label>
         <Label>
-          pw
+          {/* pw */}
           <Input
+            placeholder="Password"
             ref={focusPasswordRef}
             type="password"
             onEnter={onSubmit}
@@ -167,8 +169,9 @@ function SignBox() {
           />
         </Label>
         <Label>
-          pw(re)
+          {/* pw(re) */}
           <Input
+            placeholder="Confirm Password"
             type="password"
             onEnter={onSubmit}
             maxLength={MAX_PASSWORD_LENGTH}
@@ -177,10 +180,17 @@ function SignBox() {
           />
         </Label>
         <Label>
-          email
-          <Input type="email" onEnter={onSubmit} {...inputEmail} required />
+          {/* email */}
+          <Input
+            placeholder="E-mail Address"
+            type="email"
+            onEnter={onSubmit}
+            {...inputEmail}
+            required
+          />
         </Label>
       </InnerContainer>
+      <Button onClick={onSubmit}>Submit</Button>
       <ToLogIn
         onClick={() => {
           navigate('/');
@@ -188,7 +198,6 @@ function SignBox() {
       >
         Log in
       </ToLogIn>
-      <Button onClick={onSubmit}>Submit</Button>
     </Container>
   );
 }

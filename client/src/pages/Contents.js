@@ -1,6 +1,6 @@
-import { React } from '../common';
-import Profile from '../components/Profile';
-import Board from '../components/Board';
+import { React } from "../common";
+import Profile from "../components/Profile";
+import Board from "../components/Board";
 
 function Contents() {
   return (
