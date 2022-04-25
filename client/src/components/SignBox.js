@@ -31,7 +31,7 @@ const InnerContainer = styled(Div)`
 `;
 
 const Title = styled.h1`
-  font-size: 2.6rem;
+  font-size: 2.3rem;
 `;
 
 const Label = styled.label``;
@@ -189,7 +189,7 @@ function SignBox() {
           navigate("/");
         }}
       >
-        Log In
+        Log in
       </ToLogIn>
     </Container>
   );

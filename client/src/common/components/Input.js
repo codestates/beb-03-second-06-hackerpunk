@@ -2,14 +2,12 @@ import { forwardRef, motion, styled } from "..";
 
 const StyledInput = styled(motion.input)`
   margin: 5px 2px;
-  width: 12rem;
+  width: 15rem;
   height: 1.2rem;
-  opacity: 70%;
+  opacity: 80%;
   border: 1px solid whitesmoke;
-`;
-
-const Pholder = styled.text`
-  text-decoration-color: solid whitesmoke;
+  border-radius: 3px;
+  font-size: 11px;
 `;
 
 function Input({ onEnter = (e) => e, ...props }, ref) {

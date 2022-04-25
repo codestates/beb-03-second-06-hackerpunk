@@ -123,13 +123,13 @@ function LoginBox() {
           />
         </Label>
       </InnerContainer>
-      <Button onClick={onSubmit}>Login</Button>
+      <Button onClick={onSubmit}>Log in</Button>
       <ToSignIn
         onClick={() => {
           navigate("/sign");
         }}
       >
-        Sign Up
+        Sign up
       </ToSignIn>
     </Container>
   );
