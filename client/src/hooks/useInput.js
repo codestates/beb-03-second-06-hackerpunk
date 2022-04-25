@@ -1,18 +1,36 @@
-import { useState } from '../common';
+import { useState, useCallback } from '../common';
+/**
+ *
+ * @param {*} middleware
+ * @param {*} initialValue if the type is object, setValue will set object.value too
+ * @returns [value, { value, onChange }, setValue]
+ */
+const useInput = ({ middleware = (v) => v, initialValue = '' } = {}) => {
+  const [value, _setValue] = useState(
+    typeof initialValue === 'object' ? initialValue.value : initialValue
+  );
 
-const useInput = (middleware = (v) => v, initialValue = '') => {
-  const [value, setValue] = useState(initialValue);
-  const onChange = ({ target } = {}) => {
-    const retValue = middleware(target.value);
-    if (typeof retValue === 'undefined') {
-      setValue(target.value);
-      return;
+  const setValue = (v) => {
+    _setValue(v);
+    if (typeof initialValue === 'object') {
+      initialValue.value = v;
     }
-    if (typeof retValue !== 'string') {
-      throw new Error(`Unexpected Type ${typeof retValue}`);
-    }
-    setValue(retValue);
   };
+
+  const onChange = useCallback(
+    ({ target } = {}) => {
+      const retValue = middleware(target.value);
+      if (typeof retValue === 'undefined') {
+        setValue(target.value);
+        return;
+      }
+      if (typeof retValue !== 'string') {
+        throw new Error(`Unexpected Type ${typeof retValue}`);
+      }
+      setValue(retValue);
+    },
+    [setValue]
+  );
   return [value, { value, onChange }, setValue];
 };
 

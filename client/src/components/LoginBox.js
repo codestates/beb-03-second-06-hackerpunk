@@ -2,13 +2,20 @@ import {
   React,
   styled,
   useFetch,
+  useEffect,
   useNavigate,
   useState,
   useInput,
+  useFocus,
   Input,
   Button,
   Div,
   VideoLogo,
+  validate,
+  useErrorBang,
+  removeWhitespace,
+  MAX_ID_LENGTH,
+  MAX_PASSWORD_LENGTH,
 } from '../common';
 
 const Container = styled(Div)`
@@ -24,12 +31,6 @@ const InnerContainer = styled(Div)`
   margin: 2rem 0;
 `;
 
-const Logo = styled.img`
-  width: 28rem;
-  height: 18rem;
-  margin: 15px;
-`;
-
 const Label = styled.label``;
 
 const ToSignIn = styled.span`
@@ -40,13 +41,45 @@ const ToSignIn = styled.span`
   }
 `;
 
+const memoId = {
+  value: '',
+};
+
 function LoginBox() {
-  const [id, inputId] = useInput(),
-    [password, inputPassword] = useInput();
+  const [id, inputId] = useInput({
+      initialValue: memoId,
+      middleware: removeWhitespace,
+    }),
+    [password, inputPassword] = useInput({ middleware: removeWhitespace });
+
+  const errorBang = useErrorBang();
+
+  const [FocusIdRef, focusId] = useFocus({ start: false });
+  const [FocusPasswordRef, focusPassword] = useFocus({ start: false });
+
+  useEffect(() => {
+    if (memoId.value.length > 0) {
+      focusPassword();
+    } else {
+      focusId();
+    }
+  }, []);
 
   const [submit, setSubmit] = useState(false);
   const onSubmit = () => {
-    setSubmit(true);
+    if (
+      id.length === 0 || //
+      password.length === 0
+    ) {
+      return;
+    }
+    try {
+      validate({ key: 'id', value: id });
+      validate({ key: 'password', value: password });
+      setSubmit(true);
+    } catch ({ message = '' }) {
+      errorBang('Validating', message);
+    }
   };
 
   const { data } = useFetch({
@@ -67,11 +100,24 @@ function LoginBox() {
       <InnerContainer>
         <Label>
           <span>ID</span>
-          <Input {...inputId} />
+          <Input
+            ref={FocusIdRef}
+            onEnter={onSubmit}
+            maxLength={MAX_ID_LENGTH}
+            {...inputId}
+            required
+          />
         </Label>
         <Label>
           <span>PW</span>
-          <Input type="password" {...inputPassword} />
+          <Input
+            ref={FocusPasswordRef}
+            type="password"
+            onEnter={onSubmit}
+            maxLength={MAX_PASSWORD_LENGTH}
+            {...inputPassword}
+            required
+          />
         </Label>
       </InnerContainer>
       <ToSignIn

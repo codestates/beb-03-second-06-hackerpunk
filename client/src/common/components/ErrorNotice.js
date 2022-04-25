@@ -1,14 +1,18 @@
-import { React, motion } from '..';
+import { React, motion, useFocus } from '..';
 
 function ErrorNotice({ ...errorProps }) {
   const { error: { message, response: { data } = {} } = {} } = errorProps;
+  const [focusRef] = useFocus();
   return (
     <motion.div role="alert">
       <p>Something went wrong:</p>
       <pre>{message}</pre>
       <pre>Reason: {data?.message}</pre>
 
-      <motion.button onClick={() => errorProps.resetErrorBoundary(errorProps.error)}>
+      <motion.button
+        ref={focusRef}
+        onClick={() => errorProps.resetErrorBoundary(errorProps.error)}
+      >
         Try again
       </motion.button>
     </motion.div>
