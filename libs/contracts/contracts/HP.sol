@@ -6,11 +6,11 @@ import "@openzeppelin/contracts/access/AccessControl.sol";
 import "@openzeppelin/contracts/token/ERC20/utils/TokenTimelock.sol";
 
 contract HP is ERC20, AccessControl {
-    uint256 public constant initalSupply = 1000e18;
+    uint256 public constant initalSupply = 1000000e18;
     bool public initialised = false;
 
-    uint256 public _attendanceReward;
-    uint256 public _signupReward;
+    uint256 public attendanceReward = 1e16;
+    uint256 public signupReward = 1e18;
 
     bytes32 public constant MINTER_ROLE = keccak256("MINTER_ROLE");
     bytes32 public constant MINTER_ROLE_ADMIN = keccak256("MINTER_ROLE_ADMIN");
@@ -33,20 +33,20 @@ contract HP is ERC20, AccessControl {
         grantRole(MINTER_ROLE, account);
     }
 
-    function setAttendanceReward(uint256 attendanceReward) public onlyRole(DEFAULT_ADMIN_ROLE) {
-        _attendanceReward = attendanceReward;
+    function setAttendanceReward(uint256 _attendanceReward) public onlyRole(DEFAULT_ADMIN_ROLE) {
+        attendanceReward = _attendanceReward;
     }
 
-    function setSignupReward(uint256 signupReward) public onlyRole(DEFAULT_ADMIN_ROLE) {
-        _signupReward = signupReward;
+    function setSignupReward(uint256 _signupReward) public onlyRole(DEFAULT_ADMIN_ROLE) {
+        signupReward = _signupReward;
     }
 
     function signupMint(address recipient) public onlyRole(MINTER_ROLE) {
-        _mint(recipient, _signupReward);
+        _mint(recipient, signupReward);
     }
 
     function attendanceMint(address recipient) public onlyRole(MINTER_ROLE) {
-        _mint(recipient, _attendanceReward);
+        _mint(recipient, attendanceReward);
     }
 
     function attendanceMintBatch(address[] calldata recipients) public onlyRole(MINTER_ROLE) {

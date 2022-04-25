@@ -8,7 +8,7 @@ contract HPTimeLock is Ownable {
     using SafeERC20 for IERC20;
 
     IERC20 private immutable _token;
-    uint256 public lockTime = 30 seconds;
+    uint256 public lockTime = 3 seconds;
 
     enum DonationStatus {
         DonationStatus_NotStarted, DonationStatus_Proceeding, DonationStatus_Complete, DonationStatus_Reverted

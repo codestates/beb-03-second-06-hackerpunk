@@ -18,24 +18,42 @@ describe("ExternalHP", function () {
     ehpcont = await ehpFactory.deploy(hpcont.address);
 
     await hpcont.grantMinterRole(ehpcont.address);
-    await hpcont.setSignupReward(100000);
-    await ehpcont.setSignupFee(100); // Wei
   });
 
-  describe("Register Test", async function () {
-    it("First", async function () {
-      await ehpcont.regsiterExternal(server1.address, { value: 100 });
-      const accounts = await ehpcont.getAllServerAccounts();
+  describe("Register and Signin Test", async function () {
+    it("Register", async function () {
+      await ehpcont.registerAddress(server1.address);
 
-      console.log(await hpcont.balanceOf(server1.address));
-      expect(accounts[0]).to.equal(server1.address);
+      const ok = await ehpcont.isRegistered(server1.address);
+      expect(ok).to.equal(true);
     });
 
-    it("Already Registered", async function () {
-      await ehpcont.regsiterExternal(server1.address, { value: 100 });
+    it("SignIn", async function () {
+      await ehpcont.registerAddress(server1.address);
+      const fee = await ehpcont.signupFee(1);
       await ehpcont
         .connect(addr1)
-        .regsiterExternal(server1.address, { value: 100 });
+        .signInAddress(server1.address, { value: fee.toBigInt() });
+
+      const rewardToken = await hpcont.signupReward();
+      const balance = await hpcont.balanceOf(server1.address);
+
+      expect(rewardToken.eq(balance)).to.equal(true);
+    });
+
+    it("Change CredentialType", async function () {
+      await ehpcont.registerAddress(server1.address);
+      await ehpcont.setSignupFee(2, 2e15);
+      await ehpcont
+        .connect(addr1)
+        .signInAddress(server1.address, { value: 1e15 });
+
+      await ehpcont
+        .connect(addr1)
+        .changeCredentialType(2, server1.address, { value: 1e15 });
+
+      const type = await ehpcont.getCredentialType(server1.address);
+      expect(type).to.equal(2);
     });
   });
 });
