@@ -5,23 +5,27 @@ import {
   useNavigate,
   LoadingBox,
   AsyncBoundary,
+  useDispatch,
 } from '../common';
+import { setUser } from '../store';
 
 const WAIT = 'wait';
 
 function GetDataSignUp() {
   const { token } = useParams();
 
-  const { data, isValidating } = useFetch({
+  const { data } = useFetch({
     key: 'confirm',
     args: { data: { token } },
     condition: token !== WAIT,
   });
 
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   if (data) {
     console.log(data);
+    dispatch(setUser(data));
     navigate('/contents');
     return;
   }
