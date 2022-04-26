@@ -1,21 +1,32 @@
-import { createSlice } from '@reduxjs/toolkit';
+import { createSlice } from "@reduxjs/toolkit";
+import { setToken } from "../common";
 
 const initialState = {
-  id: '',
-  email: '',
-  internalPublicKey: '',
-  externalPublicKey: '',
+  id: "",
+  email: "",
+  internalPublicKey: "",
+  externalPublicKey: "",
   amount: 0,
   level: 0,
 };
 
 export const userSlice = createSlice({
-  name: 'user',
+  name: "user",
   initialState,
   reducers: {
     setUser: (state, action) => {
-      const { id, email, internal_pub_key, external_pub_key, amount, level } =
-        action.payload;
+      const {
+        //
+        access_token,
+        id,
+        email,
+        internal_pub_key,
+        external_pub_key,
+        amount,
+        level,
+      } = action.payload;
+
+      setToken(access_token);
       state.id = id;
       state.email = email;
       state.internalPublicKey = internal_pub_key;

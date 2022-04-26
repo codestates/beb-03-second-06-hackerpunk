@@ -1,35 +1,36 @@
-import axios from 'axios';
+import axios from "axios";
+import { getTokenHeader } from "../common";
 
-import { url } from './constants';
+import { url } from "./constants";
 
 const resolvers = ({ options = {}, state: { data } = {} } = {}) => {
   return {
     login: {
-      url: url('login'),
-      method: 'post',
+      url: url("login"),
+      method: "post",
       data,
       ...options,
     },
     sign: {
-      url: url('register'),
-      method: 'post',
+      url: url("register"),
+      method: "post",
       data,
       ...options,
     },
     confirm: {
-      url: url('confirm'),
-      method: 'post',
+      url: url("confirm"),
+      method: "post",
       data,
       ...options,
     },
     posts: {
-      url: 'https://jsonplaceholder.typicode.com/posts',
-      method: 'get',
-
+      url: "https://jsonplaceholder.typicode.com/posts",
+      method: "get",
+      headers: getTokenHeader(),
       nextMut(list) {
         return list.map(({ userId, id, title } = {}) => ({
           id,
-          author: 'testman' + userId,
+          author: "testman" + userId,
           title,
           views: 5,
           createdAt: new Date().toDateString(),

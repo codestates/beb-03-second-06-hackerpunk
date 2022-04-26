@@ -9,11 +9,12 @@ import {
   Div,
   styled,
   AnimatePresence,
-} from '../common';
+  getToken,
+} from "../common";
 
-import Home from '../pages/Home';
-import Contents from '../pages/Contents';
-import Confirm from '../pages/Confirm';
+import Home from "../pages/Home";
+import Contents from "../pages/Contents";
+import Confirm from "../pages/Confirm";
 
 const RootDiv = styled(Div)`
   z-index: 0;
@@ -25,6 +26,9 @@ const RootDiv = styled(Div)`
 `;
 
 function App() {
+  // !TODO: check expires
+  const AuthGuard = (element) => (getToken() ? element : <Home />);
+  console.log(getToken());
   return (
     <RootDiv>
       <Background />
@@ -33,8 +37,8 @@ function App() {
         <BrowserRouter>
           <Routes>
             <Route path="*" element={<Home />} />
-            <Route path="/contents" element={<Contents />} />
             <Route path="/confirm/:token" element={<Confirm />} />
+            <Route path="/contents" element={AuthGuard(<Contents />)} />
           </Routes>
         </BrowserRouter>
       </AnimatePresence>
