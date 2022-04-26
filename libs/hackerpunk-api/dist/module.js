@@ -56,13 +56,15 @@ class $6472a0cc883e062f$export$2f4fd17aff4e7fc {
     }
     /**
    * @method set signup token reward, only admin
+   * @param signupReward send value of Wei as string or BigInt
    */ async setSignupReward(signupReward) {
-        await this.contract.setSignupReward();
+        await this.contract.setSignupReward(signupReward);
     }
     /**
    * @method set attendacne token reward, only admin
+   * @param attendanceReward send value of Wei as string or BigInt
    */ async setAttendanceReward(attendanceReward) {
-        await this.contract.setAttendanceReward();
+        await this.contract.setAttendanceReward(attendanceReward);
     }
     /**
    * @method mint token to reward signup, only minter
@@ -83,6 +85,10 @@ class $6472a0cc883e062f$export$2f4fd17aff4e7fc {
    * @method check balance of user
    */ async balanceOf(user) {
         return await this.contract.balanceOf(user);
+    }
+    async withdrawToExternalAddress(serverAddressSigner, externalAddress, amount) {
+        await this.changeContractSigner(serverAddressSigner);
+        await this.contract.transfer(externalAddress, amount);
     }
 }
 
@@ -114,6 +120,7 @@ class $b5c9f8736c9df79f$export$948472b202b3236b {
     /**
    * @method donator approve donation token to HPTimeLock contract and then, this token locked, only owner
    * @param hp HP's Contract should be connected to donator's signer
+   * @param amount send value of Wei as string or BigInt
    */ async donate(hp, articleId, donator, writer, amount) {
         await hp.contract.approve(this.contract.address, amount);
         await this.contract.donate(articleId, donator, writer, amount);
@@ -136,6 +143,25 @@ class $b5c9f8736c9df79f$export$948472b202b3236b {
 }
 
 
+const $e569b9393fc002b4$export$41bdf21621ec4e24;
+class $e569b9393fc002b4$export$2f4fd17aff4e7fc {
+}
+class $e569b9393fc002b4$export$948472b202b3236b {
+}
+class $e569b9393fc002b4$export$7fb3e24a412a5622 {
+}
+const $e569b9393fc002b4$export$1572b3eade6662f9;
+const $e569b9393fc002b4$export$e61ca58b6d981800;
+const $e569b9393fc002b4$export$5e413b7d07c04d66;
+
+
+class $92f5f3ce1cbfe1f8$export$2a9ff338dd4da85e extends $e569b9393fc002b4$export$948472b202b3236b {
+    constructor(signer, contractAddress, abi){
+        super(signer, contractAddress, abi);
+    }
+}
+
+
 
 class $97915d9b045fee21$export$7fb3e24a412a5622 {
     constructor(signer, contractAddress, abi){
@@ -149,44 +175,133 @@ class $97915d9b045fee21$export$7fb3e24a412a5622 {
    */ async changeContractSigner(signer) {
         this.contract = this.contract.connect(signer);
     }
-    async signupFee() {
-        return await this.contract.signupFee();
+    /**
+   * @method onlyOwner
+   * @param fee send value of Wei as string or BigInt
+   */ async setSignupFee(credentialType, fee) {
+        await this.contract.setSignupFee(credentialType, fee);
+    }
+    async signupFee(credentialType) {
+        return await this.contract.signupFee(credentialType);
     }
     /**
    * @method onlyOwner
-   */ async getAllServerAccounts() {
-        return await this.contract.getAllServerAccounts;
+   */ async getAllInternalAddresses() {
+        return await this.contract.getAllInternalAddresses();
+    }
+    async registerAddress(internalAddress) {
+        await this.contract.registerAddress(internalAddress);
+    }
+    async isRegistered(internalAddress) {
+        return await this.contract.isRegistered(internalAddress);
+    }
+    async isAuthenticated(internalAddress) {
+        return await this.contract.isAuthenticated(internalAddress);
+    }
+    async checkExternalAuthenticated(internalAddress, externalAddress) {
+        return await this.contract.checkExternalAuthenticated(internalAddress, externalAddress);
+    }
+    async getCredentialType(internalAddress) {
+        return await this.contract.getCredentialType(internalAddress);
+    }
+    async singupEventListener(internalAddress, externalAddress, provider, callback) {
+        const filter = {
+            address: this.contractAddress,
+            topics: [
+                $hgUW1$ethers.utils.id("Signup(address, address)"),
+                $hgUW1$ethers.utils.hexZeroPad(internalAddress, 32),
+                $hgUW1$ethers.utils.hexZeroPad(externalAddress, 32), 
+            ]
+        };
+        provider.once(filter, callback);
+    }
+}
+
+
+
+class $ff828080d65d0e5e$export$5878c2c4222e4fe7 {
+    constructor(signer, contractAddress, abi){
+        this.contractAddress = contractAddress;
+        this.abi = abi;
+        this.contract = new $hgUW1$ethers.Contract(this.contractAddress, this.abi, signer);
     }
     /**
-   * @method onlyOwner
-   */ async setSignupFee(fee) {
-        await this.contract.setSignupFee(fee);
+   * @method change signer of contract
+   * @param signer
+   */ async changeContractSigner(signer) {
+        this.contract = this.contract.connect(signer);
+    }
+    async safeMint(recipient) {
+        //   const tokenURI =...
+        await this.contract.safeMint(recipient, "");
+    }
+    async ownerOf(tokenId) {
+        return await this.contract.ownerOf(tokenId);
+    }
+    async balanceOf(owner) {
+        return await this.contract.balanceOf(owner);
+    }
+}
+
+
+
+class $9bc8ebefd3c8fa6e$export$75e463e960baeac {
+    constructor(signer, contractAddress, abi){
+        this.contractAddress = contractAddress;
+        this.abi = abi;
+        this.contract = new $hgUW1$ethers.Contract(this.contractAddress, this.abi, signer);
     }
     /**
-   * @method External account send transaction fee and get amount of HP token to be registered
-   * @param serverAccount
-   * @param fee signupfee
-   */ async registerExternal(serverAccount, fee) {
-        await this.contract.registerExternal(serverAccount, {
-            from: fee
-        });
+   * @method change signer of contract
+   * @param signer
+   */ async changeContractSigner(signer) {
+        this.contract = this.contract.connect(signer);
+    }
+    async balanceOf(owner) {
+        return await this.contract.balanceOf(owner);
+    }
+}
+
+
+
+class $b8fb54fd0d0e4d4e$export$8ee31b378e074166 {
+    constructor(signer, contractAddress, abi){
+        this.contractAddress = contractAddress;
+        this.abi = abi;
+        this.contract = new $hgUW1$ethers.Contract(this.contractAddress, this.abi, signer);
+    }
+    /**
+   * @method change signer of contract
+   * @param signer
+   */ async changeContractSigner(signer) {
+        this.contract = this.contract.connect(signer);
+    }
+    async stake(hpa, tokenId) {
+        await hpa.contract.approve(this.contractAddress, tokenId);
+        await this.contract.stake(tokenId);
+    }
+    async updateReward() {
+        await this.contract.updateReward();
+    }
+    async claimReward(owner) {
+        await this.contract.claimReward(owner);
+    }
+    async unstake(tokenId) {
+        await this.contract.unstake(tokenId);
     }
 }
 
 
 
 const $24ea454e7ad63d7f$export$1572b3eade6662f9 = (network, provider, key)=>{
-    if (network === undefined) return $hgUW1$ethers.getDefaultProvider();
+    let options;
+    if (provider !== undefined) options = {
+        [provider]: key
+    };
+    if (network === undefined) return $hgUW1$ethers.getDefaultProvider("homestead", options);
     else {
         if (network.startsWith("wss") || network.startsWith("http")) return $hgUW1$ethers.getDefaultProvider(network);
-        else {
-            if (provider !== undefined) {
-                const options = {
-                    [provider]: key
-                };
-                return $hgUW1$ethers.getDefaultProvider(network, options);
-            } else return new Error("provider is not correct");
-        }
+        else return $hgUW1$ethers.getDefaultProvider(network, options);
     }
 };
 const $24ea454e7ad63d7f$export$e61ca58b6d981800 = (privateKey)=>{
@@ -199,5 +314,5 @@ const $24ea454e7ad63d7f$export$5e413b7d07c04d66 = (wallet, provider)=>{
 
 
 
-export {$6472a0cc883e062f$export$2f4fd17aff4e7fc as HP, $b5c9f8736c9df79f$export$948472b202b3236b as HPTimeLock, $97915d9b045fee21$export$7fb3e24a412a5622 as ExternalHP, $24ea454e7ad63d7f$export$1572b3eade6662f9 as setProvider, $24ea454e7ad63d7f$export$e61ca58b6d981800 as setWallet, $24ea454e7ad63d7f$export$5e413b7d07c04d66 as setSigner, $c825517a4d31fba5$export$41bdf21621ec4e24 as createWallet};
+export {$6472a0cc883e062f$export$2f4fd17aff4e7fc as HP, $b5c9f8736c9df79f$export$948472b202b3236b as HPTimeLock, $92f5f3ce1cbfe1f8$export$2a9ff338dd4da85e as PHPTimeLock, $97915d9b045fee21$export$7fb3e24a412a5622 as ExternalHP, $24ea454e7ad63d7f$export$1572b3eade6662f9 as setProvider, $ff828080d65d0e5e$export$5878c2c4222e4fe7 as HPA, $9bc8ebefd3c8fa6e$export$75e463e960baeac as PHP, $b8fb54fd0d0e4d4e$export$8ee31b378e074166 as HPAStakingSystem, $24ea454e7ad63d7f$export$e61ca58b6d981800 as setWallet, $24ea454e7ad63d7f$export$5e413b7d07c04d66 as setSigner, $c825517a4d31fba5$export$41bdf21621ec4e24 as createWallet};
 //# sourceMappingURL=module.js.map

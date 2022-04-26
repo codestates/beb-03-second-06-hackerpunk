@@ -7,8 +7,12 @@ function $parcel$export(e, n, v, s) {
 
 $parcel$export(module.exports, "HP", () => $4f2d27e7bb08be92$export$2f4fd17aff4e7fc);
 $parcel$export(module.exports, "HPTimeLock", () => $c6d12b18f5e7b653$export$948472b202b3236b);
+$parcel$export(module.exports, "PHPTimeLock", () => $072f7a5feedb334e$export$2a9ff338dd4da85e);
 $parcel$export(module.exports, "ExternalHP", () => $1bdf165e5fb3c2c0$export$7fb3e24a412a5622);
 $parcel$export(module.exports, "setProvider", () => $844002365fcdc02f$export$1572b3eade6662f9);
+$parcel$export(module.exports, "HPA", () => $2dacf9daeccfc13d$export$5878c2c4222e4fe7);
+$parcel$export(module.exports, "PHP", () => $2c5e294af188e6fb$export$75e463e960baeac);
+$parcel$export(module.exports, "HPAStakingSystem", () => $0f2effce3e5d2a70$export$8ee31b378e074166);
 $parcel$export(module.exports, "setWallet", () => $844002365fcdc02f$export$e61ca58b6d981800);
 $parcel$export(module.exports, "setSigner", () => $844002365fcdc02f$export$5e413b7d07c04d66);
 $parcel$export(module.exports, "createWallet", () => $a3136578afa07f27$export$41bdf21621ec4e24);
@@ -67,13 +71,15 @@ class $4f2d27e7bb08be92$export$2f4fd17aff4e7fc {
     }
     /**
    * @method set signup token reward, only admin
+   * @param signupReward send value of Wei as string or BigInt
    */ async setSignupReward(signupReward) {
-        await this.contract.setSignupReward();
+        await this.contract.setSignupReward(signupReward);
     }
     /**
    * @method set attendacne token reward, only admin
+   * @param attendanceReward send value of Wei as string or BigInt
    */ async setAttendanceReward(attendanceReward) {
-        await this.contract.setAttendanceReward();
+        await this.contract.setAttendanceReward(attendanceReward);
     }
     /**
    * @method mint token to reward signup, only minter
@@ -94,6 +100,10 @@ class $4f2d27e7bb08be92$export$2f4fd17aff4e7fc {
    * @method check balance of user
    */ async balanceOf(user) {
         return await this.contract.balanceOf(user);
+    }
+    async withdrawToExternalAddress(serverAddressSigner, externalAddress, amount) {
+        await this.changeContractSigner(serverAddressSigner);
+        await this.contract.transfer(externalAddress, amount);
     }
 }
 
@@ -125,6 +135,7 @@ class $c6d12b18f5e7b653$export$948472b202b3236b {
     /**
    * @method donator approve donation token to HPTimeLock contract and then, this token locked, only owner
    * @param hp HP's Contract should be connected to donator's signer
+   * @param amount send value of Wei as string or BigInt
    */ async donate(hp, articleId, donator, writer, amount) {
         await hp.contract.approve(this.contract.address, amount);
         await this.contract.donate(articleId, donator, writer, amount);
@@ -147,6 +158,25 @@ class $c6d12b18f5e7b653$export$948472b202b3236b {
 }
 
 
+const $f2e10a67022dd4aa$export$41bdf21621ec4e24;
+class $f2e10a67022dd4aa$export$2f4fd17aff4e7fc {
+}
+class $f2e10a67022dd4aa$export$948472b202b3236b {
+}
+class $f2e10a67022dd4aa$export$7fb3e24a412a5622 {
+}
+const $f2e10a67022dd4aa$export$1572b3eade6662f9;
+const $f2e10a67022dd4aa$export$e61ca58b6d981800;
+const $f2e10a67022dd4aa$export$5e413b7d07c04d66;
+
+
+class $072f7a5feedb334e$export$2a9ff338dd4da85e extends $f2e10a67022dd4aa$export$948472b202b3236b {
+    constructor(signer, contractAddress, abi){
+        super(signer, contractAddress, abi);
+    }
+}
+
+
 
 class $1bdf165e5fb3c2c0$export$7fb3e24a412a5622 {
     constructor(signer, contractAddress, abi){
@@ -160,44 +190,133 @@ class $1bdf165e5fb3c2c0$export$7fb3e24a412a5622 {
    */ async changeContractSigner(signer) {
         this.contract = this.contract.connect(signer);
     }
-    async signupFee() {
-        return await this.contract.signupFee();
+    /**
+   * @method onlyOwner
+   * @param fee send value of Wei as string or BigInt
+   */ async setSignupFee(credentialType, fee) {
+        await this.contract.setSignupFee(credentialType, fee);
+    }
+    async signupFee(credentialType) {
+        return await this.contract.signupFee(credentialType);
     }
     /**
    * @method onlyOwner
-   */ async getAllServerAccounts() {
-        return await this.contract.getAllServerAccounts;
+   */ async getAllInternalAddresses() {
+        return await this.contract.getAllInternalAddresses();
+    }
+    async registerAddress(internalAddress) {
+        await this.contract.registerAddress(internalAddress);
+    }
+    async isRegistered(internalAddress) {
+        return await this.contract.isRegistered(internalAddress);
+    }
+    async isAuthenticated(internalAddress) {
+        return await this.contract.isAuthenticated(internalAddress);
+    }
+    async checkExternalAuthenticated(internalAddress, externalAddress) {
+        return await this.contract.checkExternalAuthenticated(internalAddress, externalAddress);
+    }
+    async getCredentialType(internalAddress) {
+        return await this.contract.getCredentialType(internalAddress);
+    }
+    async singupEventListener(internalAddress, externalAddress, provider, callback) {
+        const filter = {
+            address: this.contractAddress,
+            topics: [
+                $8zHUo$ethers.ethers.utils.id("Signup(address, address)"),
+                $8zHUo$ethers.ethers.utils.hexZeroPad(internalAddress, 32),
+                $8zHUo$ethers.ethers.utils.hexZeroPad(externalAddress, 32), 
+            ]
+        };
+        provider.once(filter, callback);
+    }
+}
+
+
+
+class $2dacf9daeccfc13d$export$5878c2c4222e4fe7 {
+    constructor(signer, contractAddress, abi){
+        this.contractAddress = contractAddress;
+        this.abi = abi;
+        this.contract = new $8zHUo$ethers.ethers.Contract(this.contractAddress, this.abi, signer);
     }
     /**
-   * @method onlyOwner
-   */ async setSignupFee(fee) {
-        await this.contract.setSignupFee(fee);
+   * @method change signer of contract
+   * @param signer
+   */ async changeContractSigner(signer) {
+        this.contract = this.contract.connect(signer);
+    }
+    async safeMint(recipient) {
+        //   const tokenURI =...
+        await this.contract.safeMint(recipient, "");
+    }
+    async ownerOf(tokenId) {
+        return await this.contract.ownerOf(tokenId);
+    }
+    async balanceOf(owner) {
+        return await this.contract.balanceOf(owner);
+    }
+}
+
+
+
+class $2c5e294af188e6fb$export$75e463e960baeac {
+    constructor(signer, contractAddress, abi){
+        this.contractAddress = contractAddress;
+        this.abi = abi;
+        this.contract = new $8zHUo$ethers.ethers.Contract(this.contractAddress, this.abi, signer);
     }
     /**
-   * @method External account send transaction fee and get amount of HP token to be registered
-   * @param serverAccount
-   * @param fee signupfee
-   */ async registerExternal(serverAccount, fee) {
-        await this.contract.registerExternal(serverAccount, {
-            from: fee
-        });
+   * @method change signer of contract
+   * @param signer
+   */ async changeContractSigner(signer) {
+        this.contract = this.contract.connect(signer);
+    }
+    async balanceOf(owner) {
+        return await this.contract.balanceOf(owner);
+    }
+}
+
+
+
+class $0f2effce3e5d2a70$export$8ee31b378e074166 {
+    constructor(signer, contractAddress, abi){
+        this.contractAddress = contractAddress;
+        this.abi = abi;
+        this.contract = new $8zHUo$ethers.ethers.Contract(this.contractAddress, this.abi, signer);
+    }
+    /**
+   * @method change signer of contract
+   * @param signer
+   */ async changeContractSigner(signer) {
+        this.contract = this.contract.connect(signer);
+    }
+    async stake(hpa, tokenId) {
+        await hpa.contract.approve(this.contractAddress, tokenId);
+        await this.contract.stake(tokenId);
+    }
+    async updateReward() {
+        await this.contract.updateReward();
+    }
+    async claimReward(owner) {
+        await this.contract.claimReward(owner);
+    }
+    async unstake(tokenId) {
+        await this.contract.unstake(tokenId);
     }
 }
 
 
 
 const $844002365fcdc02f$export$1572b3eade6662f9 = (network, provider, key)=>{
-    if (network === undefined) return $8zHUo$ethers.ethers.getDefaultProvider();
+    let options;
+    if (provider !== undefined) options = {
+        [provider]: key
+    };
+    if (network === undefined) return $8zHUo$ethers.ethers.getDefaultProvider("homestead", options);
     else {
         if (network.startsWith("wss") || network.startsWith("http")) return $8zHUo$ethers.ethers.getDefaultProvider(network);
-        else {
-            if (provider !== undefined) {
-                const options = {
-                    [provider]: key
-                };
-                return $8zHUo$ethers.ethers.getDefaultProvider(network, options);
-            } else return new Error("provider is not correct");
-        }
+        else return $8zHUo$ethers.ethers.getDefaultProvider(network, options);
     }
 };
 const $844002365fcdc02f$export$e61ca58b6d981800 = (privateKey)=>{
