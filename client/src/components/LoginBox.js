@@ -17,7 +17,7 @@ import {
   removeWhitespace,
   MAX_ID_LENGTH,
   MAX_PASSWORD_LENGTH,
-} from '../common';
+} from "../common";
 
 const Container = styled(Div)`
   width: 40%;
@@ -43,7 +43,7 @@ const ToSignIn = styled(motion.span)`
 `;
 
 const memoId = {
-  value: '',
+  value: "",
 };
 
 function LoginBox() {
@@ -75,16 +75,16 @@ function LoginBox() {
       return;
     }
     try {
-      validate({ key: 'id', value: id });
-      validate({ key: 'password', value: password });
+      validate({ key: "id", value: id });
+      validate({ key: "password", value: password });
       setSubmit(true);
-    } catch ({ message = '' }) {
-      errorBang('Validating', message);
+    } catch ({ message = "" }) {
+      errorBang("Validating", message);
     }
   };
 
   const { data } = useFetch({
-    key: 'login',
+    key: "login",
     args: { data: { id, password } },
     condition: submit,
   });
@@ -92,11 +92,11 @@ function LoginBox() {
   const navigate = useNavigate();
 
   if (data) {
-    navigate('/contents');
+    navigate("/contents");
   }
 
   const toSignIn = () => {
-    navigate('/sign');
+    navigate("/sign");
   };
 
   return (
@@ -134,15 +134,15 @@ function LoginBox() {
       <ToSignIn
         onClick={toSignIn}
         whileHover={{
-          color: 'rgba(200, 225, 200, 0.7)',
+          color: "rgba(200, 225, 200, 0.7)",
           scale: 1.05,
         }}
         onKeyDown={(e) => {
           // Tab Looping
           e.preventDefault();
-          if (e.key === 'Tab') {
+          if (e.key === "Tab") {
             focusId();
-          } else if (e.key === 'Enter') {
+          } else if (e.key === "Enter") {
             toSignIn();
           }
         }}
