@@ -8,9 +8,9 @@ import {
   ErrorNotice,
   styled,
   Div,
-} from "../common";
-import LoginBox from "../components/LoginBox";
-import SignBox from "../components/SignBox";
+} from '../common';
+import LoginBox from '../components/LoginBox';
+import SignBox from '../components/SignBox';
 
 const Container = styled(Div)``;
 
@@ -23,15 +23,14 @@ function Home() {
           <LoadingBox
             message={(() => {
               switch (location.pathname) {
-                case "/":
-                  return "login...";
-                case "/sign":
-                  return "check your e-mail box";
+                case '/':
+                  return 'login...';
+                case '/sign':
+                  return 'signing...';
               }
             })()}
           />
         }
-        errorFallback={(props) => <ErrorNotice {...props} />}
         onReset={(e) => {
           console.error(e);
         }}
