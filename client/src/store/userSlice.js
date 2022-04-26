@@ -3,7 +3,7 @@ import { createSlice } from '@reduxjs/toolkit';
 const initialState = {
   id: '',
   email: '',
-  internalpublicKey: '',
+  internalPublicKey: '',
   externalPublicKey: '',
   amount: 0,
   level: 0,
@@ -14,7 +14,14 @@ export const userSlice = createSlice({
   initialState,
   reducers: {
     setUser: (state, action) => {
-      state.message = action.payload;
+      const { id, email, internal_pub_key, external_pub_key, amount, level } =
+        action.payload;
+      state.id = id;
+      state.email = email;
+      state.internalPublicKey = internal_pub_key;
+      state.externalPublicKey = external_pub_key;
+      state.amount = amount;
+      state.level = level;
     },
   },
 });

@@ -1,4 +1,12 @@
-import { React, motion, styled, Div, Logo, useState } from '../common';
+import {
+  React,
+  motion,
+  styled,
+  Div,
+  Logo,
+  useState,
+  useSelector,
+} from '../common';
 import hp from '../api/hp';
 
 const Container = styled(Div)`
@@ -104,10 +112,10 @@ function ConectWalletHelper() {
 }
 
 function Profile() {
+  const user = useSelector((state) => state.user);
+  console.log(user);
   const connectWallet = async () => {
-    await hp.connectToExternalWallet(
-      '0x5A1B221467394fFe2B2661005D7BD1e43C62C999'
-    );
+    await hp.connectToExternalWallet(user.internalPublicKey);
   };
   const [connectWalletHelper, setConnectWalletHelper] = useState('');
   return (
