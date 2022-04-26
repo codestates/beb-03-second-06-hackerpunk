@@ -68,22 +68,10 @@ class ExternalHP {
     return await this.contract.getCredentialType(internalAddress);
   }
 
-  async singupEventListener(
-    internalAddress: string,
-    externalAddress: string,
-    provider: ethers.providers.BaseProvider,
-    callback: ethers.providers.Listener
-  ) {
-    const filter = {
-      address: this.contractAddress,
-      topics: [
-        ethers.utils.id("Signup(address, address)"),
-        ethers.utils.hexZeroPad(internalAddress, 32),
-        ethers.utils.hexZeroPad(externalAddress, 32),
-      ],
-    };
-
-    provider.once(filter, callback);
+  async singupEventListener(callback: ethers.providers.Listener) {
+    this.contract.on("Signup", (internalAddress, externalAddress, event) => {
+      callback(internalAddress, externalAddress, event);
+    });
   }
 }
 
