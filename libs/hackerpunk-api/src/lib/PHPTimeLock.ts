@@ -1,5 +1,5 @@
+import { HPTimeLock } from "./HPTimeLock";
 import { ethers } from "ethers";
-import { HPTimeLock } from "../../dist/types.d";
 
 class PHPTimeLock extends HPTimeLock {
   constructor(

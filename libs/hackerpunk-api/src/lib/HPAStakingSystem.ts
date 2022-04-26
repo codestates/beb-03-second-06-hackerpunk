@@ -1,5 +1,5 @@
 import { ethers } from "ethers";
-import { HPA } from "../../dist/types";
+import { HPA } from "./HPA";
 
 class HPAStakingSystem {
   contract: ethers.Contract;
