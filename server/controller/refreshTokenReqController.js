@@ -24,7 +24,7 @@ const refresh = (req, res) => {
     else{
         const { id } = refreshTokenData;
         users
-            .findOne({"id": id})
+            .findOne({"userId": id})
             .then((user) => {
                 if (!user) {
                     res.status(404).json({message: 'old refreshToken'});

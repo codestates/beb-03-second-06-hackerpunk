@@ -1,9 +1,11 @@
+//not used anymore
+
 const users = require('../models/user');
 
 const auth = async (req, res) => {
     if (req.query.code != undefined && req.query.id != undefined){
         users.
-            findOne({'id': req.query.id})
+            findOne({'userId': req.query.id})
             .then(async (user) => {
                 if (user && user.auth == req.query.code){
                     const userModel = new users(user);

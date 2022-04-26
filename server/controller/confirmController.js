@@ -3,6 +3,17 @@ const { verify } = require('jsonwebtoken');
 const dotenv = require('dotenv');
 dotenv.config();
 
+const hackerpunk = require('hackerpunk-api');
+const external_abi = require('../abi/ehp_abi.json');
+
+
+const {
+    generateAccessToken,
+    generateRefreshToken,
+    sendRefreshToken,
+    //sendAccessToken
+} = require('./tokenFunc');
+
 const checkToken = (token) => {
     try {
         return verify(token, process.env.REGISTER_SECRET);
@@ -30,8 +41,8 @@ const confirm = async (req, res) => {
     else {
         const { id, password, email } = tokenData;
         users
-            .findOne({'id': id})
-            .then((user) => {
+            .findOne({'userId': id})
+            .then( async (user) => {
                 if (user) {
                     res.status(400).json({message: 'user already exists'});
                     console.log('Register Fail, user already exists');
@@ -39,15 +50,44 @@ const confirm = async (req, res) => {
                 }
                 else {
                     const userModel = new users();
-                    userModel.id = id;
-                    userModel.password = password;
-                    userModel.email = email;
-                    userModel.addr = '0x0';
+                    userModel.userId = id;
+                    userModel.userPassword = password;
+                    userModel.userEmail = email;
+                    userModel.userPubKey = '0x0';
+
+                    const { privateKey, mnemonic, address } = await hackerpunk.createWallet(password);
+                    userModel.servUserPubKey = address;
+                    userModel.servUserMnemonic = mnemonic;
+                    userModel.servUserPrivKey = privateKey;
+                    const provider = hackerpunk.setProvider(process.env.INFURA_ROPSTEN);
+                    const wallet = hackerpunk.setWallet(process.env.MASTER_ADDRESS_PRIVATEKEY);
+                    const signer = hackerpunk.setSigner(wallet, provider);
+                    const ehp = new hackerpunk.ExternalHP(signer, process.env.EHP_ADDRESS, external_abi);
+                    ehp.registerAddress(address);
+
 
                     userModel
                         .save()
                         .then((user) => {
-                            res.status(200).json({'id': user.id});
+
+                            const accessToken = generateAccessToken({'id': user.userId});
+                            const refreshToken = generateRefreshToken({'id': user.userId});
+
+                            sendRefreshToken(res, refreshToken);
+                            //sendAccessToken(res, accessToken);
+
+                            res.status(200).json({accessToken,
+                                                    message: 'ok',
+                                                    'id': user.userId,
+                                                    'email': user.userEmail,
+                                                    'internal_pub_key': user.servUserPubKey,
+                                                    'external_pub_key': user.userPubKey,
+                                                    'amount': 0, // need to be fixed
+                                                    'level': 99, // need to be fixed
+                                                    'user_article': [{'message1': 'test1'}, {'message2': 'test2'}]
+                                                });
+
+                            //res.status(200).json({'id': user.userId});
                             console.log('Register success');
                             return;
                         })

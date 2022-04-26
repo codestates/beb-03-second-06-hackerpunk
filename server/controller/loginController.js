@@ -22,7 +22,7 @@ const login = (req, res) => {
     }
 
     users
-        .findOne({"id": id})
+        .findOne({"userId": id})
         .then((user) => {
             if (!user) {
                 res.status(404).json({message: "user not found"});
@@ -35,7 +35,7 @@ const login = (req, res) => {
             //     return;
             // }
             else {
-                bcrypt.compare(password, user.password)
+                bcrypt.compare(password, user.userPassword)
                     .then((result) => {
                         if (!result){
                             res.status(404).json({message: "wrong password"});
@@ -43,11 +43,23 @@ const login = (req, res) => {
                             return;
                         }
                         else {
-                            const accessToken = generateAccessToken({'id': user.id});
-                            const refreshToken = generateRefreshToken({'id': user.id});
+                            const accessToken = generateAccessToken({'id': user.userId});
+                            const refreshToken = generateRefreshToken({'id': user.userId});
 
                             sendRefreshToken(res, refreshToken);
-                            sendAccessToken(res, accessToken);
+                            //sendAccessToken(res, accessToken);
+
+                            res.status(200).json({accessToken,
+                                                    message: 'ok',
+                                                    'id': user.userId,
+                                                    'email': user.userEmail,
+                                                    'internal_pub_key': user.servUserPubKey,
+                                                    'external_pub_key': user.userPubKey,
+                                                    'amount': 0, // need to be fixed
+                                                    'level': 99, // need to be fixed
+                                                    'user_article': [{'message1': 'test1'}, {'message2': 'test2'}]
+                                                });
+
 
                             //res.status(200).json({'id': user.id});
                             console.log("Login Success");

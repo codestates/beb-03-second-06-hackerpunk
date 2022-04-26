@@ -20,17 +20,17 @@ const write = async (req, res) => {
 
     const contentModel = new contents();
     contentModel.no = await contents.countDocuments({}) + 1;
-    contentModel.id = id;
+    contentModel.author = id;
     contentModel.title = title;
-    let today = new Date();
-    contentModel.date = today.toLocaleDateString();
+    //let today = new Date();
+    //contentModel.date = today.toLocaleDateString();
     contentModel.views = 0;
     contentModel.content = content;
 
     contentModel
         .save()
         .then((content) => {
-            res.status(200).json({'no': content.no});
+            res.status(200).json({'no': content.no, message:'write success'}); // 응답 보낼 때는 message를 통해서 액션이 어떻게 처리되었는지 말해주는 걸로 전부 바꾸기
             console.log('Write success');
             return;
         })

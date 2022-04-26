@@ -9,7 +9,7 @@ const app = express();
 
 const { DBinit } = require('./mongodb/db');
 
-const port = 4100;
+const port = process.env.PORT || 4100; ////////////////
 
 const login_router = require('./router/login');
 const register_router = require('./router/register');
@@ -56,8 +56,9 @@ app.get('/', (req, res) => {
 
 
 //
-const HTTPS_PORT = process.env.HTTPS_PORT || 4000;
+const HTTPS_PORT = process.env.PORT || process.env.HTTPS_PORT || 4000; /////////////
 let server;
+
 if (fs.existsSync('./key.pem') && fs.existsSync('./cert.pem')){
     const privateKey = fs.readFileSync(__dirname + "/key.pem", "utf8");
     const certificate = fs.readFileSync(__dirname + "/cert.pem", "utf8");
@@ -75,6 +76,13 @@ else {
         console.log(`[Running] HTTP Server is listening on port ${port}.`);
     });
 }
+
+//for deploying at the heroku
+// server = app.listen(port, () => {
+//             DBinit();
+//             console.log(`[Running] Server is listening on port ${port}.`);
+//         });
+
 
 //module.exports = app;
 //

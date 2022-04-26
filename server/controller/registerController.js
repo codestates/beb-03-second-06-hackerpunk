@@ -37,7 +37,7 @@ const sendConfirmationEmail = (name, email, confirmationCode) => {
         subject: "[HackerPunk] Please confirm your account!",
         html: `<h1>Email Confirmation</h1>
             <h2>Hello ${name}</h2>
-            <p>Thank you for joining the HackerPunk. Please confirm your email by entering the following code.</p>
+            <p>Thank you for joining the HackerPunk. Please confirm your email by clicking the following link.</p>
             <a href=https://localhost:3000/confirm/${confirmationCode}> Click here</a>
             </div>`
     }).catch((err) => console.log(err));
@@ -56,14 +56,14 @@ const register = async (req, res) => {
     }
 
     users
-        .findOne({"id": id})
+        .findOne({"userId": id})
         .then((user) => {
             if (user) {
-                if (user.status == 'pending'){
-                    res.status(400).json({message: "pending accounts, please verify your email"});
-                    console.log('Register Fail, pending account');
-                    return;
-                }
+                // if (user.status == 'pending'){
+                //     res.status(400).json({message: "pending accounts, please verify your email"});
+                //     console.log('Register Fail, pending account');
+                //     return;
+                // }
                 res.status(400).json({message: 'user already exists'});
                 console.log('Register Fail, user already exists');
                 return;
@@ -104,12 +104,13 @@ const register = async (req, res) => {
                         //         return;
                         //     });
 
-                        res.status(200).json({'id': id});
+                        res.status(200).json({'id': id, 'message':'please verify the account'});
                         console.log('Register processing, not verified');
 
                         const data = {'id': id, 'password': hash, 'email': email };
                         const confirmToken = sign(data, process.env.REGISTER_SECRET);
                         sendConfirmationEmail(id, email, confirmToken);
+                        //이메일 보내는 순서와 이메일 확인하라고 응답하는 코드 순서를 바꿔야 함. 이메일이 똑바로 보내진 걸 확인하고 응답하는게 올바른 순서임.
                         return;
                     })
                 })
