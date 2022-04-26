@@ -14,6 +14,7 @@ import {
   Outlet,
   useNavigate,
   useLocation,
+  useParams,
 } from 'react-router-dom';
 
 import { ErrorBoundary, useErrorHandler } from 'react-error-boundary';
@@ -88,6 +89,7 @@ export {
   useCallback,
   useNavigate,
   useLocation,
+  useParams,
   Suspense,
   forwardRef,
 };

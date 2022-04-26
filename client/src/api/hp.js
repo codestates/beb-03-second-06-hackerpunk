@@ -42,7 +42,7 @@ class HackerPunkAPI {
     // Throw new Error
     // EXTERNAL_WALLET_TIER temporary
     const fee = await this.methods.signupFee(EXTERNAL_WALLET_TIER).call();
-    await this.methods.signInAddress(internalWalletAddr).send({
+    await this.methods.authenticate(internalWalletAddr).send({
       from: this.account,
       value: fee,
     });

@@ -13,6 +13,7 @@ import {
 
 import Home from '../pages/Home';
 import Contents from '../pages/Contents';
+import Confirm from '../pages/Confirm';
 
 const RootDiv = styled(Div)`
   z-index: 0;
@@ -33,6 +34,7 @@ function App() {
           <Routes>
             <Route path="*" element={<Home />} />
             <Route path="/contents" element={<Contents />} />
+            <Route path="/confirm/:token" element={<Confirm />} />
           </Routes>
         </BrowserRouter>
       </AnimatePresence>

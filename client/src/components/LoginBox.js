@@ -92,6 +92,8 @@ function LoginBox() {
   const navigate = useNavigate();
 
   if (data) {
+    console.log(data);
+    setSubmit(false);
     navigate("/contents");
   }
 

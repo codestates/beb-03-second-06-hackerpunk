@@ -4,32 +4,39 @@ const Block = styled(Div)`
   display: grid;
   grid-template-columns: 2fr 8fr 1fr 1fr;
   grid-gap: 12px;
-  font-size: 6vw;
+
   word-break: break-all;
   justify-content: center;
   align-items: center;
-  margin: 0.5rem 0;
+  padding: 1.5rem;
 `;
 
 const Author = styled(Div)`
-  font-size: 3vw;
+  font-size: clamp(0.7rem, 1vw, 2rem);
+  justify-content: flex-start;
 `;
 
-const Title = styled(Div)``;
+const Title = styled(Div)`
+  font-size: clamp(1.5rem, 1vw, 3rem);
+`;
 
 const CreatedAt = styled(Div)`
-  font-size: 2vw;
-  justify-content: flex-end;
+  font-size: clamp(0.5rem, 1vw, 0.8rem);
 `;
 
 const Views = styled(Div)`
-  font-size: 2.5vw;
+  font-size: clamp(0.5rem, 2.5vw, 0.8rem);
   justify-content: flex-end;
 `;
 
 function Post({ author, title, views, createdAt, updatedAt } = {}) {
   return (
-    <Block>
+    <Block
+      whileHover={{
+        border: '1px solid whitesmoke',
+      }}
+      transition={{ type: 'spring', stiffness: 100 }}
+    >
       <Author>{author}</Author>
       <Title>{title}</Title>
       <CreatedAt>{createdAt}</CreatedAt>

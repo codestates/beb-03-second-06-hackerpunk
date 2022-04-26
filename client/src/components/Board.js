@@ -46,9 +46,6 @@ function Board() {
       exit={{ opacity: 0, height: 0 }}
     >
       <AsyncBoundary
-        fallback={<Spinner />}
-        // https://github.com/bvaughn/react-error-boundary 참조
-        errorFallback={(props) => <ErrorNotice {...props} />}
         onReset={(e) => {
           // `try again button` was clicked
           console.error(e);

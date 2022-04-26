@@ -16,9 +16,16 @@ const resolvers = ({ options = {}, state: { data } = {} } = {}) => {
       data,
       ...options,
     },
+    confirm: {
+      url: url('confirm'),
+      method: 'post',
+      data,
+      ...options,
+    },
     posts: {
       url: 'https://jsonplaceholder.typicode.com/posts',
       method: 'get',
+
       nextMut(list) {
         return list.map(({ userId, id, title } = {}) => ({
           id,
