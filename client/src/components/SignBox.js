@@ -88,6 +88,8 @@ function SignBox() {
 
   const [focusIdRef, focusId] = useFocus({ start: false });
   const [focusPasswordRef, focusPassword] = useFocus({ start: false });
+  const [focusPasswordReRef, focusPasswordRe] = useFocus({ start: false });
+  const [focusEmailRef, focusEmail] = useFocus({ start: false });
 
   useEffect(() => {
     if (memoId.value.length > 0) {
@@ -101,12 +103,20 @@ function SignBox() {
 
   const [submit, setSubmit] = useState(false);
   const onSubmit = () => {
-    if (
-      id.length === 0 || //
-      password.length === 0 ||
-      passwordRe.length === 0 ||
-      email.length === 0
-    ) {
+    if (id.length === 0) {
+      focusId();
+      return;
+    }
+    if (password.length === 0) {
+      focusPassword();
+      return;
+    }
+    if (passwordRe.length === 0) {
+      focusPasswordRe();
+      return;
+    }
+    if (email.length === 0) {
+      focusEmail();
       return;
     }
     if (password !== passwordRe) {
@@ -125,7 +135,7 @@ function SignBox() {
 
   const { data } = useFetch({
     key: 'sign',
-    args: { data: { id, password } },
+    args: { data: { id, password, email } },
     condition: submit,
   });
 
@@ -133,7 +143,7 @@ function SignBox() {
 
   if (data) {
     setSubmit(false);
-    navigate('/');
+    navigate('/confirm/wait');
   }
 
   const toLogin = () => {
@@ -178,6 +188,7 @@ function SignBox() {
           {/* pw(re) */}
           <Input
             placeholder="Confirm Password"
+            ref={focusPasswordReRef}
             type="password"
             onEnter={onSubmit}
             maxLength={MAX_PASSWORD_LENGTH}
@@ -190,6 +201,7 @@ function SignBox() {
           {/* email */}
           <Input
             placeholder="E-mail Address"
+            ref={focusEmailRef}
             type="email"
             onEnter={onSubmit}
             {...inputEmail}

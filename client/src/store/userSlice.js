@@ -5,6 +5,8 @@ const initialState = {
   email: '',
   internalpublicKey: '',
   externalPublicKey: '',
+  amount: 0,
+  level: 0,
 };
 
 export const userSlice = createSlice({

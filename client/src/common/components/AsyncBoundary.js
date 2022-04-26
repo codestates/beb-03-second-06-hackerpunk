@@ -1,9 +1,9 @@
-import { Suspense, ErrorBoundary } from '..';
+import { Suspense, ErrorBoundary, ErrorNotice, Spinner } from '..';
 
 function AsyncBoundary({
   children,
-  fallback,
-  errorFallback,
+  fallback = <Spinner />,
+  errorFallback = (props) => <ErrorNotice {...props} />,
   ...restErrorBoundaryAttributes
 } = {}) {
   if (!errorFallback) {
