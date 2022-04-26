@@ -1,18 +1,17 @@
 const { task } = require("hardhat/config");
 
-task("TokenDeploy", "Deploys Token contracts").setAction(
+task("Deploy1", "Deploys hp and ehp contracts").setAction(
   async (taskArguments, hre) => {
     const hpContractFactory = await hre.ethers.getContractFactory("HP");
-    const hpaContractFactory = await hre.ethers.getContractFactory("HPA");
-    // const phpContractFactory = await hre.ethers.getContractFactory("PHP");
+    const ehpContractFactory = await hre.ethers.getContractFactory(
+      "ExternalHP"
+    );
 
     const hp = await hpContractFactory.deploy();
-    const hpa = await hpaContractFactory.deploy();
-    // const php = await phpContractFactory.deploy();
+    const ehp = await ehpContractFactory.deploy(hp.address);
 
     console.log(`Contract deployed to address: ${hp.address}`);
-    console.log(`Contract deployed to address: ${hpa.address}`);
-    // console.log(`Contract deployed to address: ${php.address}`);
+    console.log(`Contract deployed to address: ${ehp.address}`);
   }
 );
 

@@ -193,16 +193,10 @@ class $97915d9b045fee21$export$7fb3e24a412a5622 {
     async getCredentialType(internalAddress) {
         return await this.contract.getCredentialType(internalAddress);
     }
-    async singupEventListener(internalAddress, externalAddress, provider, callback) {
-        const filter = {
-            address: this.contractAddress,
-            topics: [
-                $hgUW1$ethers.utils.id("Signup(address, address)"),
-                $hgUW1$ethers.utils.hexZeroPad(internalAddress, 32),
-                $hgUW1$ethers.utils.hexZeroPad(externalAddress, 32), 
-            ]
-        };
-        provider.once(filter, callback);
+    async singupEventListener(callback) {
+        this.contract.on("Signup", (internalAddress, externalAddress, event)=>{
+            callback(internalAddress, externalAddress, event);
+        });
     }
 }
 

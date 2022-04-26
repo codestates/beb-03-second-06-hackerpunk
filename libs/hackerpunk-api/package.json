@@ -1,6 +1,6 @@
 {
   "name": "hackerpunk-api",
-  "version": "1.2.2",
+  "version": "1.2.7",
   "description": "api for hackerpunk",
   "source": "src/index.ts",
   "main": "dist/main.js",

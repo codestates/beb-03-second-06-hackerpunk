@@ -3,6 +3,7 @@
  */
 require("@nomiclabs/hardhat-ethers");
 require("./scripts/deploy.js");
+require("./scripts/signup.js");
 
 module.exports = {
   defaultNetwork: "localhost",
