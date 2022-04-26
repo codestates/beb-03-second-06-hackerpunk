@@ -1,16 +1,17 @@
 import { motion, styled } from '..';
 
 const StyledButton = styled(motion.button)`
-  width: 6rem;
-  height: 2.5rem;
-  font-size: 1em;
-  margin: 1em;
-  padding: 0.25em 1em;
-  border: 2px solid white;
-  color: white;
+  width: 5.8rem;
+  height: 3rem;
+  font-size: 0.9rem;
+  margin: 1rem;
+  padding: 0.34rem 0.9rem;
+  border: 2px solid rgb(245, 230, 230, 0.85);
+  color: rgb(245, 230, 230, 0.85);
   background-color: black;
-  border-radius: 3px;
+  border-radius: 4px;
   display: block;
+  box-shadow: 0 0 2px rgb(220, 200, 200, 0.9);
 `;
 
 function Button(props) {

@@ -20,11 +20,13 @@ const resolvers = ({ options = {}, state: { data } = {} } = {}) => {
       url: 'https://jsonplaceholder.typicode.com/posts',
       method: 'get',
       nextMut(list) {
-        return list.map(({ userId, id, title, body } = {}) => ({
-          userId: 'testman' + userId,
+        return list.map(({ userId, id, title } = {}) => ({
           id,
+          author: 'testman' + userId,
           title,
-          body,
+          views: 5,
+          createdAt: new Date().toDateString(),
+          updatedAt: new Date().toDateString(),
         }));
       },
       ...options,

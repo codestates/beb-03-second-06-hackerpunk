@@ -23,6 +23,9 @@ const Container = styled(Div)`
   flex-direction: column;
   justify-content: flex-start;
   overflow-y: scroll;
+  overflow-x: hidden;
+
+  padding: 1rem;
 
   /* Hide scrollbar for Chrome, Safari and Opera */
   &::-webkit-scrollbar {

@@ -23,6 +23,7 @@ const InnerContainer = styled(motion.div)`
 
 const Copyright = styled.h1`
   margin-left: 10px;
+  padding-top: 5px;
 `;
 
 const Message = styled.h1``;
