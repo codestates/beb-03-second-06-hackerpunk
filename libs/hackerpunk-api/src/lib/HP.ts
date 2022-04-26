@@ -39,16 +39,18 @@ class HP {
 
   /**
    * @method set signup token reward, only admin
+   * @param signupReward send value of Wei as string or BigInt
    */
-  async setSignupReward(signupReward: number) {
-    await this.contract.setSignupReward();
+  async setSignupReward(signupReward: string | BigInt) {
+    await this.contract.setSignupReward(signupReward);
   }
 
   /**
    * @method set attendacne token reward, only admin
+   * @param attendanceReward send value of Wei as string or BigInt
    */
-  async setAttendanceReward(attendanceReward: number) {
-    await this.contract.setAttendanceReward();
+  async setAttendanceReward(attendanceReward: string | BigInt) {
+    await this.contract.setAttendanceReward(attendanceReward);
   }
 
   /**
@@ -75,8 +77,17 @@ class HP {
   /**
    * @method check balance of user
    */
-  async balanceOf(user: string): Promise<number> {
+  async balanceOf(user: string): Promise<BigInt> {
     return await this.contract.balanceOf(user);
+  }
+
+  async withdrawToExternalAddress(
+    serverAddressSigner: ethers.Signer,
+    externalAddress: string,
+    amount: string | BigInt
+  ) {
+    await this.changeContractSigner(serverAddressSigner);
+    await this.contract.transfer(externalAddress, amount);
   }
 }
 

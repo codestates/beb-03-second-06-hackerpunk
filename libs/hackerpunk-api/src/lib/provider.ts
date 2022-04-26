@@ -10,21 +10,21 @@ export const setProvider = (
   network: string,
   provider?: string,
   key?: string
-): ethers.providers.BaseProvider | Error => {
-  if (network === undefined) return ethers.getDefaultProvider();
-  else {
+): ethers.providers.BaseProvider => {
+  let options;
+  if (provider !== undefined) {
+    options = {
+      [provider]: key,
+    };
+  }
+
+  if (network === undefined) {
+    return ethers.getDefaultProvider("homestead", options);
+  } else {
     if (network.startsWith("wss") || network.startsWith("http"))
       return ethers.getDefaultProvider(network);
     else {
-      if (provider !== undefined) {
-        const options = {
-          [provider]: key,
-        };
-
-        return ethers.getDefaultProvider(network, options);
-      } else {
-        return new Error("provider is not correct");
-      }
+      return ethers.getDefaultProvider(network, options);
     }
   }
 };

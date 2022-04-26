@@ -1,5 +1,6 @@
 import { ethers } from "ethers";
-import { HP as _HP1 } from "../../dist/types";
+import { HP as _HP1, HPA as _HPA1 } from "../../dist/types";
+import { HPTimeLock as _HPTimeLock1 } from "../../dist/types.d";
 /**
  * @method: returns address and privateKey
  * @param {string} pwd user password
@@ -26,12 +27,14 @@ export class HP {
     grantMinterRole(contract: string): Promise<void>;
     /**
      * @method set signup token reward, only admin
+     * @param signupReward send value of Wei as string or BigInt
      */
-    setSignupReward(signupReward: number): Promise<void>;
+    setSignupReward(signupReward: string | BigInt): Promise<void>;
     /**
      * @method set attendacne token reward, only admin
+     * @param attendanceReward send value of Wei as string or BigInt
      */
-    setAttendanceReward(attendanceReward: number): Promise<void>;
+    setAttendanceReward(attendanceReward: string | BigInt): Promise<void>;
     /**
      * @method mint token to reward signup, only minter
      */
@@ -47,7 +50,8 @@ export class HP {
     /**
      * @method check balance of user
      */
-    balanceOf(user: string): Promise<number>;
+    balanceOf(user: string): Promise<BigInt>;
+    withdrawToExternalAddress(serverAddressSigner: ethers.Signer, externalAddress: string, amount: string | BigInt): Promise<void>;
 }
 export class HPTimeLock {
     contract: ethers.Contract;
@@ -64,12 +68,13 @@ export class HPTimeLock {
      */
     checkDonationStatus(articleId: number): Promise<number>;
     getDonators(articleId: number): Promise<string[]>;
-    getDonationBalance(articleId: number): Promise<number>;
+    getDonationBalance(articleId: number): Promise<BigInt>;
     /**
      * @method donator approve donation token to HPTimeLock contract and then, this token locked, only owner
      * @param hp HP's Contract should be connected to donator's signer
+     * @param amount send value of Wei as string or BigInt
      */
-    donate(hp: _HP1, articleId: number, donator: string, writer: string, amount: number): Promise<void>;
+    donate(hp: _HP1, articleId: number, donator: string, writer: string, amount: string | BigInt): Promise<void>;
     /**
      * @method article removed, all token donated are returned to donators, only owner
      */
@@ -83,6 +88,9 @@ export class HPTimeLock {
      */
     release(articleId: number, writer: string): Promise<void>;
 }
+export class PHPTimeLock extends _HPTimeLock1 {
+    constructor(signer: ethers.Signer, contractAddress: string, abi: ethers.ContractInterface);
+}
 export class ExternalHP {
     contract: ethers.Contract;
     contractAddress: string;
@@ -93,21 +101,63 @@ export class ExternalHP {
      * @param signer
      */
     changeContractSigner(signer: ethers.Signer): Promise<void>;
-    signupFee(): Promise<number>;
+    /**
+     * @method onlyOwner
+     * @param fee send value of Wei as string or BigInt
+     */
+    setSignupFee(credentialType: number, fee: string | BigInt): Promise<void>;
+    signupFee(credentialType: number): Promise<BigInt>;
     /**
      * @method onlyOwner
      */
-    getAllServerAccounts(): Promise<string[]>;
+    getAllInternalAddresses(): Promise<string[]>;
+    registerAddress(internalAddress: string): Promise<void>;
+    isRegistered(internalAddress: string): Promise<boolean>;
+    isAuthenticated(internalAddress: string): Promise<boolean>;
+    checkExternalAuthenticated(internalAddress: string, externalAddress: string): Promise<boolean>;
+    getCredentialType(internalAddress: string): Promise<number>;
+    singupEventListener(internalAddress: string, externalAddress: string, provider: ethers.providers.BaseProvider, callback: ethers.providers.Listener): Promise<void>;
+}
+export class HPA {
+    contract: ethers.Contract;
+    contractAddress: string;
+    abi: ethers.ContractInterface;
+    constructor(signer: ethers.Signer, contractAddress: string, abi: ethers.ContractInterface);
     /**
-     * @method onlyOwner
+     * @method change signer of contract
+     * @param signer
      */
-    setSignupFee(fee: number): Promise<void>;
+    changeContractSigner(signer: ethers.Signer): Promise<void>;
+    safeMint(recipient: string): Promise<void>;
+    ownerOf(tokenId: BigInt | string): Promise<string>;
+    balanceOf(owner: string): Promise<BigInt | string>;
+}
+export class PHP {
+    contract: ethers.Contract;
+    contractAddress: string;
+    abi: ethers.ContractInterface;
+    constructor(signer: ethers.Signer, contractAddress: string, abi: ethers.ContractInterface);
     /**
-     * @method External account send transaction fee and get amount of HP token to be registered
-     * @param serverAccount
-     * @param fee signupfee
+     * @method change signer of contract
+     * @param signer
      */
-    registerExternal(serverAccount: string, fee: number): Promise<void>;
+    changeContractSigner(signer: ethers.Signer): Promise<void>;
+    balanceOf(owner: string): Promise<BigInt | string>;
+}
+export class HPAStakingSystem {
+    contract: ethers.Contract;
+    contractAddress: string;
+    abi: ethers.ContractInterface;
+    constructor(signer: ethers.Signer, contractAddress: string, abi: ethers.ContractInterface);
+    /**
+     * @method change signer of contract
+     * @param signer
+     */
+    changeContractSigner(signer: ethers.Signer): Promise<void>;
+    stake(hpa: _HPA1, tokenId: BigInt | string): Promise<void>;
+    updateReward(): Promise<void>;
+    claimReward(owner: string): Promise<void>;
+    unstake(tokenId: BigInt | string): Promise<void>;
 }
 /**
  * @param network default mainnet, can be url like http or wss
@@ -115,7 +165,7 @@ export class ExternalHP {
  * @param key apikey, in case of infura project_id
  * @returns provider or Error
  */
-export const setProvider: (network: string, provider?: string | undefined, key?: string | undefined) => ethers.providers.BaseProvider | Error;
+export const setProvider: (network: string, provider?: string | undefined, key?: string | undefined) => ethers.providers.BaseProvider;
 /**
  * @method make crypto wallet
  * @param privateKey string

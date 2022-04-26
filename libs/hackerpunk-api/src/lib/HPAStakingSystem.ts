@@ -1,6 +1,7 @@
 import { ethers } from "ethers";
+import { HPA } from "../../dist/types";
 
-class HPA {
+class HPAStakingSystem {
   contract: ethers.Contract;
   contractAddress: string;
   abi: ethers.ContractInterface;
@@ -23,18 +24,22 @@ class HPA {
     this.contract = this.contract.connect(signer);
   }
 
-  async safeMint(recipient: string) {
-    //   const tokenURI =...
-    await this.contract.safeMint(recipient, "");
+  async stake(hpa: HPA, tokenId: BigInt | string) {
+    await hpa.contract.approve(this.contractAddress, tokenId);
+    await this.contract.stake(tokenId);
   }
 
-  async ownerOf(tokenId: BigInt | string): Promise<string> {
-    return await this.contract.ownerOf(tokenId);
+  async updateReward() {
+    await this.contract.updateReward();
   }
 
-  async balanceOf(owner: string): Promise<BigInt | string> {
-    return await this.contract.balanceOf(owner);
+  async claimReward(owner: string) {
+    await this.contract.claimReward(owner);
+  }
+
+  async unstake(tokenId: BigInt | string) {
+    await this.contract.unstake(tokenId);
   }
 }
 
-export { HPA };
+export { HPAStakingSystem };
