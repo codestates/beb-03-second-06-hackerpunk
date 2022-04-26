@@ -1,6 +1,4 @@
 import { ethers } from "ethers";
-import { HP as _HP1, HPA as _HPA1 } from "../../dist/types";
-import { HPTimeLock as _HPTimeLock1 } from "../../dist/types.d";
 /**
  * @method: returns address and privateKey
  * @param {string} pwd user password
@@ -74,7 +72,7 @@ export class HPTimeLock {
      * @param hp HP's Contract should be connected to donator's signer
      * @param amount send value of Wei as string or BigInt
      */
-    donate(hp: _HP1, articleId: number, donator: string, writer: string, amount: string | BigInt): Promise<void>;
+    donate(hp: HP, articleId: number, donator: string, writer: string, amount: string | BigInt): Promise<void>;
     /**
      * @method article removed, all token donated are returned to donators, only owner
      */
@@ -88,7 +86,7 @@ export class HPTimeLock {
      */
     release(articleId: number, writer: string): Promise<void>;
 }
-export class PHPTimeLock extends _HPTimeLock1 {
+export class PHPTimeLock extends HPTimeLock {
     constructor(signer: ethers.Signer, contractAddress: string, abi: ethers.ContractInterface);
 }
 export class ExternalHP {
@@ -154,7 +152,7 @@ export class HPAStakingSystem {
      * @param signer
      */
     changeContractSigner(signer: ethers.Signer): Promise<void>;
-    stake(hpa: _HPA1, tokenId: BigInt | string): Promise<void>;
+    stake(hpa: HPA, tokenId: BigInt | string): Promise<void>;
     updateReward(): Promise<void>;
     claimReward(owner: string): Promise<void>;
     unstake(tokenId: BigInt | string): Promise<void>;

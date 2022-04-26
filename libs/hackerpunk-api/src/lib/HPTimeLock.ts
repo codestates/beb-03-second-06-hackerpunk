@@ -1,4 +1,4 @@
-import { HP } from "../../dist/types";
+import { HP } from "./HP";
 import { ethers } from "ethers";
 
 class HPTimeLock {
