@@ -1,5 +1,6 @@
 import {keystore as $hgUW1$keystore} from "eth-lightwallet";
 import {ethers as $hgUW1$ethers} from "ethers";
+import $hgUW1$web3 from "web3";
 
 
 /**
@@ -152,6 +153,7 @@ class $92f5f3ce1cbfe1f8$export$2a9ff338dd4da85e extends $b5c9f8736c9df79f$export
 
 
 
+
 class $97915d9b045fee21$export$7fb3e24a412a5622 {
     constructor(signer, contractAddress, abi){
         this.contractAddress = contractAddress;
@@ -168,30 +170,82 @@ class $97915d9b045fee21$export$7fb3e24a412a5622 {
    * @method onlyOwner
    * @param fee send value of Wei as string or BigInt
    */ async setSignupFee(credentialType, fee) {
-        await this.contract.setSignupFee(credentialType, fee);
+        try {
+            await this.contract.setSignupFee(credentialType, fee);
+        } catch (err) {
+            throw new Error(err);
+        }
     }
     async signupFee(credentialType) {
-        return await this.contract.signupFee(credentialType);
+        try {
+            const fee = await this.contract.signupFee(credentialType);
+            return fee;
+        } catch (err) {
+            return new Error(err);
+        }
     }
     /**
    * @method onlyOwner
    */ async getAllInternalAddresses() {
-        return await this.contract.getAllInternalAddresses();
+        try {
+            const addresses = await this.contract.getAllInternalAddresses();
+            return addresses;
+        } catch (err) {
+            return new Error(err);
+        }
     }
     async registerAddress(internalAddress) {
-        await this.contract.registerAddress(internalAddress);
+        try {
+            const ok = await this.contract.registerAddress(internalAddress);
+            return ok;
+        } catch (err) {
+            return new Error(err);
+        }
     }
     async isRegistered(internalAddress) {
-        return await this.contract.isRegistered(internalAddress);
+        try {
+            return await this.contract.isRegistered(internalAddress);
+        } catch (err) {
+            return new Error(err);
+        }
     }
     async isAuthenticated(internalAddress) {
-        return await this.contract.isAuthenticated(internalAddress);
+        try {
+            return await this.contract.isAuthenticated(internalAddress);
+        } catch (err) {
+            return new Error(err);
+        }
     }
     async checkExternalAuthenticated(internalAddress, externalAddress) {
-        return await this.contract.checkExternalAuthenticated(internalAddress, externalAddress);
+        try {
+            return await this.contract.checkExternalAuthenticated(internalAddress, externalAddress);
+        } catch (err) {
+            return new Error(err);
+        }
     }
     async getCredentialType(internalAddress) {
-        return await this.contract.getCredentialType(internalAddress);
+        try {
+            return await this.contract.getCredentialType(internalAddress);
+        } catch (err) {
+            return new Error(err);
+        }
+    }
+    async getSignature(provider, internalAddress, privateKey) {
+        try {
+            const ok = await this.registerAddress(internalAddress);
+            let sign, hashedMessage;
+            if (ok === true) {
+                const web3 = new $hgUW1$web3(new $hgUW1$web3.providers.HttpProvider(provider));
+                hashedMessage = web3.utils.sha3(internalAddress);
+                if (hashedMessage !== null) sign = web3.eth.accounts.sign(hashedMessage, privateKey);
+            }
+            return {
+                sign: sign,
+                hashedMessage: hashedMessage
+            };
+        } catch (err) {
+            return new Error(err);
+        }
     }
     async singupEventListener(callback) {
         this.contract.on("Signup", (internalAddress, externalAddress, event)=>{

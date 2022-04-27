@@ -25,7 +25,8 @@
   "homepage": "https://github.com/gunb0s/hackerpunk-api#readme",
   "dependencies": {
     "eth-lightwallet": "^4.0.0",
-    "ethers": "^5.6.4"
+    "ethers": "^5.6.4",
+    "web3": "^1.7.3"
   },
   "devDependencies": {
     "@parcel/packager-ts": "^2.4.1",
