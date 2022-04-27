@@ -1,4 +1,4 @@
-import { React, motion, styled } from '..';
+import { React, motion, styled } from "..";
 
 const Container = styled(motion.div)`
   position: absolute;
@@ -28,9 +28,9 @@ const Copyright = styled.h1`
 
 const Message = styled.h1``;
 
-const COMPANY_NAME = 'Hacker Punk';
+const COMPANY_NAME = "HackerPunk";
 
-function Footer({ message = '' } = {}) {
+function Footer({ message = "" } = {}) {
   return (
     <Container>
       <InnerContainer>

@@ -18,6 +18,8 @@ import {
   useFocus,
 } from "../common";
 
+import SignUpVideo from "../common/components/SignUpVideo";
+
 const Container = styled(Div)`
   width: 40%;
   flex-direction: column;
@@ -159,7 +161,7 @@ function SignBox() {
       animate="visible"
       exit="exit"
     >
-      <Title>Sign Up</Title>
+      <SignUpVideo />
       <InnerContainer>
         <Label>
           {/* ID */}
