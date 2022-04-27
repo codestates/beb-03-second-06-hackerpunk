@@ -1,4 +1,4 @@
-import { useRef, useEffect } from '../common';
+import { useRef, useEffect } from "../common";
 
 /**
  *
@@ -6,7 +6,7 @@ import { useRef, useEffect } from '../common';
  * @returns [ref, focus]
  */
 const useFocus = ({ start = true } = {}) => {
-  const ref = useRef();
+  const ref = useRef(null);
   const focus = () => {
     if (ref.current) ref.current.focus();
   };

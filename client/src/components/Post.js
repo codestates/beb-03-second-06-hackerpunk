@@ -1,9 +1,9 @@
-import { React, styled, Div } from '../common';
+import { React, styled, Div } from "../common";
 
 const Block = styled(Div)`
   display: grid;
   grid-template-columns: 2fr 8fr 1fr 1fr;
-  grid-gap: 12px;
+  grid-gap: 14px;
 
   word-break: break-all;
   justify-content: center;
@@ -29,13 +29,34 @@ const Views = styled(Div)`
   justify-content: flex-end;
 `;
 
-function Post({ author, title, views, createdAt, updatedAt } = {}) {
+function Post({
+  myKey,
+  selectedKey,
+  selectThisToggle = () => {},
+  data: { author, title, views, createdAt, updatedAt } = {},
+}) {
+  const variants = {
+    opened: {},
+    closed: {
+      opacity: 0,
+      display: "none",
+    },
+    none: {},
+  };
+
+  const isSelected = myKey === selectedKey;
+  const isNotSelected = !isSelected && selectedKey !== -1;
+
   return (
     <Block
+      onClick={selectThisToggle}
+      variants={variants}
+      animate={isSelected ? "opened" : isNotSelected ? "closed" : "opened"}
+      exit="opened"
       whileHover={{
-        border: '1px solid whitesmoke',
+        border: "1px solid whitesmoke",
       }}
-      transition={{ type: 'spring', stiffness: 100 }}
+      transition={{ type: "spring", stiffness: 100 }}
     >
       <Author>{author}</Author>
       <Title>{title}</Title>
