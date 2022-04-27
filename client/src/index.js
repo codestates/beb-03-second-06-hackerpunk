@@ -1,4 +1,4 @@
-import { React, ReactDOM, SWRConfig } from "./common";
+import { React, ReactDOM, SWRConfig, BrowserRouter } from "./common";
 import { Provider } from "react-redux";
 import { store } from "./store";
 
@@ -20,7 +20,9 @@ root.render(
           suspense: true,
         }}
       >
-        <App />
+        <BrowserRouter>
+          <App />
+        </BrowserRouter>
       </SWRConfig>
     </Provider>
   </React.StrictMode>

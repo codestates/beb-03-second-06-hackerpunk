@@ -1,13 +1,15 @@
 import {
   //
   React,
-  BrowserRouter,
   Routes,
   Route,
   Background,
   Footer,
   Div,
   styled,
+  useLocation,
+  AsyncBoundary,
+  LoadingBox,
   AnimatePresence,
   getToken,
 } from "../common";
@@ -26,21 +28,41 @@ const RootDiv = styled(Div)`
 `;
 
 function App() {
+  const { pathname } = useLocation();
   // !TODO: check expires
   const AuthGuard = (element) => (getToken() ? element : <Home />);
-  console.log(getToken());
   return (
     <RootDiv>
       <Background />
       <Footer />
       <AnimatePresence>
-        <BrowserRouter>
+        <AsyncBoundary
+          fallback={
+            <LoadingBox
+              message={(() => {
+                switch (pathname) {
+                  case "/":
+                    return "login...";
+                  case "/sign":
+                    return "signing...";
+                  case "/confirm":
+                    return "checking your token...";
+                  default:
+                    return "loading...";
+                }
+              })()}
+            />
+          }
+          onReset={(e) => {
+            console.error(e);
+          }}
+        >
           <Routes>
             <Route path="*" element={<Home />} />
-            <Route path="/confirm/:token" element={<Confirm />} />
+            <Route path="/confirm" element={<Confirm />} />
             <Route path="/contents" element={AuthGuard(<Contents />)} />
           </Routes>
-        </BrowserRouter>
+        </AsyncBoundary>
       </AnimatePresence>
     </RootDiv>
   );

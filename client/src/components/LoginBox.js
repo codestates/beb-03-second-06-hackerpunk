@@ -17,6 +17,8 @@ import {
   removeWhitespace,
   MAX_ID_LENGTH,
   MAX_PASSWORD_LENGTH,
+  setToken,
+  getToken,
 } from "../common";
 
 const Container = styled(Div)`
@@ -59,11 +61,14 @@ function LoginBox() {
   const [FocusPasswordRef, focusPassword] = useFocus({ start: false });
 
   useEffect(() => {
+    console.log("token", getToken());
+
     if (memoId.value.length > 0) {
       focusPassword();
     } else {
       focusId();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const [submit, setSubmit] = useState(false);
@@ -83,7 +88,7 @@ function LoginBox() {
     }
   };
 
-  const { data } = useFetch({
+  const { data: { access_token } = {} } = useFetch({
     key: "login",
     args: { data: { id, password } },
     condition: submit,
@@ -91,15 +96,18 @@ function LoginBox() {
 
   const navigate = useNavigate();
 
-  if (data) {
-    console.log(data);
-    setSubmit(false);
-    navigate("/contents");
-  }
-
   const toSignIn = () => {
     navigate("/sign");
   };
+
+  useEffect(() => {
+    if (access_token) {
+      console.log("setToken", access_token);
+      setToken(access_token); // storing data - token only
+      setSubmit(false);
+      navigate("/contents");
+    }
+  }, [access_token, navigate]);
 
   return (
     <Container>

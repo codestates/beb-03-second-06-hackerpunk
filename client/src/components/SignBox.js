@@ -17,6 +17,7 @@ import {
   removeWhitespace,
   useFocus,
 } from "../common";
+
 import SignUpVideo from "../common/components/SignUpVideo";
 
 const Container = styled(Div)`
@@ -98,6 +99,7 @@ function SignBox() {
     } else {
       focusId();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const errorBang = useErrorBang();
@@ -141,15 +143,16 @@ function SignBox() {
   });
 
   const navigate = useNavigate();
-
-  if (data) {
-    setSubmit(false);
-    navigate("/confirm/wait");
-  }
-
   const toLogin = () => {
     navigate("/");
   };
+
+  useEffect(() => {
+    if (data) {
+      setSubmit(false);
+      navigate("/confirm?token=undefined");
+    }
+  }, [data, navigate]);
 
   return (
     <Container

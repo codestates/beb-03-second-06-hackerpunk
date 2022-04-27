@@ -15,6 +15,7 @@ import {
   useNavigate,
   useLocation,
   useParams,
+  useSearchParams,
 } from "react-router-dom";
 
 import { ErrorBoundary, useErrorHandler } from "react-error-boundary";
@@ -46,6 +47,7 @@ import getToken, { getTokenHeader } from "./functions/getToken";
 import setToken from "./functions/setToken";
 
 export * from "./constants";
+export * from "../store";
 
 // Functions
 export { validate, getToken, getTokenHeader, setToken };
@@ -91,6 +93,7 @@ export {
   useCallback,
   useNavigate,
   useLocation,
+  useSearchParams,
   useParams,
   Suspense,
   forwardRef,

@@ -1,17 +1,13 @@
 import {
   React,
   AsyncBoundary,
-  ErrorNotice,
-  Spinner,
-  useRef,
-  useState,
-  useEffect,
+  useSelector,
   useNavigate,
   styled,
   Div,
-} from '../common';
+} from "../common";
 
-import Posts from './Posts';
+import Posts from "./Posts";
 
 const Container = styled(Div)`
   width: 70%;
@@ -38,21 +34,22 @@ const Container = styled(Div)`
 
 function Board() {
   const navigate = useNavigate();
+  const { contents } = useSelector((state) => state.posts);
 
   return (
     <Container
       initial={{ opacity: 0, height: 0 }}
-      animate={{ opacity: 1, height: '70%' }}
+      animate={{ opacity: 1, height: "70%" }}
       exit={{ opacity: 0, height: 0 }}
     >
       <AsyncBoundary
         onReset={(e) => {
           // `try again button` was clicked
           console.error(e);
-          navigate('/');
+          navigate("/");
         }}
       >
-        <Posts />
+        <Posts contents={contents} />
       </AsyncBoundary>
     </Container>
   );

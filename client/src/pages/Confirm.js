@@ -1,36 +1,28 @@
 import {
   React,
   useFetch,
-  useParams,
+  useSearchParams,
   useNavigate,
   LoadingBox,
-  AsyncBoundary,
-  useDispatch,
+  setToken,
 } from "../common";
-import { setUser } from "../store";
 
-const WAIT = "wait";
+const WAIT = "undefined";
 
-/* ------------------------------------- */
-const StoreUserData = (data) => {
-  const dispatch = useDispatch();
-  console.log(data);
-  dispatch(setUser(data)); // redux
-};
 /* ------------------------------------- */
 const GetDataSignUp = () => {
-  const { token } = useParams();
+  const [searchParams] = useSearchParams();
+  const token = searchParams.get("token");
 
-  const { data } = useFetch({
+  const { data: { access_token } = {} } = useFetch({
     key: "confirm",
     args: { data: { token } },
     condition: token !== WAIT,
   });
 
   const navigate = useNavigate();
-
-  if (data) {
-    StoreUserData(data);
+  if (access_token) {
+    setToken(access_token);
     navigate("/contents"); // log in
     return;
   }
@@ -39,18 +31,7 @@ const GetDataSignUp = () => {
 };
 /* ------------------------------------- */
 function Confirm() {
-  const navigate = useNavigate();
-  return (
-    <AsyncBoundary
-      fallback={<LoadingBox message="checking your token..." />}
-      onReset={(e) => {
-        console.error(e);
-        navigate("/");
-      }}
-    >
-      <GetDataSignUp />
-    </AsyncBoundary>
-  );
+  return <GetDataSignUp />;
 }
 
 export default Confirm;

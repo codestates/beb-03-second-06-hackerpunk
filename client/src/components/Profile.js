@@ -6,8 +6,8 @@ import {
   Logo,
   useState,
   useSelector,
-} from '../common';
-import hp from '../api/hp';
+} from "../common";
+import hp from "../api/hp";
 
 const Container = styled(Div)`
   z-index: 999;
@@ -20,7 +20,7 @@ const Container = styled(Div)`
   border-radius: 2px;
   padding: 10px;
   flex-direction: column;
-  font-family: 'Gill Sans', sans-serif;
+  font-family: "Gill Sans", sans-serif;
   background-color: rgb(10, 10, 10, 0.6);
 `;
 
@@ -79,13 +79,13 @@ const Container__Animate = {
 const ConnectWallet__Animate = {
   whileHover: {
     scale: 1.02,
-    color: 'rgba(150, 20, 20, 0.8)',
-    textDecoration: 'underline bisque dashed 1px',
+    color: "rgba(150, 20, 20, 0.8)",
+    textDecoration: "underline bisque dashed 1px",
   },
   whileTap: {
     scale: 0.95,
-    color: 'rgb(0, 0, 0, 0)',
-    textDecoration: 'none',
+    color: "rgb(0, 0, 0, 0)",
+    textDecoration: "none",
   },
 };
 // -------------------------------
@@ -102,9 +102,9 @@ const Helper = styled(Div)`
 function ConectWalletHelper() {
   return (
     <Helper
-      initial={{ x: '-14rem', y: '-14rem' }}
-      animate={{ x: '-11rem', y: '-5.2rem' }}
-      exit={{ x: '-14rem', y: '-14rem' }}
+      initial={{ x: "-14rem", y: "-14rem" }}
+      animate={{ x: "-11rem", y: "-5.2rem" }}
+      exit={{ x: "-14rem", y: "-14rem" }}
     >
       If you want to withdraw your hp tokens, Please connect to your own wallet.
     </Helper>
@@ -112,30 +112,31 @@ function ConectWalletHelper() {
 }
 
 function Profile() {
-  const user = useSelector((state) => state.user);
-  console.log(user);
+  const { internalPublicKey, level, amount } = useSelector(
+    (state) => state.user
+  );
   const connectWallet = async () => {
-    await hp.connectToExternalWallet(user.internalPublicKey);
+    await hp.connectToExternalWallet(internalPublicKey);
   };
-  const [connectWalletHelper, setConnectWalletHelper] = useState('');
+  const [connectWalletHelper, setConnectWalletHelper] = useState("");
   return (
     <Container {...Container__Animate}>
       <ConnectWallet
         {...ConnectWallet__Animate}
         onClick={connectWallet}
         onMouseEnter={() => setConnectWalletHelper(ConectWalletHelper)}
-        onMouseLeave={() => setConnectWalletHelper('')}
+        onMouseLeave={() => setConnectWalletHelper("")}
       >
         ❕ Connect To External Wallet
       </ConnectWallet>
       {connectWalletHelper}
       <InnerContainer>
         <StyledLogo />
-        <Address>0x90DdB069D1BFF5CEe2bFaA1Fe889990CB5F14f72</Address>
+        <Address>{internalPublicKey}</Address>
       </InnerContainer>
       <InnerContainer>
-        <Span>Lv.99</Span>
-        <Token>20521003</Token>
+        <Span>Lv.{level}</Span>
+        <Token>{amount}</Token>
         <Span>hp</Span>
       </InnerContainer>
     </Container>
