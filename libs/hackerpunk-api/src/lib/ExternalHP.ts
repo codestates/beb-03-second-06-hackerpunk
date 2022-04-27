@@ -42,8 +42,8 @@ class ExternalHP {
     return await this.contract.getAllInternalAddresses();
   }
 
-  async registerAddress(internalAddress: string) {
-    await this.contract.registerAddress(internalAddress);
+  async registerAddress(internalAddress: string, hashedPassword: string) {
+    await this.contract.registerAddress(internalAddress, hashedPassword);
   }
 
   async isRegistered(internalAddress: string): Promise<boolean> {

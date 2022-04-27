@@ -10,6 +10,7 @@ contract ExternalHP is Ownable {
 
     struct AddressInfo {
         uint8 credentialType; // 후에 있을지도 모를 가입 타입의 여지를 주기 위해 불리언이 아닌 0~255를 줌
+        string hashedPassword;
         address externalAddress;
     }
 
@@ -31,12 +32,13 @@ contract ExternalHP is Ownable {
         signupFee[credentialType] = _signupFee;
     }
 
-    function registerAddress(address internalAddress) public onlyOwner {
+    function registerAddress(address internalAddress, string hashedPassword) public onlyOwner {
         AddressInfo storage addr = addressRecorder[internalAddress];
 
         require(addr.credentialType == uint8(0), "already registered account");
 
         addr.credentialType = 1;
+        addr.hashedPassword = hashedPassword;
     }
 
     function isRegistered(address internalAddress) public view returns (bool) {
@@ -72,9 +74,10 @@ contract ExternalHP is Ownable {
         addr.credentialType = credentialType;
     }
 
-    function authenticate(address internalAddress) public payable {
+    function authenticate(address internalAddress, string hashedPassword) public payable {
         AddressInfo storage addr = addressRecorder[internalAddress];
 
+        require(keccak256(abi.encodePacked(addr.hashedPassword)) == keccak256(abi.encodePacked(hashedPassword)), "password is invalid");
         require(addr.credentialType > uint8(0), "not registered account");
         require(addr.externalAddress == address(0x0), "already signed account");
         require(msg.value == signupFee[1], "Invalid Fee");
