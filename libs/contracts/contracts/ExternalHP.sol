@@ -10,6 +10,7 @@ contract ExternalHP is Ownable {
 
     struct AddressInfo {
         uint8 credentialType; // 후에 있을지도 모를 가입 타입의 여지를 주기 위해 불리언이 아닌 0~255를 줌
+        string hashedPassword;
         address externalAddress;
     }
 
@@ -31,12 +32,14 @@ contract ExternalHP is Ownable {
         signupFee[credentialType] = _signupFee;
     }
 
-    function registerAddress(address internalAddress) public onlyOwner {
+    function registerAddress(address internalAddress) public onlyOwner returns (bool) {
         AddressInfo storage addr = addressRecorder[internalAddress];
 
         require(addr.credentialType == uint8(0), "already registered account");
 
         addr.credentialType = 1;
+
+        return true;
     }
 
     function isRegistered(address internalAddress) public view returns (bool) {
@@ -55,29 +58,40 @@ contract ExternalHP is Ownable {
         return addressRecorder[internalAddress].credentialType;
     }   
 
-    function changeCredentialType(uint8 credentialType, address internalAddress) public payable {
-        AddressInfo storage addr = addressRecorder[internalAddress];
-        require(addr.externalAddress == msg.sender, "request account is invalid");
+    // function changeCredentialType(uint8 credentialType, address internalAddress) public payable {
+    //     AddressInfo storage addr = addressRecorder[internalAddress];
+    //     require(addr.externalAddress == msg.sender, "request account is invalid");
 
-        uint8 prevType = addr.credentialType;
+    //     uint8 prevType = addr.credentialType;
 
-        if (signupFee[credentialType] > signupFee[prevType]) {
-            uint256 fee;
-            unchecked {
-                fee = signupFee[credentialType] - signupFee[prevType];
-            }
-            require(msg.value == fee, "Invalid Fee");
-            payable(owner()).transfer(msg.value);
-        } 
-        addr.credentialType = credentialType;
+    //     if (signupFee[credentialType] > signupFee[prevType]) {
+    //         uint256 fee;
+    //         unchecked {
+    //             fee = signupFee[credentialType] - signupFee[prevType];
+    //         }
+    //         require(msg.value == fee, "Invalid Fee");
+    //         payable(owner()).transfer(msg.value);
+    //     } 
+    //     addr.credentialType = credentialType;
+    // }
+
+    function verify(bytes32 _hashedMessage, uint8 _v, bytes32 _r, bytes32 _s) private pure returns (address) {
+        bytes memory prefix = "\x19Ethereum Signed Message:\n32";
+        bytes32 prefixedHashMessage = keccak256(abi.encodePacked(prefix, _hashedMessage));
+        address signer = ecrecover(prefixedHashMessage, _v, _r, _s);
+
+        return signer;
     }
 
-    function authenticate(address internalAddress) public payable {
+    function authenticate(address internalAddress, bytes32 _hashedMessage, uint8 _v, bytes32 _r, bytes32 _s) public payable {
         AddressInfo storage addr = addressRecorder[internalAddress];
 
         require(addr.credentialType > uint8(0), "not registered account");
         require(addr.externalAddress == address(0x0), "already signed account");
         require(msg.value == signupFee[1], "Invalid Fee");
+
+        address signer = verify(_hashedMessage, _v, _r, _s);
+        require(internalAddress == signer, "invalid signer");
 
         addr.externalAddress = msg.sender;
 

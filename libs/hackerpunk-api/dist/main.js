@@ -1,8 +1,12 @@
 var $8zHUo$ethlightwallet = require("eth-lightwallet");
 var $8zHUo$ethers = require("ethers");
+var $8zHUo$web3 = require("web3");
 
 function $parcel$export(e, n, v, s) {
   Object.defineProperty(e, n, {get: v, set: s, enumerable: true, configurable: true});
+}
+function $parcel$interopDefault(a) {
+  return a && a.__esModule ? a.default : a;
 }
 
 $parcel$export(module.exports, "HP", () => $4f2d27e7bb08be92$export$2f4fd17aff4e7fc);
@@ -167,6 +171,7 @@ class $072f7a5feedb334e$export$2a9ff338dd4da85e extends $c6d12b18f5e7b653$export
 
 
 
+
 class $1bdf165e5fb3c2c0$export$7fb3e24a412a5622 {
     constructor(signer, contractAddress, abi){
         this.contractAddress = contractAddress;
@@ -183,30 +188,82 @@ class $1bdf165e5fb3c2c0$export$7fb3e24a412a5622 {
    * @method onlyOwner
    * @param fee send value of Wei as string or BigInt
    */ async setSignupFee(credentialType, fee) {
-        await this.contract.setSignupFee(credentialType, fee);
+        try {
+            await this.contract.setSignupFee(credentialType, fee);
+        } catch (err) {
+            throw new Error(err);
+        }
     }
     async signupFee(credentialType) {
-        return await this.contract.signupFee(credentialType);
+        try {
+            const fee = await this.contract.signupFee(credentialType);
+            return fee;
+        } catch (err) {
+            return new Error(err);
+        }
     }
     /**
    * @method onlyOwner
    */ async getAllInternalAddresses() {
-        return await this.contract.getAllInternalAddresses();
+        try {
+            const addresses = await this.contract.getAllInternalAddresses();
+            return addresses;
+        } catch (err) {
+            return new Error(err);
+        }
     }
     async registerAddress(internalAddress) {
-        await this.contract.registerAddress(internalAddress);
+        try {
+            const ok = await this.contract.registerAddress(internalAddress);
+            return ok;
+        } catch (err) {
+            return new Error(err);
+        }
     }
     async isRegistered(internalAddress) {
-        return await this.contract.isRegistered(internalAddress);
+        try {
+            return await this.contract.isRegistered(internalAddress);
+        } catch (err) {
+            return new Error(err);
+        }
     }
     async isAuthenticated(internalAddress) {
-        return await this.contract.isAuthenticated(internalAddress);
+        try {
+            return await this.contract.isAuthenticated(internalAddress);
+        } catch (err) {
+            return new Error(err);
+        }
     }
     async checkExternalAuthenticated(internalAddress, externalAddress) {
-        return await this.contract.checkExternalAuthenticated(internalAddress, externalAddress);
+        try {
+            return await this.contract.checkExternalAuthenticated(internalAddress, externalAddress);
+        } catch (err) {
+            return new Error(err);
+        }
     }
     async getCredentialType(internalAddress) {
-        return await this.contract.getCredentialType(internalAddress);
+        try {
+            return await this.contract.getCredentialType(internalAddress);
+        } catch (err) {
+            return new Error(err);
+        }
+    }
+    async getSignature(provider, internalAddress, privateKey) {
+        try {
+            const ok = await this.registerAddress(internalAddress);
+            let sign, hashedMessage;
+            if (ok === true) {
+                const web3 = new ($parcel$interopDefault($8zHUo$web3))(new ($parcel$interopDefault($8zHUo$web3)).providers.HttpProvider(provider));
+                hashedMessage = web3.utils.sha3(internalAddress);
+                if (hashedMessage !== null) sign = web3.eth.accounts.sign(hashedMessage, privateKey);
+            }
+            return {
+                sign: sign,
+                hashedMessage: hashedMessage
+            };
+        } catch (err) {
+            return new Error(err);
+        }
     }
     async singupEventListener(callback) {
         this.contract.on("Signup", (internalAddress, externalAddress, event)=>{
