@@ -9,6 +9,7 @@ import {
   toSummary,
 } from "../common";
 import hp from "../api/hp";
+import TokenImage from "../assets/images/diamond.png";
 
 const Container = styled(Div)`
   z-index: 999;
@@ -146,7 +147,22 @@ function Profile() {
         <StyledLogo />
         <ProfileInnerContainer>
           <Id>{id}</Id>
-          <Address>{toSummary(internalPublicKey)}</Address>
+          <img src="TokenImage" />
+          <Address
+            onClick={() => {
+              navigator.clipboard.writeText(internalPublicKey).then(
+                () => {
+                  alert("Copyed!");
+                },
+                () => {
+                  alert("Copy failed");
+                }
+              );
+              // alert("주소가 복사되었습니다.");
+            }}
+          >
+            {toSummary(internalPublicKey)}
+          </Address>
         </ProfileInnerContainer>
       </InnerContainer>
       <InnerContainer>
