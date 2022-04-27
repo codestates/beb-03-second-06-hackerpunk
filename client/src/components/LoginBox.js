@@ -17,7 +17,9 @@ import {
   removeWhitespace,
   MAX_ID_LENGTH,
   MAX_PASSWORD_LENGTH,
-} from '../common';
+  setToken,
+  getToken,
+} from "../common";
 
 const Container = styled(Div)`
   width: 40%;
@@ -43,7 +45,7 @@ const ToSignIn = styled(motion.span)`
 `;
 
 const memoId = {
-  value: '',
+  value: "",
 };
 
 function LoginBox() {
@@ -59,11 +61,14 @@ function LoginBox() {
   const [FocusPasswordRef, focusPassword] = useFocus({ start: false });
 
   useEffect(() => {
+    console.log("token", getToken());
+
     if (memoId.value.length > 0) {
       focusPassword();
     } else {
       focusId();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const [submit, setSubmit] = useState(false);
@@ -75,31 +80,34 @@ function LoginBox() {
       return;
     }
     try {
-      validate({ key: 'id', value: id });
-      validate({ key: 'password', value: password });
+      validate({ key: "id", value: id });
+      validate({ key: "password", value: password });
       setSubmit(true);
-    } catch ({ message = '' }) {
-      errorBang('Validating', message);
+    } catch ({ message = "" }) {
+      errorBang("Validating", message);
     }
   };
 
-  const { data } = useFetch({
-    key: 'login',
+  const { data: { access_token } = {} } = useFetch({
+    key: "login",
     args: { data: { id, password } },
     condition: submit,
   });
 
   const navigate = useNavigate();
 
-  if (data) {
-    console.log(data);
-    setSubmit(false);
-    navigate('/contents');
-  }
-
   const toSignIn = () => {
-    navigate('/sign');
+    navigate("/sign");
   };
+
+  useEffect(() => {
+    if (access_token) {
+      console.log("setToken", access_token);
+      setToken(access_token); // storing data - token only
+      setSubmit(false);
+      navigate("/contents");
+    }
+  }, [access_token, navigate]);
 
   return (
     <Container>
@@ -136,15 +144,15 @@ function LoginBox() {
       <ToSignIn
         onClick={toSignIn}
         whileHover={{
-          color: 'rgba(200, 225, 200, 0.7)',
+          color: "rgba(200, 225, 200, 0.7)",
           scale: 1.05,
         }}
         onKeyDown={(e) => {
           // Tab Looping
           e.preventDefault();
-          if (e.key === 'Tab') {
+          if (e.key === "Tab") {
             focusId();
-          } else if (e.key === 'Enter') {
+          } else if (e.key === "Enter") {
             toSignIn();
           }
         }}

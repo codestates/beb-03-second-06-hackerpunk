@@ -16,7 +16,7 @@ import {
   MAX_PASSWORD_LENGTH,
   removeWhitespace,
   useFocus,
-} from '../common';
+} from "../common";
 
 const Container = styled(Div)`
   width: 40%;
@@ -47,31 +47,31 @@ const ToLogIn = styled(motion.span)`
 // ---------- Animation ----------
 const Container__Animate = {
   hidden: {
-    y: '-50vh',
+    y: "-50vh",
     opacity: 0,
   },
   visible: {
-    y: '0',
+    y: "0",
     opacity: 1,
     transition: {
       duration: 0.1,
-      type: 'spring',
+      type: "spring",
       damping: 30,
       stiffness: 400,
     },
   },
   exit: {
-    y: '50vh',
+    y: "50vh",
     opacity: 0,
   },
 };
 // -------------------------------
 
 const memoId = {
-    value: '',
+    value: "",
   },
   memoEmail = {
-    value: '',
+    value: "",
   };
 
 function SignBox() {
@@ -97,6 +97,7 @@ function SignBox() {
     } else {
       focusId();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const errorBang = useErrorBang();
@@ -123,32 +124,33 @@ function SignBox() {
       errorBang(`Validating`, `Password(re) is different from the password`);
     }
     try {
-      validate({ key: 'id', value: id });
-      validate({ key: 'password', value: password });
-      validate({ key: 'email', value: email });
+      validate({ key: "id", value: id });
+      validate({ key: "password", value: password });
+      validate({ key: "email", value: email });
       setSubmit(true);
-    } catch ({ message = '' }) {
-      errorBang('Validating', message);
+    } catch ({ message = "" }) {
+      errorBang("Validating", message);
     }
     setSubmit(true);
   };
 
   const { data } = useFetch({
-    key: 'sign',
+    key: "sign",
     args: { data: { id, password, email } },
     condition: submit,
   });
 
   const navigate = useNavigate();
-
-  if (data) {
-    setSubmit(false);
-    navigate('/confirm/wait');
-  }
-
   const toLogin = () => {
-    navigate('/');
+    navigate("/");
   };
+
+  useEffect(() => {
+    if (data) {
+      setSubmit(false);
+      navigate("/confirm?token=undefined");
+    }
+  }, [data, navigate]);
 
   return (
     <Container
@@ -216,14 +218,14 @@ function SignBox() {
         onKeyDown={(e) => {
           // Tab Looping
           e.preventDefault();
-          if (e.key === 'Tab') {
+          if (e.key === "Tab") {
             focusId();
-          } else if (e.key === 'Enter') {
+          } else if (e.key === "Enter") {
             toLogin();
           }
         }}
         whileHover={{
-          color: 'rgba(200, 225, 200, 0.7)',
+          color: "rgba(200, 225, 200, 0.7)",
           scale: 1.05,
         }}
         tabIndex="5"

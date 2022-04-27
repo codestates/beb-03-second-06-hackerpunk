@@ -23,19 +23,30 @@ const resolvers = ({ options = {}, state: { data } = {} } = {}) => {
       data,
       ...options,
     },
-    posts: {
+    user_posts: {
       url: "https://jsonplaceholder.typicode.com/posts",
       method: "get",
       headers: getTokenHeader(),
       nextMut(list) {
-        return list.map(({ userId, id, title } = {}) => ({
-          id,
-          author: "testman" + userId,
-          title,
-          views: 5,
-          createdAt: new Date().toDateString(),
-          updatedAt: new Date().toDateString(),
-        }));
+        return {
+          user: {
+            access_token: "Qwdqwdqd",
+            id: "idididi",
+            email: "email@email.com",
+            internal_pub_key: "internal_pub_keyeky",
+            external_pub_key: "external_pub_keyeky",
+            amount: 91992,
+            level: 99,
+          },
+          posts: list.map(({ userId, id, title } = {}) => ({
+            id,
+            author: "testman" + userId,
+            title,
+            views: 5,
+            createdAt: new Date().toDateString(),
+            updatedAt: new Date().toDateString(),
+          })),
+        };
       },
       ...options,
     },

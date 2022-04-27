@@ -1,12 +1,9 @@
-import { React, useFetch } from '../common';
+import { React } from "../common";
 
-import Post from './Post';
+import Post from "./Post";
 
-function Posts() {
-  const { data } = useFetch({
-    key: 'posts',
-  });
-  return data.map((props, idx) => {
+function Posts({ contents = [] } = {}) {
+  return contents.map((props, idx) => {
     return <Post key={idx} {...props} />;
   });
 }
