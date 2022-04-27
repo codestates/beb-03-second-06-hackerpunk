@@ -9,6 +9,10 @@ import {
   toSummary,
 } from "../common";
 import hp from "../api/hp";
+
+import WriteButton from "./WriteButton";
+import SubmitButton from "./SubmitButton";
+
 import TokenIcon from "../assets/images/hptoken.png";
 
 const Container = styled(Div)`
@@ -91,14 +95,25 @@ const CopyAccount = styled(motion.div)`
 `;
 
 // ---------- Animation ----------
-const Container__Animate = {
+const Container__Animate_variants = {
   initial: {
+    opacity: 0,
     y: -30,
+    height: "11%",
   },
   animate: {
+    opacity: 1,
     x: 12,
     y: 0,
     scale: 1.1,
+    height: "11%",
+  },
+  exit: {
+    opacity: 1,
+    position: "absolute",
+    x: "-4vw",
+    y: "0vh",
+    height: "2.2%",
   },
 };
 
@@ -149,42 +164,57 @@ function Profile() {
   const { id, internalPublicKey, level, amount } = useSelector(
     (state) => state.user
   );
+  const { selected } = useSelector((state) => state.posts);
+  console.log(selected);
+
   const connectWallet = async () => {
     await hp.connectToExternalWallet(internalPublicKey);
   };
   const [connectWalletHelper, setConnectWalletHelper] = useState("");
   return (
-    <Container {...Container__Animate}>
-      <ConnectWallet
-        {...ConnectWallet__Animate}
-        onClick={connectWallet}
-        onMouseEnter={() => setConnectWalletHelper(ConectWalletHelper)}
-        onMouseLeave={() => setConnectWalletHelper("")}
-      >
-        ❕ Connect To External Wallet
-      </ConnectWallet>
-      {connectWalletHelper}
-      <InnerContainer>
-        <StyledLogo />
-        <ProfileInnerContainer>
-          <Id>{id}</Id>
-          <Address
-            {...CopyAccount__Animate}
-            onClick={() => {
-              navigator.clipboard.writeText(internalPublicKey).then(
-                () => {
-                  alert("Copyed!");
-                },
-                () => {
-                  alert("Copy failed");
-                }
-              );
-            }}
+    <Container
+      variants={Container__Animate_variants}
+      initial={selected > -1 ? "initial" : "animate"}
+      animate={selected > -1 ? "animate" : "exit"}
+      exit="exit"
+    >
+      {selected > -1 ? (
+        <>
+          <WriteButton message="Write" />
+          <ConnectWallet
+            {...ConnectWallet__Animate}
+            onClick={connectWallet}
+            onMouseEnter={() => setConnectWalletHelper(ConectWalletHelper)}
+            onMouseLeave={() => setConnectWalletHelper("")}
           >
-            {toSummary(internalPublicKey)}
-          </Address>
-        </ProfileInnerContainer>
-      </InnerContainer>
+            ❕ Connect To External Wallet
+          </ConnectWallet>
+          {connectWalletHelper}
+          <InnerContainer>
+            <StyledLogo />
+            <ProfileInnerContainer>
+              <Id>{id}</Id>
+              <Address
+                {...CopyAccount__Animate}
+                onClick={() => {
+                  navigator.clipboard.writeText(internalPublicKey).then(
+                    () => {
+                      alert("Copyed!");
+                    },
+                    () => {
+                      alert("Copy failed");
+                    }
+                  );
+                }}
+              >
+                {toSummary(internalPublicKey)}
+              </Address>
+            </ProfileInnerContainer>
+          </InnerContainer>
+        </>
+      ) : (
+        <SubmitButton message="Submit" />
+      )}
       <InnerContainer>
         <Span>Lv.{level}</Span>
         <img src={TokenIcon} />

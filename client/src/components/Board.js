@@ -3,23 +3,25 @@ import {
   AsyncBoundary,
   useSelector,
   useNavigate,
+  useDispatch,
+  setSelected,
   styled,
   Div,
 } from "../common";
 
+import Post from "./Post";
 import Posts from "./Posts";
 
 const Container = styled(Div)`
-  width: 70%;
-  height: 70%;
-  /* margin-right: 20rem; */
+  position: relative;
+  width: 72%;
+  height: 72%;
   border: 1px groove gray;
   border-radius: 1px;
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
   overflow-y: scroll;
-  overflow-x: inherit;
 
   padding: 1rem;
 
@@ -34,23 +36,31 @@ const Container = styled(Div)`
 
 function Board() {
   const navigate = useNavigate();
-  const { contents } = useSelector((state) => state.posts);
+  const { selected, contents } = useSelector((state) => state.posts);
+  const dispatch = useDispatch();
   return (
-    <Container
-      initial={{ opacity: 0, height: 0 }}
-      animate={{ opacity: 1, height: "70%" }}
-      exit={{ opacity: 0, height: 0 }}
+    <AsyncBoundary
+      onReset={(e) => {
+        // `try again button` was clicked
+        console.error(e);
+        navigate("/");
+      }}
     >
-      <AsyncBoundary
-        onReset={(e) => {
-          // `try again button` was clicked
-          console.error(e);
-          navigate("/");
-        }}
+      <Container
+        initial={{ opacity: 0, height: 0 }}
+        animate={{ opacity: 1, height: "70%" }}
+        exit={{ opacity: 0, height: 0 }}
       >
-        <Posts contents={contents} />
-      </AsyncBoundary>
-    </Container>
+        {/* selected === -1 => Writing Box */}
+        {selected === -1 && <Post />}
+        <Posts
+          contents={contents}
+          selectedCallback={(isSelected) => {
+            dispatch(setSelected(isSelected));
+          }}
+        />
+      </Container>
+    </AsyncBoundary>
   );
 }
 

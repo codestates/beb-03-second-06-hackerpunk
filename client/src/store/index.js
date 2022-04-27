@@ -4,7 +4,7 @@ import userReducer from "./userSlice";
 import postsReducer from "./postsSlice";
 
 export { setUser } from "./userSlice";
-export { setPosts } from "./postsSlice";
+export { setPosts, setSelected } from "./postsSlice";
 
 export const store = configureStore({
   reducer: {

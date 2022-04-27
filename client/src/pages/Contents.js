@@ -7,7 +7,7 @@ function Contents() {
   const {
     data: { user, posts },
   } = useFetch({
-    key: "user_posts",
+    key: "get_user_posts",
   });
   if (user && posts) {
     dispatch(setUser(user));
