@@ -45,12 +45,13 @@ import useFocus from "../hooks/useFocus";
 import validate from "./functions/validate";
 import getToken, { getTokenHeader } from "./functions/getToken";
 import setToken from "./functions/setToken";
+import toSummary from "./functions/toSummary";
 
 export * from "./constants";
 export * from "../store";
 
 // Functions
-export { validate, getToken, getTokenHeader, setToken };
+export { validate, getToken, getTokenHeader, setToken, toSummary };
 
 // Custom Components
 export {
