@@ -1,10 +1,15 @@
-import { React, motion, useFocus } from '..';
+import { React, motion, useFocus } from "..";
 
 function ErrorNotice({ ...errorProps }) {
   const { error: { message, response: { data } = {} } = {} } = errorProps;
   const [focusRef] = useFocus();
   return (
-    <motion.div role="alert">
+    <motion.div
+      style={{
+        wordBreak: "break-all",
+      }}
+      role="alert"
+    >
       <p>Something went wrong:</p>
       <pre>{message}</pre>
       <pre>Reason: {data?.message}</pre>

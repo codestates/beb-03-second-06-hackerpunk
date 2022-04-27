@@ -16,8 +16,8 @@ const Container = styled(Div)`
   position: absolute;
   right: 10vw;
   top: 11vh;
-  width: 11rem;
-  height: 6rem;
+  width: 11.5rem;
+  height: 6.5rem;
   border: solid 1px whitesmoke;
   border-radius: 2px;
   padding: 10px;
@@ -67,14 +67,14 @@ const Token = styled.p`
 
 const ConnectWallet = styled(motion.div)`
   position: absolute;
-  left: 40px;
+  left: 25px;
   top: -25px;
   font-size: 0.75rem;
   padding: 0.1rem;
   display: flex;
   justify-content: center;
   align-items: center;
-  width: 78%;
+  width: 86%;
 `;
 
 // ---------- Animation ----------
