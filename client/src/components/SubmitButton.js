@@ -1,7 +1,7 @@
 import { React, styled, Button, useDispatch, setSelected } from "../common";
 
 const StyledButton = styled(Button)`
-  font-size: 0.75rem;
+  font-size: 0.72rem;
   border: 1px solid white;
   height: 105%;
 `;
