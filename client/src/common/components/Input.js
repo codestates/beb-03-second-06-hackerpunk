@@ -1,4 +1,4 @@
-import { forwardRef, motion, styled } from '..';
+import { forwardRef, motion, styled } from "..";
 
 const StyledInput = styled(motion.input)`
   margin: 5px 2px;
@@ -30,8 +30,8 @@ function Input({ onEnter = (e) => e, autoComplete = false, ...props }, ref) {
     <StyledInput
       ref={ref}
       whileFocus={{
-        border: '3px solid #A588C7',
-        boxShadow: '0 0 10px #719ECE',
+        border: "3px solid #A588C7",
+        boxShadow: "0 0 10px #719ECE",
       }}
       onKeyDown={(e) => {
         if (e.keyCode === 13) {
@@ -39,7 +39,7 @@ function Input({ onEnter = (e) => e, autoComplete = false, ...props }, ref) {
           onEnter(e);
         }
       }}
-      autoComplete={autoComplete ? 'on' : 'new-password'}
+      autoComplete={autoComplete ? "on" : "new-password"}
       {...props}
     />
   );
