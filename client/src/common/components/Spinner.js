@@ -1,4 +1,4 @@
-import { motion, styled } from '..';
+import { motion, styled } from "..";
 
 const SVG = styled(motion.svg)`
   margin: auto;
@@ -11,7 +11,7 @@ const SVG = styled(motion.svg)`
 
 function Spinner() {
   return (
-    <SVG viewBox={'0 0 100 100'} preserveAspectRatio="xMidYMid">
+    <SVG viewBox={"0 0 100 100"} preserveAspectRatio="xMidYMid">
       <path
         d="M10 50A40 40 0 0 0 90 50A40 43.1 0 0 1 10 50"
         fill="#efeee0"

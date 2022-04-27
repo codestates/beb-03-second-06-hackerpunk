@@ -30,6 +30,7 @@ const InnerContainer = styled(Div)`
   justify-content: space-between;
   align-items: center;
   word-break: break-all;
+  height: 80%;
 `;
 
 const ProfileInnerContainer = styled.div`
@@ -56,7 +57,7 @@ const Id = styled.p`
   font-size: 0.77rem;
 `;
 
-const Address = styled.p`
+const Address = styled(motion.p)`
   font-size: 0.77rem;
 `;
 
@@ -66,6 +67,18 @@ const Token = styled.p`
 `;
 
 const ConnectWallet = styled(motion.div)`
+  position: absolute;
+  left: 25px;
+  top: -25px;
+  font-size: 0.75rem;
+  padding: 0.1rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 86%;
+`;
+
+const CopyAccount = styled(motion.div)`
   position: absolute;
   left: 25px;
   top: -25px;
@@ -99,6 +112,14 @@ const ConnectWallet__Animate = {
     scale: 0.95,
     color: "rgb(0, 0, 0, 0)",
     textDecoration: "none",
+  },
+};
+
+const CopyAccount__Animate = {
+  whileHover: {
+    scale: 1,
+    color: "rgba(150, 20, 20, 0.8)",
+    textDecoration: "underline bisque dashed 1px",
   },
 };
 // -------------------------------
@@ -147,8 +168,8 @@ function Profile() {
         <StyledLogo />
         <ProfileInnerContainer>
           <Id>{id}</Id>
-          <img src={TokenIcon} />
           <Address
+            {...CopyAccount__Animate}
             onClick={() => {
               navigator.clipboard.writeText(internalPublicKey).then(
                 () => {
@@ -159,7 +180,6 @@ function Profile() {
                 }
               );
             }}
-            onKeyUp={() => setAccountWallet}
           >
             {toSummary(internalPublicKey)}
           </Address>
@@ -167,6 +187,7 @@ function Profile() {
       </InnerContainer>
       <InnerContainer>
         <Span>Lv.{level}</Span>
+        <img src={TokenIcon} />
         <Token>{amount}</Token>
         <Span>hp</Span>
       </InnerContainer>
