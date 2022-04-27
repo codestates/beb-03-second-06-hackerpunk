@@ -33,10 +33,6 @@ const InnerContainer = styled(Div)`
   margin: 2rem 0;
 `;
 
-const Title = styled.h1`
-  font-size: 2.4rem;
-`;
-
 const Label = styled.label``;
 
 const ToLogIn = styled(motion.span)`

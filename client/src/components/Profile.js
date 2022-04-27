@@ -6,6 +6,7 @@ import {
   Logo,
   useState,
   useSelector,
+  toSummary,
 } from "../common";
 import hp from "../api/hp";
 
@@ -30,6 +31,13 @@ const InnerContainer = styled(Div)`
   word-break: break-all;
 `;
 
+const ProfileInnerContainer = styled.div`
+  height: 75%;
+  flex-direction: column;
+  align-items: center;
+  word-break: break-all;
+`;
+
 const StyledLogo = styled(Logo)`
   width: 30%;
   height: 70%;
@@ -41,6 +49,10 @@ const Span = styled.label`
   font-size: 0.8rem;
   font-weight: 600;
   margin-right: 10px;
+`;
+
+const Id = styled.p`
+  font-size: 0.77rem;
 `;
 
 const Address = styled.p`
@@ -112,7 +124,7 @@ function ConectWalletHelper() {
 }
 
 function Profile() {
-  const { internalPublicKey, level, amount } = useSelector(
+  const { id, internalPublicKey, level, amount } = useSelector(
     (state) => state.user
   );
   const connectWallet = async () => {
@@ -132,7 +144,10 @@ function Profile() {
       {connectWalletHelper}
       <InnerContainer>
         <StyledLogo />
-        <Address>{internalPublicKey}</Address>
+        <ProfileInnerContainer>
+          <Id>{id}</Id>
+          <Address>{toSummary(internalPublicKey)}</Address>
+        </ProfileInnerContainer>
       </InnerContainer>
       <InnerContainer>
         <Span>Lv.{level}</Span>

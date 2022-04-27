@@ -1,6 +1,7 @@
 import {
   React,
   useFetch,
+  useEffect,
   useSearchParams,
   useNavigate,
   LoadingBox,
@@ -21,11 +22,14 @@ const GetDataSignUp = () => {
   });
 
   const navigate = useNavigate();
-  if (access_token) {
-    setToken(access_token);
-    navigate("/contents"); // log in
-    return;
-  }
+
+  useEffect(() => {
+    if (access_token) {
+      setToken(access_token);
+      navigate("/contents"); // log in
+      return;
+    }
+  }, [access_token, navigate]);
 
   return <LoadingBox message="check your e-mail box" />;
 };
