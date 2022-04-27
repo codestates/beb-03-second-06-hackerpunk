@@ -43,21 +43,21 @@ const login = (req, res) => {
                             return;
                         }
                         else {
-                            const accessToken = generateAccessToken({'id': user.userId});
-                            const refreshToken = generateRefreshToken({'id': user.userId});
+                            const access_token = generateAccessToken({'id': user.userId});
+                            const refresh_token = generateRefreshToken({'id': user.userId});
 
-                            sendRefreshToken(res, refreshToken);
+                            sendRefreshToken(res, refresh_token);
                             //sendAccessToken(res, accessToken);
 
-                            res.status(200).json({accessToken,
+                            res.status(200).json({access_token,
                                                     message: 'ok',
-                                                    'id': user.userId,
-                                                    'email': user.userEmail,
-                                                    'internal_pub_key': user.servUserPubKey,
-                                                    'external_pub_key': user.userPubKey,
-                                                    'amount': 0, // need to be fixed
-                                                    'level': 99, // need to be fixed
-                                                    'user_article': [{'message1': 'test1'}, {'message2': 'test2'}]
+                                                    // 'id': user.userId,
+                                                    // 'email': user.userEmail,
+                                                    // 'internal_pub_key': user.servUserPubKey,
+                                                    // 'external_pub_key': user.userPubKey,
+                                                    // 'amount': 0, // need to be fixed
+                                                    // 'level': 99, // need to be fixed
+                                                    // 'user_article': [{'message1': 'test1'}, {'message2': 'test2'}]
                                                 });
 
 

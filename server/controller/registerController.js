@@ -38,7 +38,7 @@ const sendConfirmationEmail = (name, email, confirmationCode) => {
         html: `<h1>Email Confirmation</h1>
             <h2>Hello ${name}</h2>
             <p>Thank you for joining the HackerPunk. Please confirm your email by clicking the following link.</p>
-            <a href=https://localhost:3000/confirm/${confirmationCode}> Click here</a>
+            <a href=http://localhost:3000/confirm?token=${confirmationCode}> Click here</a>
             </div>`
     }).catch((err) => console.log(err));
     console.log('sent confirmation email');

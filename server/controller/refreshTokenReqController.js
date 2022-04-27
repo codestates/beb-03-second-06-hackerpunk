@@ -7,15 +7,15 @@ const {
 } = require('./tokenFunc');
 
 const refresh = (req, res) => {
-    const refreshToken = req.cookies.refreshToken;
+    const refresh_token = req.cookies.refresh_token;
 
-    if (!refreshToken){
+    if (!refresh_token){
         res.status(400).json({message: 'refresh token has not provided'});
         console.log('no refresh token');
         return;
     }
 
-    const refreshTokenData = checkRefeshToken(refreshToken);
+    const refreshTokenData = checkRefeshToken(refresh_token);
     if (!refreshTokenData) {
         res.status(400).json({message: 'invalid refresh token'});
         console.log('invalid refresh token');
@@ -32,8 +32,8 @@ const refresh = (req, res) => {
                     return;
                 }
                 else {
-                    const newAccessToken = generateAccessToken({'id': id});
-                    sendAccessToken(res, newAccessToken);
+                    const access_token = generateAccessToken({'id': id});
+                    sendAccessToken(res, access_token);
                     console.log('sent new accessToken');
                     return;
                 }

@@ -1,10 +1,11 @@
-const { write, read, list } = require('../controller/contentsController');
+const { create, read, update, del } = require('../controller/articleController');
 const express = require('express');
 const router = express.Router();
 
-router.post('/', write);
+router.post('/', create);
 router.get('/', read);
-router.get('/list/', list);
+router.put('/', update);
+router.delete('/', del);
 
 // 전체 글 수가 있다면, 한 페이지에 10개의 게시물이 보인다고 하면,
 // 글 번호 몇 번 부터 몇 번까지 보내주는 것과 특정 글쓴이가 작성한 게시물 검색 기능 -> 일단 기본적인 두가지 구현

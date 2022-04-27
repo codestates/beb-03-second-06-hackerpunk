@@ -12,6 +12,8 @@ const userSchema = new mongoose.Schema({
     userPassword: String,
     userEmail: String,
 
+    userDonated: Number, // calculate the level with donated tokens amount
+
     userPubKey: String,
 
     servUserPubKey: String,
@@ -19,6 +21,7 @@ const userSchema = new mongoose.Schema({
     servUserMnemonic: String,
 
     userArticles: [Number],
+    userComments: [String],
 });
 
 module.exports = mongoose.model('User', userSchema);
