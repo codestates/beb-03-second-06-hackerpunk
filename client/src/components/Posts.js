@@ -2,15 +2,21 @@ import { React, useState } from "../common";
 
 import Post from "./Post";
 
-function Posts({ contents = [] } = {}) {
-  const [selectedKey, setSelected] = useState(-1);
+const NONE_SELECTED = 0;
+
+function Posts({ contents = [], selectedCallback = (_isSelected) => {} } = {}) {
+  const [selectedKey, setSelected] = useState(NONE_SELECTED);
   return contents.map((data, idx) => {
+    const key = idx + 1;
     return (
       <Post
-        key={idx}
-        myKey={idx}
+        key={key}
+        myKey={key}
         selectedKey={selectedKey}
-        selectThisToggle={() => setSelected(selectedKey === idx ? -1 : idx)}
+        selectThisToggle={() => {
+          selectedCallback(selectedKey !== NONE_SELECTED);
+          setSelected(selectedKey === key ? NONE_SELECTED : key);
+        }}
         data={data}
       />
     );

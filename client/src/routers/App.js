@@ -19,7 +19,6 @@ import Contents from "../pages/Contents";
 import Confirm from "../pages/Confirm";
 
 const RootDiv = styled(Div)`
-  z-index: 0;
   position: absolute;
   left: 0;
   top: 0;
