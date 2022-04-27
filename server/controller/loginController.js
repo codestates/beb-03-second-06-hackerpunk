@@ -50,7 +50,7 @@ const login = (req, res) => {
                             //sendAccessToken(res, accessToken);
 
                             res.status(200).json({access_token,
-                                                    message: 'ok',
+                                                    message: 'succeed',
                                                     // 'id': user.userId,
                                                     // 'email': user.userEmail,
                                                     // 'internal_pub_key': user.servUserPubKey,

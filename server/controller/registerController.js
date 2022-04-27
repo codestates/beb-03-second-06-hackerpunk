@@ -104,7 +104,7 @@ const register = async (req, res) => {
                         //         return;
                         //     });
 
-                        res.status(200).json({'id': id, 'message':'please verify the account'});
+                        res.status(200).json({message:'please verify the account'});
                         console.log('Register processing, not verified');
 
                         const data = {'id': id, 'password': hash, 'email': email };

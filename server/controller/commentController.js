@@ -5,66 +5,65 @@ const users = require('../models/user');
 const article = require('../models/article');
 
 const create = async (req, res) => {
-    if (!req.query.article_id){
-        res.status(400).json({message: 'need article_id'});
-        console.log('Create Fail, need article_id');
+    const { article_id, comment_title, comment_content } = req.body;
+
+    if (!article_id || !comment_title || !comment_content) {
+        res.status(400).json({message: 'need article_id, comment_title or comment_content'});
+        console.log('Create Fail');
         return;
     }
-    else {
-        const { comment_title, comment_content } = req.body;
 
-        const accessTokenData = isAuthorized(req);
-        if (!accessTokenData){
-            res.status(400).json({message: 'invalid access token'});
-            return;
-        }
-        const { id } = accessTokenData;
-
-        articles
-            .findOne({"no": req.query.article_id})
-            .then((article) => {
-                if (article.deleted){
-                    res.status(400).json({message: 'deleted article'});
-                    console.log('deleted article');
-                    return;
-                }
-
-                const commentModel = new comments();
-                commentModel.no = article.comments.length + 1;
-                commentModel.articleId = article.no;
-                commentModel.author = id;
-                commentModel.title = comment_title;
-                commentModel.content = comment_content;
-                commentModel.deleted = 0;
-                
-                commentModel
-                    .save()
-                    .then( async (comment) => {
-                        const user = await users.findOne({"userId": id});
-                        let temp = String(article.no) + '.' + String(comment.no);
-                        user.userComments.push(temp);
-                        await user.save();
-
-                        const targetArticle = await articles.findOne({"no": comment.articleId});
-                        targetArticle.comments.push(comment);
-                        await targetArticle.save();
-
-                        res.status(200).json({'no': temp, message:'create success'});
-                        console.log('Create comment success');
-                        return;
-                    })
-                    .catch((err) => {
-                        res.status(500).json({message: err});
-                        console.log('[ERROR save comment] \n', err);
-                        return;
-                    });
-            })
-            .catch((err) => {
-                res.status(500).json({message: err});
-                console.log('[ERROR find article in creating comment] \n', err);
-                return;
-            });
+    const accessTokenData = isAuthorized(req);
+    if (!accessTokenData){
+        res.status(400).json({message: 'invalid access token'});
+        return;
     }
+    const { id } = accessTokenData;
+
+    articles
+        .findOne({"no": req.query.article_id})
+        .then((article) => {
+            if (article.deleted){
+                res.status(400).json({message: 'deleted article'});
+                console.log('deleted article');
+                return;
+            }
+
+            const commentModel = new comments();
+            commentModel.no = article.comments.length + 1;
+            commentModel.articleId = article.no;
+            commentModel.author = id;
+            commentModel.title = comment_title;
+            commentModel.content = comment_content;
+            commentModel.deleted = 0;
+            
+            commentModel
+                .save()
+                .then( async (comment) => {
+                    const user = await users.findOne({"userId": id});
+                    let temp = String(article.no) + '.' + String(comment.no);
+                    user.userComments.push(temp);
+                    await user.save();
+
+                    const targetArticle = await articles.findOne({"no": comment.articleId});
+                    targetArticle.comments.push(comment);
+                    await targetArticle.save();
+
+                    res.status(200).json({'article_id': article.no, 'comment_id': comment.no, message:'succeed'});
+                    console.log('Create comment success');
+                    return;
+                })
+                .catch((err) => {
+                    res.status(500).json({message: err});
+                    console.log('[ERROR save comment] \n', err);
+                    return;
+                });
+        })
+        .catch((err) => {
+            res.status(500).json({message: err});
+            console.log('[ERROR find article in creating comment] \n', err);
+            return;
+        });
 }
 
 const read = async (req, res) => {
@@ -157,7 +156,7 @@ const update = async (req, res) => {
             }
             await article.save();
 
-            res.status(200).json({message: 'update success'});
+            res.status(200).json({message: 'succeed'});
             console.log('update success');
             return;
         })
@@ -221,7 +220,7 @@ const del = async (req, res) => {
             });
             await user.save();
 
-            res.status(200).json({message: 'delete success'});
+            res.status(200).json({message: 'succeed'});
             console.log('delete success');
             return;
         })

@@ -20,11 +20,11 @@ module.exports = {
     },
 
     sendAccessToken: (res, access_token) => {
-        res.json({ access_token, message: "ok" });
+        res.json({ access_token, message: "succeed" });
     },
 
     resendAccessToken: (res, access_token, data) => {
-        res.json({ access_token, message: "ok" });
+        res.json({ access_token, message: "succeed" });
     },
 
     isAuthorized: (req) => {

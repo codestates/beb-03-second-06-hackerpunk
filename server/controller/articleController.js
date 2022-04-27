@@ -37,7 +37,7 @@ const create = async (req, res) => {
             user.userArticles.push(article.no);
             await user.save();
 
-            res.status(200).json({'no': article.no, message:'create success'}); // 응답 보낼 때는 message를 통해서 액션이 어떻게 처리되었는지 말해주는 걸로 전부 바꾸기
+            res.status(200).json({'article_id': article.no, message:'succeed'}); // 응답 보낼 때는 message를 통해서 액션이 어떻게 처리되었는지 말해주는 걸로 전부 바꾸기
             console.log('Create success');
             return;
         })
@@ -138,7 +138,7 @@ const read = async (req, res) => {
                 return;
             });
     }
-    else if (req.query.start_num) {
+    else if (req.query.amount) {
         // 이번만 잠시, 유저 정보와 특정 위치부터 보내기
 
         let box = [];
@@ -187,13 +187,19 @@ const read = async (req, res) => {
                     'user_article': userBox
         })
         //
-
+        let query;
+        if (req.query.num){
+            query = {'deleted': 0, 'no': {'$lte': req.query.num}}
+        }
+        else {
+            query = {'deleted': 0}
+        }
+        
         articles
-            .find({'deleted':0, 'no':{'$gte': req.query.start_num}})
-            .limit(4)
+            .find(query)
+            .sort({"no": -1})
+            .limit(req.query.amount)
             .then( async (results) => {
-                
-
                 let idx = 1;
                 for (const elem of results){
                     let temp = {};
@@ -216,6 +222,11 @@ const read = async (req, res) => {
                 console.log('[ERROR read] \n', err);
                 return;
             });
+    }
+    else {
+        res.status(400).json({message: 'wrong request'});
+        console.log('[error] reach the end');
+        return;
     }
 
 }
@@ -246,7 +257,7 @@ const update = async (req, res) => {
     article.content = article_content;
     await article.save();
 
-    res.status(200).json({'no': article.no, message:'update success'});
+    res.status(200).json({message:'succeed'});
     console.log('Update Success');
     return;
 }
@@ -283,7 +294,7 @@ const del = async (req, res) => {
     });
     await user.save();
 
-    res.status(200).json({'no': article.no, message:'delete success'});
+    res.status(200).json({message:'succeed'});
     console.log('Delete Success');
     return;
 }
