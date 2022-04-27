@@ -1,5 +1,5 @@
 function toSummary(str) {
-  return str.slice(0, 6) + "..." + str.slice(str.length - 4);
+  return str.slice(0, 8) + "..." + str.slice(str.length - 6);
 }
 
 export default toSummary;

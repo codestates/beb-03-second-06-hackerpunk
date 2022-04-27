@@ -37,11 +37,13 @@ const InnerContainer = styled(Div)`
   height: 80%;
 `;
 
-const ProfileInnerContainer = styled.div`
+const ProfileInnerContainer = styled(Div)`
   height: 75%;
-  flex-direction: row;
-  align-items: center;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: flex-start;
   word-break: break-all;
+  margin: 0.2rem;
 `;
 
 const StyledLogo = styled(Logo)`
@@ -57,32 +59,24 @@ const Span = styled.label`
   margin-right: 10px;
 `;
 
-const Id = styled.p`
-  font-size: 0.77rem;
+const Id = styled(Div)`
+  justify-content: flex-end;
+  font-size: 0.8rem;
+  margin: 0.2rem 0;
 `;
 
-const Address = styled(motion.p)`
+const Address = styled(Div)`
+  justify-content: flex-end;
   font-size: 0.77rem;
+  padding: 0.5rem 0;
 `;
 
 const Token = styled.p`
-  font-size: 0.8rem;
+  font-size: 0.77rem;
   color: white;
 `;
 
 const ConnectWallet = styled(motion.div)`
-  position: absolute;
-  left: 25px;
-  top: -25px;
-  font-size: 0.75rem;
-  padding: 0.1rem;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 86%;
-`;
-
-const CopyAccount = styled(motion.div)`
   position: absolute;
   left: 25px;
   top: -25px;
@@ -111,6 +105,7 @@ const Container__Animate_variants = {
   exit: {
     opacity: 1,
     position: "absolute",
+    borderRadius: "0.15rem",
     x: "-4vw",
     y: "0vh",
     height: "2.2%",
@@ -133,8 +128,13 @@ const ConnectWallet__Animate = {
 const CopyAccount__Animate = {
   whileHover: {
     scale: 1,
-    color: "rgba(150, 20, 20, 0.8)",
-    textDecoration: "underline bisque dashed 1px",
+    color: "rgba(200, 240, 230, 0.8)",
+    cursor: "pointer",
+  },
+  whileTap: {
+    scale: 0.95,
+    color: "rgb(110, 180, 180, 0.6)",
+    textDecoration: "none",
   },
 };
 // -------------------------------
@@ -152,7 +152,7 @@ function ConectWalletHelper() {
   return (
     <Helper
       initial={{ x: "-14rem", y: "-14rem" }}
-      animate={{ x: "-11rem", y: "-5.2rem" }}
+      animate={{ x: "-11rem", y: "-6rem" }}
       exit={{ x: "-14rem", y: "-14rem" }}
     >
       If you want to withdraw your hp tokens, Please connect to your own wallet.
@@ -165,7 +165,6 @@ function Profile() {
     (state) => state.user
   );
   const { selected } = useSelector((state) => state.posts);
-  console.log(selected);
 
   const connectWallet = async () => {
     await hp.connectToExternalWallet(internalPublicKey);
@@ -197,14 +196,7 @@ function Profile() {
               <Address
                 {...CopyAccount__Animate}
                 onClick={() => {
-                  navigator.clipboard.writeText(internalPublicKey).then(
-                    () => {
-                      alert("Copyed!");
-                    },
-                    () => {
-                      alert("Copy failed");
-                    }
-                  );
+                  navigator.clipboard.writeText(internalPublicKey);
                 }}
               >
                 {toSummary(internalPublicKey)}
@@ -217,7 +209,13 @@ function Profile() {
       )}
       <InnerContainer>
         <Span>Lv.{level}</Span>
-        <img src={TokenIcon} />
+        <img
+          style={{
+            width: "0.86rem",
+          }}
+          src={TokenIcon}
+          alt="hpicon"
+        />
         <Token>{amount}</Token>
         <Span>hp</Span>
       </InnerContainer>
