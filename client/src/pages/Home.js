@@ -1,10 +1,28 @@
-import { React, Routes, Route, styled, Div } from "../common";
+import {
+  React,
+  Routes,
+  Route,
+  styled,
+  Div,
+  getToken,
+  useEffect,
+  useNavigate,
+} from "../common";
 import LoginBox from "../components/LoginBox";
 import SignBox from "../components/SignBox";
 
 const Container = styled(Div)``;
 
 function Home() {
+  const token = getToken();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (token) {
+      navigate("/contents");
+    }
+  }, [token, navigate]);
+
   return (
     <Container>
       <Routes>

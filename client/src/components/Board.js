@@ -19,7 +19,7 @@ const Container = styled(Div)`
   flex-direction: column;
   justify-content: flex-start;
   overflow-y: scroll;
-  overflow-x: hidden;
+  overflow-x: inherit;
 
   padding: 1rem;
 
@@ -35,7 +35,6 @@ const Container = styled(Div)`
 function Board() {
   const navigate = useNavigate();
   const { contents } = useSelector((state) => state.posts);
-
   return (
     <Container
       initial={{ opacity: 0, height: 0 }}
