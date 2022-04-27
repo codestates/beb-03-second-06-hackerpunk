@@ -9,7 +9,7 @@ import {
   toSummary,
 } from "../common";
 import hp from "../api/hp";
-import TokenImage from "../assets/images/diamond.png";
+import TokenIcon from "../assets/images/hptoken.png";
 
 const Container = styled(Div)`
   z-index: 999;
@@ -34,7 +34,7 @@ const InnerContainer = styled(Div)`
 
 const ProfileInnerContainer = styled.div`
   height: 75%;
-  flex-direction: column;
+  flex-direction: row;
   align-items: center;
   word-break: break-all;
 `;
@@ -147,7 +147,7 @@ function Profile() {
         <StyledLogo />
         <ProfileInnerContainer>
           <Id>{id}</Id>
-          <img src="TokenImage" />
+          <img src={TokenIcon} />
           <Address
             onClick={() => {
               navigator.clipboard.writeText(internalPublicKey).then(
@@ -158,8 +158,8 @@ function Profile() {
                   alert("Copy failed");
                 }
               );
-              // alert("주소가 복사되었습니다.");
             }}
+            onKeyUp={() => setAccountWallet}
           >
             {toSummary(internalPublicKey)}
           </Address>
