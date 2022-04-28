@@ -104,23 +104,30 @@ class ExternalHP {
     }
   }
 
+  /**
+   * @param provider url
+   */
   async getSignature(
     provider: string,
     internalAddress: string,
     privateKey: string
-  ): Promise<object | Error> {
+  ): Promise<any> {
     try {
       const ok = await this.registerAddress(internalAddress);
+
       let sign, hashedMessage;
-      if (ok === true) {
+      if (ok) {
         const web3 = new Web3(new Web3.providers.HttpProvider(provider));
         hashedMessage = web3.utils.sha3(internalAddress);
         if (hashedMessage !== null) {
           sign = web3.eth.accounts.sign(hashedMessage, privateKey);
+          let v = parseInt(sign.v, 16);
+          let r = sign.r;
+          let s = sign.s;
+
+          return { v, r, s, hashedMessage };
         }
       }
-
-      return { sign, hashedMessage };
     } catch (err: any) {
       return new Error(err);
     }

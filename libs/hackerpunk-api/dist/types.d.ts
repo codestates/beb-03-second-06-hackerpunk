@@ -114,7 +114,10 @@ export class ExternalHP {
     isAuthenticated(internalAddress: string): Promise<boolean | Error>;
     checkExternalAuthenticated(internalAddress: string, externalAddress: string): Promise<boolean | Error>;
     getCredentialType(internalAddress: string): Promise<number | Error>;
-    getSignature(provider: string, internalAddress: string, privateKey: string): Promise<object | Error>;
+    /**
+     * @param provider url
+     */
+    getSignature(provider: string, internalAddress: string, privateKey: string): Promise<any>;
     singupEventListener(callback: ethers.providers.Listener): Promise<void>;
 }
 export class HPA {

@@ -86,8 +86,9 @@ class HP {
     externalAddress: string,
     amount: string | BigInt
   ) {
-    await this.changeContractSigner(serverAddressSigner);
-    await this.contract.transfer(externalAddress, amount);
+    await this.contract
+      .connect(serverAddressSigner)
+      .transfer(externalAddress, amount);
   }
 }
 
