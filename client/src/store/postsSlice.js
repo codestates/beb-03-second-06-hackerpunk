@@ -1,8 +1,10 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
-  selected: 0,
+  selected: 0, // === -1 writing, === 0 no selected(all visible), > 0 selected
   contents: [],
+  writingTitle: "",
+  writingContent: "",
 };
 
 export const postsSlice = createSlice({
@@ -19,9 +21,14 @@ export const postsSlice = createSlice({
 
       state.selected = selected;
     },
+    setWriting: (state, action) => {
+      const { title, content } = action.payload;
+      if (content !== undefined) state.writingContent = content;
+      if (title !== undefined) state.writingTitle = title;
+    },
   },
 });
 
-export const { setPosts, setSelected } = postsSlice.actions;
+export const { setPosts, setSelected, setWriting } = postsSlice.actions;
 
 export default postsSlice.reducer;

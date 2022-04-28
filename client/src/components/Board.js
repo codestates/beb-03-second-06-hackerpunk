@@ -52,13 +52,16 @@ function Board() {
         exit={{ opacity: 0, height: 0 }}
       >
         {/* selected === -1 => Writing Box */}
-        {selected === -1 && <Post />}
-        <Posts
-          contents={contents}
-          selectedCallback={(isSelected) => {
-            dispatch(setSelected(isSelected));
-          }}
-        />
+        {selected === -1 ? (
+          <Post />
+        ) : (
+          <Posts
+            contents={contents}
+            selectedCallback={(selected) => {
+              dispatch(setSelected(selected));
+            }}
+          />
+        )}
       </Container>
     </AsyncBoundary>
   );
