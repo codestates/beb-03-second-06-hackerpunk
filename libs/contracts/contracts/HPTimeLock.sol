@@ -40,6 +40,10 @@ contract HPTimeLock is Ownable {
         return _token;
     }
 
+    function setLockTime(uint256 locktime_) public onlyOwner {
+        lockTime = locktime_;
+    }
+
     function checkDonationStatus(uint256 _articleId) public view returns (DonationStatus) {
         return articleToDonationInfo[_articleId].donationStatus;
     }
@@ -52,25 +56,33 @@ contract HPTimeLock is Ownable {
         return articleToLockInfo[articleId].totalBalance;
     }
 
-    function donate(uint256 articleId, address donator, address writer, uint256 amount) public onlyOwner {
+    function writeArticle(uint256 articleId, address writer) public onlyOwner {
         DonationStatus ds = checkDonationStatus(articleId);
-        require(ds == DonationStatus.DonationStatus_NotStarted || ds == DonationStatus.DonationStatus_Proceeding, "Invalid status");
+        require(ds == DonationStatus.DonationStatus_NotStarted, "Donate already Proceeding");
+
+        LockInfo storage lockInfo = articleToLockInfo[articleId];
+        DonationInfo storage donationInfo = articleToDonationInfo[articleId];
+
+        donationInfo.donationStatus = DonationStatus.DonationStatus_Proceeding;
+        donationInfo.writer = writer;
+        lockInfo.writer = writer;
+        lockInfo.startTime = block.timestamp;
+    }
+
+    function donate(uint256 articleId, address donator, uint256 amount) public onlyOwner {
+        DonationStatus ds = checkDonationStatus(articleId);
+        require(ds == DonationStatus.DonationStatus_Proceeding, "Donation not proceeding");
 
         uint256 balance = token().balanceOf(donator);
         require(balance >= amount, "Not enough balance");
         LockInfo storage lockInfo = articleToLockInfo[articleId];
-        DonationInfo storage donationInfo = articleToDonationInfo[articleId];
-        if (checkDonationStatus(articleId) == DonationStatus.DonationStatus_NotStarted) {
-            donationInfo.donationStatus = DonationStatus.DonationStatus_Proceeding;
-            donationInfo.writer = writer;
-            lockInfo.writer = writer;
-            lockInfo.startTime = block.timestamp;
-        }
+        uint256 fee = (amount / 100) * 3;
 
-        token().safeTransferFrom(donator, address(this), amount);
-        lockInfo.totalBalance += amount;
+        token().safeTransferFrom(donator, msg.sender, fee);
+        token().safeTransferFrom(donator, address(this), amount - fee);
+        lockInfo.totalBalance += amount - fee;
         lockInfo.donators.push(donator);
-        lockInfo.donations[donator] = amount;
+        lockInfo.donations[donator] = amount - fee;
     }
 
     function revokeAll(uint256 articleId, address writer) public onlyOwner {

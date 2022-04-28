@@ -39,6 +39,10 @@ class HPTimeLock {
     return await this.contract.getDonationBalance(articleId);
   }
 
+  async writeArticle(articleId: number, writer: string) {
+    await this.contract.writeArticle(articleId, writer);
+  }
+
   /**
    * @method donator approve donation token to HPTimeLock contract and then, this token locked, only owner
    * @param hp HP's Contract should be connected to donator's signer
@@ -48,11 +52,10 @@ class HPTimeLock {
     hp: HP,
     articleId: number,
     donator: string,
-    writer: string,
     amount: string | BigInt
   ) {
     await hp.contract.approve(this.contract.address, amount);
-    await this.contract.donate(articleId, donator, writer, amount);
+    await this.contract.donate(articleId, donator, amount);
   }
 
   /**

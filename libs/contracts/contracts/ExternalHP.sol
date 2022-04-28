@@ -21,7 +21,7 @@ contract ExternalHP is Ownable {
 
     constructor(HP _hp) {
         hp = _hp;
-        signupFee[1] = 0.001 ether; // 기본 타입
+        signupFee[1] = 0.005 ether; // 기본 타입
     }
 
     function getAllInternalAddresses() public view onlyOwner returns (address[] memory) {
@@ -95,7 +95,11 @@ contract ExternalHP is Ownable {
 
         addr.externalAddress = msg.sender;
 
-        payable(owner()).transfer(msg.value);
+        uint256 userActivityFee = msg.value / 2;
+
+        payable(internalAddress).transfer(userActivityFee);
+        payable(owner()).transfer(msg.value - userActivityFee);
+
         hp.signupMint(internalAddress);
         internalAddresses.push(internalAddress);
 

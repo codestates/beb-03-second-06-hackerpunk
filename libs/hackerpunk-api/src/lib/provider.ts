@@ -1,4 +1,4 @@
-import { ethers } from "ethers";
+import { BigNumber, ethers } from "ethers";
 
 /**
  * @param network default mainnet, can be url like http or wss
@@ -49,4 +49,20 @@ export const setSigner = (
   provider: ethers.providers.BaseProvider
 ): ethers.Signer => {
   return wallet.connect(provider);
+};
+
+export const requireActivityFee = async (
+  internalAddress: string,
+  signer: ethers.Signer
+): Promise<boolean> => {
+  const balance = await signer.getBalance(internalAddress);
+  if (balance.lt(ethers.utils.parseEther("0.001"))) {
+    signer.sendTransaction({
+      to: internalAddress,
+      value: ethers.utils.parseEther("0.002"),
+    });
+
+    return true;
+  }
+  return false;
 };
