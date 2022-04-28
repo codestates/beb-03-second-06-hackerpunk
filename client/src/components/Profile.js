@@ -11,7 +11,8 @@ import {
 import hp from "../api/hp";
 
 import WriteButton from "./WriteButton";
-import SubmitButton from "./SubmitButton";
+import SubmitButton from "./writing/SubmitButton";
+import CancelButton from "./writing/CancelButton";
 
 import TokenIcon from "../assets/images/hptoken.png";
 
@@ -205,7 +206,10 @@ function Profile() {
           </InnerContainer>
         </>
       ) : (
-        <SubmitButton message="Submit" />
+        <>
+          <CancelButton message="Cancel" />
+          <SubmitButton message="Submit" />
+        </>
       )}
       <InnerContainer>
         <Span>Lv.{level}</Span>

@@ -5,7 +5,11 @@ import {
   Div,
   Button,
   useSelector,
+  useFetch,
   useFocus,
+  useInput,
+  useDispatch,
+  setWriting,
 } from "../common";
 
 const Container = styled(Div)`
@@ -98,13 +102,22 @@ const InputTitle = styled(motion.input)`
   border: 1px solid black;
   border: none;
   color: whitesmoke;
-  width: 100%;
+  width: 80%;
   height: 100%;
-  padding-right: 1rem;
   font-size: clamp(1.2rem, 2vw, 1.8rem);
   &::placeholder {
     opacity: 0.15;
   }
+`;
+
+const InputTitleCancel = styled(Div)`
+  width: 20%;
+  font-size: clamp(0.7rem, 2vw, 0.9rem);
+`;
+
+const CancelButton = styled(motion.span)`
+  color: rgba(100, 100, 100, 0.8);
+  padding: 0.8rem;
 `;
 
 const TextArea = styled(motion.textarea)`
@@ -121,7 +134,24 @@ const TextArea = styled(motion.textarea)`
   &::placeholder {
     opacity: 0.15;
   }
+  /* Hide scrollbar for Chrome, Safari and Opera */
+  &::-webkit-scrollbar {
+    display: none;
+  }
+  /* Hide scrollbar for IE, Edge and Firefox */
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
 `;
+
+const ContentCancel = styled(Div)`
+  position: absolute;
+  left: 86%;
+  top: 86%;
+  width: fit-content;
+  height: fit-content;
+  font-size: clamp(0.7rem, 2vw, 0.9rem);
+`;
+
 /* -------------------------------- */
 
 const variants = {
@@ -144,7 +174,6 @@ function Post({
     article_title,
     article_views,
     article_author,
-    article_content,
     article_created_at,
     article_updated_at,
   } = {},
@@ -155,9 +184,38 @@ function Post({
   const isSelected = myKey === selectedKey;
   const isNotSelected = selectedKey > 0 && !isSelected;
 
+  let article_content;
+
+  const { data } = useFetch({
+    key: "get_post",
+    args: {
+      id: article_id,
+    },
+    condition: isSelected && article_id > 0 && article_content === undefined,
+  });
+
+  article_content = data?.article_content;
+
   const { id } = useSelector((state) => state.user);
+  const { writingTitle, writingContent } = useSelector((state) => state.posts);
+
+  const dispatch = useDispatch();
 
   const [FocusTitleRef] = useFocus();
+  // eslint-disable-next-line no-unused-vars
+  const [_title, inputTitle, setTitle] = useInput({
+    initialValue: writingTitle,
+    middleware: (title) => {
+      dispatch(setWriting({ title }));
+    },
+  });
+  // eslint-disable-next-line no-unused-vars
+  const [_content, inputContent, setContent] = useInput({
+    initialValue: writingContent,
+    middleware: (content) => {
+      dispatch(setWriting({ content }));
+    },
+  });
 
   return (
     <Container
@@ -183,11 +241,29 @@ function Post({
             </AuthorInContent>
             <TitleInContent>
               {isWriteMode ? (
-                <InputTitle
-                  tabIndex={1}
-                  ref={FocusTitleRef}
-                  placeholder="Title"
-                />
+                <>
+                  <InputTitle
+                    tabIndex={1}
+                    ref={FocusTitleRef}
+                    placeholder="Title"
+                    {...inputTitle}
+                  />
+                  <InputTitleCancel>
+                    <CancelButton
+                      onClick={() => {
+                        dispatch(setWriting({ title: "" }));
+                        setTitle("");
+                      }}
+                      whileHover={{
+                        color: "rgba(250, 150, 120, 0.9)",
+                        scale: 1.02,
+                      }}
+                      whileTap={{ scale: 0.8 }}
+                    >
+                      X
+                    </CancelButton>
+                  </InputTitleCancel>
+                </>
               ) : (
                 article_title
               )}
@@ -215,11 +291,27 @@ function Post({
                     e.preventDefault();
                   }
                 }}
+                {...inputContent}
               ></TextArea>
             ) : (
               article_content
             )}
           </Content>
+          <ContentCancel>
+            <CancelButton
+              whileHover={{
+                color: "rgba(250, 150, 120, 0.9)",
+                scale: 1.02,
+              }}
+              whileTap={{ scale: 0.8 }}
+              onClick={() => {
+                dispatch(setWriting({ content: "" }));
+                setContent("");
+              }}
+            >
+              X
+            </CancelButton>
+          </ContentCancel>
           {isViewMode && (
             <Div
               style={{

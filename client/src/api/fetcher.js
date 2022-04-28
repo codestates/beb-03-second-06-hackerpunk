@@ -3,7 +3,7 @@ import { getToken, getTokenHeader } from "../common";
 
 import { url } from "./constants";
 
-const resolvers = ({ options = {}, state: { data } = {} } = {}) => {
+const resolvers = ({ options = {}, state: { id, data } = {} } = {}) => {
   return {
     login: {
       url: url("login"),
@@ -32,6 +32,16 @@ const resolvers = ({ options = {}, state: { data } = {} } = {}) => {
           user,
           posts,
         };
+      },
+      ...options,
+    },
+    get_post: {
+      url: url(`article?article_id=${id}`),
+      method: "get",
+      headers: getTokenHeader(),
+      nextMut(posts) {
+        console.log(posts);
+        return posts;
       },
       ...options,
     },
