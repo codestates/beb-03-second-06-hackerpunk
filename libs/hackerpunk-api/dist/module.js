@@ -88,8 +88,7 @@ class $6472a0cc883e062f$export$2f4fd17aff4e7fc {
         return await this.contract.balanceOf(user);
     }
     async withdrawToExternalAddress(serverAddressSigner, externalAddress, amount) {
-        await this.changeContractSigner(serverAddressSigner);
-        await this.contract.transfer(externalAddress, amount);
+        await this.contract.connect(serverAddressSigner).transfer(externalAddress, amount);
     }
 }
 
@@ -230,19 +229,28 @@ class $97915d9b045fee21$export$7fb3e24a412a5622 {
             return new Error(err);
         }
     }
-    async getSignature(provider, internalAddress, privateKey) {
+    /**
+   * @param provider url
+   */ async getSignature(provider, internalAddress, privateKey) {
         try {
             const ok = await this.registerAddress(internalAddress);
             let sign, hashedMessage;
-            if (ok === true) {
+            if (ok) {
                 const web3 = new $hgUW1$web3(new $hgUW1$web3.providers.HttpProvider(provider));
                 hashedMessage = web3.utils.sha3(internalAddress);
-                if (hashedMessage !== null) sign = web3.eth.accounts.sign(hashedMessage, privateKey);
+                if (hashedMessage !== null) {
+                    sign = web3.eth.accounts.sign(hashedMessage, privateKey);
+                    let v = parseInt(sign.v, 16);
+                    let r = sign.r;
+                    let s = sign.s;
+                    return {
+                        v: v,
+                        r: r,
+                        s: s,
+                        hashedMessage: hashedMessage
+                    };
+                }
             }
-            return {
-                sign: sign,
-                hashedMessage: hashedMessage
-            };
         } catch (err) {
             return new Error(err);
         }
