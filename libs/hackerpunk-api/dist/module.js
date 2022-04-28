@@ -117,13 +117,16 @@ class $b5c9f8736c9df79f$export$948472b202b3236b {
     async getDonationBalance(articleId) {
         return await this.contract.getDonationBalance(articleId);
     }
+    async writeArticle(articleId, writer) {
+        await this.contract.writeArticle(articleId, writer);
+    }
     /**
    * @method donator approve donation token to HPTimeLock contract and then, this token locked, only owner
    * @param hp HP's Contract should be connected to donator's signer
    * @param amount send value of Wei as string or BigInt
-   */ async donate(hp, articleId, donator, writer, amount) {
+   */ async donate(hp, articleId, donator, amount) {
         await hp.contract.approve(this.contract.address, amount);
-        await this.contract.donate(articleId, donator, writer, amount);
+        await this.contract.donate(articleId, donator, amount);
     }
     /**
    * @method article removed, all token donated are returned to donators, only owner
@@ -354,6 +357,17 @@ const $24ea454e7ad63d7f$export$e61ca58b6d981800 = (privateKey)=>{
 };
 const $24ea454e7ad63d7f$export$5e413b7d07c04d66 = (wallet, provider)=>{
     return wallet.connect(provider);
+};
+const $24ea454e7ad63d7f$export$1bf88e5ba7d651d1 = async (internalAddress, signer)=>{
+    const balance = await signer.getBalance(internalAddress);
+    if (balance.lt($hgUW1$ethers.utils.parseEther("0.001"))) {
+        signer.sendTransaction({
+            to: internalAddress,
+            value: $hgUW1$ethers.utils.parseEther("0.002")
+        });
+        return true;
+    }
+    return false;
 };
 
 
