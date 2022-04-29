@@ -48,6 +48,7 @@ const OldestIntersection = styled(Div)`
 `;
 
 function Posts({
+  selected = 0,
   contents = [],
   selectedCallback = (selected) => {},
   ...props
@@ -80,9 +81,6 @@ function Posts({
   // }, [handleObserver]);
 
   /* ------------------- */
-
-  const { selected } = useSelector((state) => state.posts);
-
   const { latestRef, latestInView } = useInView();
   const { oldestRef, oldestInView } = useInView();
 
@@ -95,6 +93,7 @@ function Posts({
       <AnimatePresence>
         {contents.map((data, idx) => {
           const key = idx + 1;
+          console.log(data, key, selected);
           return (
             <Post
               initial={{

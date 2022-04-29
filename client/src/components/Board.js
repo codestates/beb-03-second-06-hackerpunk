@@ -46,15 +46,7 @@ function Board() {
   const { selected, contents } = useSelector((state) => state.posts);
 
   const containerRef = useRef(null);
-
-  const { id } = useParams();
-
-  useEffect(() => {
-    if (id) {
-      dispatch(setSelected(1));
-    }
-  }, [id, dispatch]);
-
+  console.log(selected);
   return (
     <AsyncBoundary
       fallback={
@@ -70,9 +62,7 @@ function Board() {
     >
       <Container
         ref={containerRef}
-        initial={{ opacity: 0, height: 0 }}
         animate={{ opacity: 1, height: "70%" }}
-        exit={{ opacity: 0, height: 0 }}
         onScroll={({ target }) => {
           if (selected === 0)
             dispatch(
@@ -88,6 +78,7 @@ function Board() {
         ) : (
           <Posts
             // scrollToOrigin={scrollToOrigin}
+            selected={selected}
             contents={contents}
             selectedCallback={(selected) => {
               dispatch(setSelected(selected));

@@ -223,7 +223,7 @@ function Post({
       dispatch(setWriting({ content }));
     },
   });
-
+  console.log(isSelected);
   return (
     <Container
       onClick={selectThisToggle}

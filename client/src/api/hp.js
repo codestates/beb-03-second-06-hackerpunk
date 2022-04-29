@@ -54,12 +54,14 @@ class HackerPunkAPI {
       const { data: { sign: { hashedMessage, v, r, s } = {} } = {} } = result;
 
       const fee = await this.methods.signupFee(EXTERNAL_WALLET_TIER).call();
-      await this.methods
+      const tx = await this.methods
         .authenticate(internalWalletAddr, hashedMessage, v, r, s)
         .send({
           from: this.account,
           value: fee,
         });
+
+      return tx !== undefined; // is success
     }
   }
 }

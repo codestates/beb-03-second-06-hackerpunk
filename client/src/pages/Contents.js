@@ -22,11 +22,17 @@ function Contents() {
       id,
     },
   });
+
   useEffect(() => {
     if (user) dispatch(setUser(user));
+  }, [dispatch, user]);
+  useEffect(() => {
     if (posts) dispatch(setPosts(posts));
+  }, [dispatch, posts]);
+  useEffect(() => {
     if (id) dispatch(setSelected(1));
-  }, [dispatch, id, posts, user]);
+  }, [dispatch, id]);
+
   return (
     <>
       {user && <Profile />}

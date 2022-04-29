@@ -11,6 +11,7 @@ import {
   setSelected,
   setWriting,
   deletePost,
+  setUser,
   useSWRConfig,
   setCurrentContentBody,
 } from "../common";
@@ -169,7 +170,7 @@ function ConectWalletHelper() {
 
 function Profile() {
   const dispatch = useDispatch();
-  const { id, internalPublicKey, level, amount } = useSelector(
+  const { id, internal_pub_key, external_pub_key, level, amount } = useSelector(
     (state) => state.user
   );
   const {
@@ -191,7 +192,10 @@ function Profile() {
   }
 
   const connectWallet = async () => {
-    await hp.connectToExternalWallet(internalPublicKey);
+    const isSuccess = await hp.connectToExternalWallet(internal_pub_key);
+    if (isSuccess) {
+      dispatch(setUser({ external_pub_key: hp.account }));
+    }
   };
 
   const [connectWalletHelper, setConnectWalletHelper] = useState("");
@@ -200,7 +204,8 @@ function Profile() {
     isEditMode = selected === -2,
     isMainMode = selected === 0,
     isViewMode = selected > 0 && current_author !== id,
-    isMyViewMode = selected > 0 && current_author === id;
+    isMyViewMode = selected > 0 && current_author === id,
+    hasConnectedWallet = external_pub_key.length > 3;
 
   const { cache } = useSWRConfig();
 
@@ -214,26 +219,40 @@ function Profile() {
       {isMainMode && (
         <>
           <WriteButton message="Write" />
-          <ConnectWallet
-            {...ConnectWallet__Animate}
-            onClick={connectWallet}
-            onMouseEnter={() => setConnectWalletHelper(ConectWalletHelper)}
-            onMouseLeave={() => setConnectWalletHelper("")}
-          >
-            ❕ Connect To External Wallet
-          </ConnectWallet>
-          {connectWalletHelper}
+          {hasConnectedWallet === false && (
+            <>
+              <ConnectWallet
+                {...ConnectWallet__Animate}
+                onClick={connectWallet}
+                onMouseEnter={() => setConnectWalletHelper(ConectWalletHelper)}
+                onMouseLeave={() => setConnectWalletHelper("")}
+              >
+                ❕ Connect To External Wallet
+              </ConnectWallet>
+              {connectWalletHelper}
+            </>
+          )}
           <InnerContainer>
             <StyledLogo />
             <ProfileInnerContainer>
-              <Id>{id}</Id>
+              {hasConnectedWallet ? (
+                <Id
+                  style={{
+                    color: "#f4ba3d",
+                  }}
+                >
+                  🦀​ {id}
+                </Id>
+              ) : (
+                <Id>{id}</Id>
+              )}
               <Address
                 {...CopyAccount__Animate}
                 onClick={() => {
-                  navigator.clipboard.writeText(internalPublicKey);
+                  navigator.clipboard.writeText(internal_pub_key);
                 }}
               >
-                {toSummary(internalPublicKey)}
+                {toSummary(internal_pub_key)}
               </Address>
             </ProfileInnerContainer>
           </InnerContainer>
