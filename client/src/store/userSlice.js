@@ -18,6 +18,7 @@ export const userSlice = createSlice({
       const { access_token, ...userData } = action.payload;
 
       setToken(access_token);
+      console.log(userData, "qwdqwdqwdw");
       Object.assign(state, userData);
     },
   },

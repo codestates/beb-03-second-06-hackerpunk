@@ -29,6 +29,7 @@ import {
   useSpring,
   useTransform,
   usePresence,
+  useAnimation,
 } from "framer-motion";
 import styled from "styled-components";
 import useSWR, { SWRConfig, useSWRConfig } from "swr";
@@ -118,6 +119,7 @@ export {
   useViewportScroll,
   useSpring,
   useTransform,
+  useAnimation,
   AnimatePresence,
   styled,
   SWRConfig,

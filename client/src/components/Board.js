@@ -10,8 +10,6 @@ import {
   useRef,
   addValues,
   Spinner,
-  useParams,
-  useEffect,
 } from "../common";
 
 import Post from "./Post";

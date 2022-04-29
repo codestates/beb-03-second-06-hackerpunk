@@ -7,6 +7,7 @@ import {
   useState,
   useDispatch,
   useSelector,
+  useAnimation,
   toSummary,
   setSelected,
   setWriting,
@@ -191,11 +192,19 @@ function Profile() {
     current_title = current_article.article_title;
   }
 
-  const connectWallet = async () => {
-    const isSuccess = await hp.connectToExternalWallet(internal_pub_key);
-    if (isSuccess) {
-      dispatch(setUser({ external_pub_key: hp.account }));
-    }
+  const walletControl = useAnimation();
+
+  const connectWallet = () => {
+    walletControl.start("blocked");
+    hp.connectToExternalWallet(internal_pub_key)
+      .then((amount) => {
+        if (amount) {
+          dispatch(setUser({ external_pub_key: hp.account, amount }));
+        }
+      })
+      .finally(() => {
+        walletControl.start("unBlocked");
+      });
   };
 
   const [connectWalletHelper, setConnectWalletHelper] = useState("");
@@ -222,9 +231,24 @@ function Profile() {
           {hasConnectedWallet === false && (
             <>
               <ConnectWallet
+                variants={{
+                  blocked: {
+                    pointerEvents: "none",
+                    opacity: 0.3,
+                    scale: 0.8,
+                  },
+                  unBlocked: {
+                    pointerEvents: "auto",
+                    opacity: 1,
+                    scale: 1,
+                  },
+                }}
+                animate={walletControl}
                 {...ConnectWallet__Animate}
                 onClick={connectWallet}
-                onMouseEnter={() => setConnectWalletHelper(ConectWalletHelper)}
+                onMouseEnter={() =>
+                  setConnectWalletHelper(<ConectWalletHelper />)
+                }
                 onMouseLeave={() => setConnectWalletHelper("")}
               >
                 ❕ Connect To External Wallet
@@ -258,7 +282,56 @@ function Profile() {
           </InnerContainer>
         </>
       )}
-      {isViewMode && <></>}
+      {isViewMode && (
+        <>
+          <SubmitButton
+            fetch={{
+              key: "post_post",
+              data: {
+                article_title: writingTitle,
+                article_content: writingContent,
+              },
+            }}
+            succeedCallback={() => {
+              dispatch(setSelected(0));
+              dispatch(setWriting({ title: "", content: "" }));
+            }}
+            onClick={() => writingTitle && writingContent}
+          >
+            Donate
+          </SubmitButton>
+          <CancelButton
+            initial={{
+              opacity: 0,
+              fontSize: "0.7rem",
+              x: "0rem",
+              y: "0rem",
+            }}
+            animate={{
+              opacity: 1,
+              border: "none",
+              boxShadow: "none",
+              fontSize: "0.7rem",
+              color: "#af497080",
+              position: "absolute",
+              x: "-16.5rem",
+              y: "0rem",
+              width: "75%",
+            }}
+          >
+            Total Donation:
+            <span
+              style={{
+                color: "#888823ff",
+                fontSize: "0.8rem",
+              }}
+            >
+              {" "}
+              292929
+            </span>
+          </CancelButton>
+        </>
+      )}
       {isWriteMode && (
         <>
           <CancelButton onClick={() => dispatch(setSelected(0))} />
