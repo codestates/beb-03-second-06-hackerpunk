@@ -1,4 +1,4 @@
-import { React, styled, Button, useDispatch, setSelected } from "../../common";
+import { React, styled, Button } from "../../common";
 
 const StyledButton = styled(Button)`
   font-size: 0.62rem;
@@ -24,17 +24,10 @@ const StyledButton__Animate = {
   },
 };
 
-function CancelButton({ message = "Submit", ...props }) {
-  const dispatch = useDispatch();
+function CancelButton({ children = "Cancel", ...props }) {
   return (
-    <StyledButton
-      {...StyledButton__Animate}
-      onClick={() => {
-        dispatch(setSelected(0));
-      }}
-      {...props}
-    >
-      {message}
+    <StyledButton {...StyledButton__Animate} {...props}>
+      {children}
     </StyledButton>
   );
 }

@@ -5,8 +5,14 @@ import {
   Div,
   Logo,
   useState,
+  useDispatch,
   useSelector,
   toSummary,
+  setSelected,
+  setWriting,
+  deletePost,
+  useSWRConfig,
+  setCurrentContentBody,
 } from "../common";
 import hp from "../api/hp";
 
@@ -162,23 +168,50 @@ function ConectWalletHelper() {
 }
 
 function Profile() {
+  const dispatch = useDispatch();
   const { id, internalPublicKey, level, amount } = useSelector(
     (state) => state.user
   );
-  const { selected } = useSelector((state) => state.posts);
+  const {
+    prevSelected,
+    selected,
+    contents,
+    writingTitle,
+    writingContent,
+    currentContentId,
+    currentContentBody,
+  } = useSelector((state) => state.posts);
+
+  let current_author, current_title;
+
+  if (selected > 0) {
+    const current_article = contents[selected - 1];
+    current_author = current_article.article_author;
+    current_title = current_article.article_title;
+  }
 
   const connectWallet = async () => {
     await hp.connectToExternalWallet(internalPublicKey);
   };
+
   const [connectWalletHelper, setConnectWalletHelper] = useState("");
+
+  const isWriteMode = selected === -1,
+    isEditMode = selected === -2,
+    isMainMode = selected === 0,
+    isViewMode = selected > 0 && current_author !== id,
+    isMyViewMode = selected > 0 && current_author === id;
+
+  const { cache } = useSWRConfig();
+
   return (
     <Container
       variants={Container__Animate_variants}
-      initial={selected > -1 ? "initial" : "animate"}
-      animate={selected > -1 ? "animate" : "exit"}
+      initial={isMainMode ? "initial" : "animate"}
+      animate={isMainMode ? "animate" : "exit"}
       exit="exit"
     >
-      {selected > -1 ? (
+      {isMainMode && (
         <>
           <WriteButton message="Write" />
           <ConnectWallet
@@ -205,12 +238,104 @@ function Profile() {
             </ProfileInnerContainer>
           </InnerContainer>
         </>
-      ) : (
+      )}
+      {isViewMode && <></>}
+      {isWriteMode && (
         <>
-          <CancelButton message="Cancel" />
-          <SubmitButton message="Submit" />
+          <CancelButton onClick={() => dispatch(setSelected(0))} />
+          <SubmitButton
+            fetch={{
+              key: "post_post",
+              data: {
+                article_title: writingTitle,
+                article_content: writingContent,
+              },
+            }}
+            succeedCallback={() => {
+              dispatch(setSelected(0));
+              dispatch(setWriting({ title: "", content: "" }));
+            }}
+            onClick={() => writingTitle && writingContent}
+          />
         </>
       )}
+      {isMyViewMode && (
+        <>
+          <CancelButton
+            onClick={() => {
+              dispatch(
+                setWriting({
+                  title: current_title,
+                  content: currentContentBody,
+                })
+              );
+              dispatch(setSelected(-2));
+            }}
+          >
+            Edit
+          </CancelButton>
+          <SubmitButton
+            fetch={{
+              key: "delete_post",
+              data: {
+                article_id: currentContentId,
+              },
+            }}
+            succeedCallback={() => {
+              dispatch(deletePost(selected));
+              dispatch(setSelected(0));
+            }}
+            onClick={() => {
+              if (currentContentId > 0) {
+                return window.confirm(
+                  "Are you sure you want to delete this article?"
+                );
+              }
+              return false;
+            }}
+          >
+            Delete
+          </SubmitButton>
+        </>
+      )}
+      {isEditMode && (
+        <>
+          <CancelButton
+            onClick={() => {
+              dispatch(setSelected(prevSelected));
+            }}
+          >
+            Cancel
+          </CancelButton>
+          <SubmitButton
+            fetch={{
+              key: "put_post",
+              data: {
+                article_id: currentContentId,
+                article_title: writingTitle,
+                article_content: writingContent,
+              },
+            }}
+            succeedCallback={() => {
+              cache.clear();
+              dispatch(setSelected(0));
+              dispatch(setCurrentContentBody(writingContent));
+              dispatch(setWriting({ title: "", content: "" }));
+            }}
+            onClick={() => {
+              if (currentContentId > 0) {
+                return window.confirm(
+                  "Are you sure you want to update this article?"
+                );
+              }
+              return false;
+            }}
+          >
+            Confirm
+          </SubmitButton>
+        </>
+      )}
+
       <InnerContainer>
         <Span>Lv.{level}</Span>
         <img

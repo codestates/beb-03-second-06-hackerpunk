@@ -7,6 +7,11 @@ import {
   setSelected,
   styled,
   Div,
+  useRef,
+  addValues,
+  Spinner,
+  useParams,
+  useEffect,
 } from "../common";
 
 import Post from "./Post";
@@ -36,10 +41,27 @@ const Container = styled(Div)`
 
 function Board() {
   const navigate = useNavigate();
-  const { selected, contents } = useSelector((state) => state.posts);
   const dispatch = useDispatch();
+
+  const { selected, contents } = useSelector((state) => state.posts);
+
+  const containerRef = useRef(null);
+
+  const { id } = useParams();
+
+  useEffect(() => {
+    if (id) {
+      dispatch(setSelected(id));
+    }
+  }, [id, dispatch]);
+
   return (
     <AsyncBoundary
+      fallback={
+        <Container>
+          <Spinner />
+        </Container>
+      }
       onReset={(e) => {
         // `try again button` was clicked
         console.error(e);
@@ -47,15 +69,25 @@ function Board() {
       }}
     >
       <Container
+        ref={containerRef}
         initial={{ opacity: 0, height: 0 }}
         animate={{ opacity: 1, height: "70%" }}
         exit={{ opacity: 0, height: 0 }}
+        onScroll={({ target }) => {
+          if (selected === 0)
+            dispatch(
+              addValues({
+                boardScrollTop: target.scrollTop,
+              })
+            );
+        }}
       >
         {/* selected === -1 => Writing Box */}
-        {selected === -1 ? (
+        {selected === -1 || selected === -2 ? (
           <Post />
         ) : (
           <Posts
+            // scrollToOrigin={scrollToOrigin}
             contents={contents}
             selectedCallback={(selected) => {
               dispatch(setSelected(selected));

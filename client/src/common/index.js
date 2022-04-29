@@ -4,6 +4,7 @@ import React, {
   useState,
   useEffect,
   useCallback,
+  useLayoutEffect,
   forwardRef,
 } from "react";
 import ReactDOM from "react-dom/client";
@@ -20,9 +21,18 @@ import {
 
 import { ErrorBoundary, useErrorHandler } from "react-error-boundary";
 import { useDispatch, useSelector } from "react-redux";
-import { motion, AnimatePresence } from "framer-motion";
+import {
+  motion,
+  motionValue,
+  AnimatePresence,
+  useViewportScroll,
+  useSpring,
+  useTransform,
+  usePresence,
+} from "framer-motion";
 import styled from "styled-components";
-import useSWR, { SWRConfig } from "swr";
+import useSWR, { SWRConfig, useSWRConfig } from "swr";
+import { useInView } from "react-intersection-observer";
 
 import AsyncBoundary from "./components/AsyncBoundary";
 import ErrorNotice from "./components/ErrorNotice";
@@ -94,6 +104,7 @@ export {
   useCallback,
   useNavigate,
   useLocation,
+  useLayoutEffect,
   useSearchParams,
   useParams,
   Suspense,
@@ -103,9 +114,16 @@ export {
 // Etc
 export {
   motion,
+  motionValue,
+  useViewportScroll,
+  useSpring,
+  useTransform,
   AnimatePresence,
   styled,
   SWRConfig,
+  useSWRConfig,
   ErrorBoundary,
   useErrorHandler,
+  usePresence,
+  useInView,
 };

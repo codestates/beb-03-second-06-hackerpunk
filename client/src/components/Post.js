@@ -10,6 +10,8 @@ import {
   useInput,
   useDispatch,
   setWriting,
+  useLayoutEffect,
+  setCurrentContentBody,
 } from "../common";
 
 const Container = styled(Div)`
@@ -178,39 +180,44 @@ function Post({
     article_updated_at,
   } = {},
 }) {
-  const isViewMode = myKey > 0;
-  const isWriteMode = myKey === -1;
+  // const isMainMode = selectedKey === 0;
+  const isListAndViewMode = selectedKey >= 0;
+  const isWriteMode = selectedKey === -1 || selectedKey === -2;
 
   const isSelected = myKey === selectedKey;
   const isNotSelected = selectedKey > 0 && !isSelected;
 
-  let article_content;
+  const { id } = useSelector((state) => state.user);
+  const { writingTitle, writingContent, currentContentBody } = useSelector(
+    (state) => state.posts
+  );
 
   const { data } = useFetch({
     key: "get_post",
     args: {
       id: article_id,
     },
-    condition: isSelected && article_id > 0 && article_content === undefined,
+    condition: isSelected && article_id > 0 && currentContentBody === "",
   });
 
-  article_content = data?.article_content;
-
-  const { id } = useSelector((state) => state.user);
-  const { writingTitle, writingContent } = useSelector((state) => state.posts);
-
   const dispatch = useDispatch();
+  useLayoutEffect(() => {
+    if (data && typeof data === "object") {
+      const { article_content } = data;
+      dispatch(setCurrentContentBody(article_content));
+    }
+  }, [dispatch, data]);
 
   const [FocusTitleRef] = useFocus();
   // eslint-disable-next-line no-unused-vars
-  const [_title, inputTitle, setTitle] = useInput({
+  const [_, inputTitle, setTitle] = useInput({
     initialValue: writingTitle,
     middleware: (title) => {
       dispatch(setWriting({ title }));
     },
   });
   // eslint-disable-next-line no-unused-vars
-  const [_content, inputContent, setContent] = useInput({
+  const [__, inputContent, setContent] = useInput({
     initialValue: writingContent,
     middleware: (content) => {
       dispatch(setWriting({ content }));
@@ -222,12 +229,13 @@ function Post({
       onClick={selectThisToggle}
       variants={variants}
       animate={isSelected ? "opened" : isNotSelected ? "closed" : "opened"}
+      exit="closed"
       whileHover={
-        isViewMode && {
+        isListAndViewMode && {
           border: "1px solid whitesmoke",
         }
       }
-      transition={{ type: "spring", stiffness: 100, duration: 200 }}
+      transition={{ type: "spring", stiffness: 100, duration: 1 }}
     >
       {isSelected ? (
         <ContentContainer>
@@ -268,10 +276,10 @@ function Post({
                 article_title
               )}
             </TitleInContent>
-            {isViewMode && (
+            {isListAndViewMode && (
               <Div
                 style={{
-                  x: "1rem",
+                  x: "0rem",
                   flexDirection: "column",
                   alignItems: "flex-end",
                 }}
@@ -281,38 +289,40 @@ function Post({
               </Div>
             )}
           </Div>
-          <Content>
-            {isWriteMode ? (
-              <TextArea
-                tabIndex={2}
-                placeholder="Content"
-                onKeyDown={(e) => {
-                  if (e.key === "Tab") {
-                    e.preventDefault();
-                  }
-                }}
-                {...inputContent}
-              ></TextArea>
-            ) : (
-              article_content
-            )}
-          </Content>
-          <ContentCancel>
-            <CancelButton
-              whileHover={{
-                color: "rgba(250, 150, 120, 0.9)",
-                scale: 1.02,
-              }}
-              whileTap={{ scale: 0.8 }}
-              onClick={() => {
-                dispatch(setWriting({ content: "" }));
-                setContent("");
-              }}
-            >
-              X
-            </CancelButton>
-          </ContentCancel>
-          {isViewMode && (
+          {isWriteMode ? (
+            <>
+              <Content>
+                <TextArea
+                  tabIndex={2}
+                  placeholder="Content"
+                  onKeyDown={(e) => {
+                    if (e.key === "Tab") {
+                      e.preventDefault();
+                    }
+                  }}
+                  {...inputContent}
+                ></TextArea>
+              </Content>
+              <ContentCancel>
+                <CancelButton
+                  whileHover={{
+                    color: "rgba(250, 150, 120, 0.9)",
+                    scale: 1.02,
+                  }}
+                  whileTap={{ scale: 0.8 }}
+                  onClick={() => {
+                    dispatch(setWriting({ content: "" }));
+                    setContent("");
+                  }}
+                >
+                  X
+                </CancelButton>
+              </ContentCancel>
+            </>
+          ) : (
+            <Content>{currentContentBody}</Content>
+          )}
+          {isListAndViewMode && (
             <Div
               style={{
                 height: "10%",
