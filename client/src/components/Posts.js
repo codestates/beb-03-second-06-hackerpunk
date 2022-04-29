@@ -93,7 +93,6 @@ function Posts({
       <AnimatePresence>
         {contents.map((data, idx) => {
           const key = idx + 1;
-          console.log(data, key, selected);
           return (
             <Post
               initial={{

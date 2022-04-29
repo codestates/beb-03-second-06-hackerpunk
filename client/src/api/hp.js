@@ -1,6 +1,12 @@
 import Web3 from "web3";
 import externalHpAbi from "../assets/abis/externalHpAbi";
-import { CONTRACT_ADDR, EXTERNAL_WALLET_TIER, url } from "./constants";
+import hpAbi from "../assets/abis/hpAbi";
+import {
+  CONTRACT_ADDR,
+  HP_CONTRACT_ADDR,
+  EXTERNAL_WALLET_TIER,
+  url,
+} from "./constants";
 import axios from "axios";
 import { getTokenHeader } from "../common/functions/getToken";
 
@@ -15,6 +21,7 @@ class HackerPunkAPI {
     }
     this.provider = window.ethereum;
     /* External HP Contract Addr */
+    this.HP_CONTRACT_ADDR = HP_CONTRACT_ADDR;
     this.CONTRACT_ADDR = CONTRACT_ADDR;
     /* ------------------------- */
   }
@@ -25,9 +32,12 @@ class HackerPunkAPI {
       this.account = account;
       this.provider.on("accountsChanged", ([newAccount]) => {
         this.account = newAccount;
-        console.log(this.account);
       });
       this.web3 = new Web3(this.provider);
+      this.hpMethods = new this.web3.eth.Contract(
+        hpAbi,
+        this.HP_CONTRACT_ADDR
+      ).methods;
       this.methods = new this.web3.eth.Contract(
         externalHpAbi,
         this.CONTRACT_ADDR
@@ -59,10 +69,28 @@ class HackerPunkAPI {
         .send({
           from: this.account,
           value: fee,
+          gas: 200000,
         });
+      if (tx) {
+        const amount = await this.hpMethods
+          .balanceOf(internalWalletAddr)
+          .call();
 
-      return tx !== undefined; // is success
+        return this.toAmountFromWei(amount.toString());
+      }
+
+      return; // failed amount
     }
+  }
+  toAmountFromWei(weiStr) {
+    const tokenAmount = this.web3.utils.fromWei(weiStr, "ether");
+
+    for (let i = 1; i < tokenAmount.length; i++) {
+      if (tokenAmount[i] === ".") {
+        return tokenAmount.slice(0, i + 3);
+      }
+    }
+    return tokenAmount;
   }
 }
 

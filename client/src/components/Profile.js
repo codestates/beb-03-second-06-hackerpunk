@@ -7,6 +7,7 @@ import {
   useState,
   useDispatch,
   useSelector,
+  useAnimation,
   toSummary,
   setSelected,
   setWriting,
@@ -170,9 +171,14 @@ function ConectWalletHelper() {
 
 function Profile() {
   const dispatch = useDispatch();
-  const { id, internal_pub_key, external_pub_key, level, amount } = useSelector(
-    (state) => state.user
-  );
+  const {
+    id,
+    internal_pub_key,
+    external_pub_key,
+    level,
+    amount,
+    latestDonationAmount,
+  } = useSelector((state) => state.user);
   const {
     prevSelected,
     selected,
@@ -191,11 +197,19 @@ function Profile() {
     current_title = current_article.article_title;
   }
 
-  const connectWallet = async () => {
-    const isSuccess = await hp.connectToExternalWallet(internal_pub_key);
-    if (isSuccess) {
-      dispatch(setUser({ external_pub_key: hp.account }));
-    }
+  const walletControl = useAnimation();
+
+  const connectWallet = () => {
+    walletControl.start("blocked");
+    hp.connectToExternalWallet(internal_pub_key)
+      .then((amount) => {
+        if (amount) {
+          dispatch(setUser({ external_pub_key: hp.account, amount }));
+        }
+      })
+      .finally(() => {
+        walletControl.start("unBlocked");
+      });
   };
 
   const [connectWalletHelper, setConnectWalletHelper] = useState("");
@@ -226,9 +240,24 @@ function Profile() {
           {hasConnectedWallet === false && (
             <>
               <ConnectWallet
+                variants={{
+                  blocked: {
+                    pointerEvents: "none",
+                    opacity: 0.3,
+                    scale: 0.8,
+                  },
+                  unBlocked: {
+                    pointerEvents: "auto",
+                    opacity: 1,
+                    scale: 1,
+                  },
+                }}
+                animate={walletControl}
                 {...ConnectWallet__Animate}
                 onClick={connectWallet}
-                onMouseEnter={() => setConnectWalletHelper(ConectWalletHelper)}
+                onMouseEnter={() =>
+                  setConnectWalletHelper(<ConectWalletHelper />)
+                }
                 onMouseLeave={() => setConnectWalletHelper("")}
               >
                 ❕ Connect To External Wallet
@@ -262,7 +291,75 @@ function Profile() {
           </InnerContainer>
         </>
       )}
-      {isViewMode && <></>}
+      {isViewMode && (
+        <>
+          <SubmitButton
+            fetch={{
+              key: "donate",
+              data: {
+                article_id: currentContentId,
+                amount: latestDonationAmount,
+              },
+            }}
+            succeedCallback={() => {
+              dispatch(setSelected(0));
+            }}
+            onClick={() => {
+              const donateAmount = window.prompt(
+                "how much do you want to donate?"
+              );
+              if (
+                typeof amount !== "number" ||
+                donateAmount <= 0 ||
+                donateAmount > amount
+              ) {
+                window.alert(
+                  `the amount of donation must be larger than 0 and smaller than ${amount}`
+                );
+                return false;
+              }
+              if (
+                window.confirm(
+                  "Are you sure you want to donate to this article?"
+                ) === false
+              )
+                return false;
+
+              dispatch(setUser({ latestDonationAmount: donateAmount }));
+              return true;
+            }}
+          >
+            Donate
+          </SubmitButton>
+          <CancelButton
+            initial={{
+              opacity: 0,
+              fontSize: "0.7rem",
+              x: "0rem",
+              y: "0rem",
+            }}
+            animate={{
+              opacity: 0.6,
+              border: "none",
+              boxShadow: "none",
+              fontSize: "0.7rem",
+              position: "absolute",
+              x: "-16.5rem",
+              y: "0rem",
+              width: "75%",
+            }}
+          >
+            Total Donation:{" "}
+            <span
+              style={{
+                fontSize: "0.8rem",
+              }}
+            >
+              292929
+            </span>
+          </CancelButton>
+        </>
+      )}
       {isWriteMode && (
         <>
           <CancelButton onClick={() => dispatch(setSelected(0))} />
@@ -278,7 +375,14 @@ function Profile() {
               dispatch(setSelected(0));
               dispatch(setWriting({ title: "", content: "" }));
             }}
-            onClick={() => writingTitle && writingContent}
+            onClick={() => {
+              if (writingTitle && writingContent) {
+                return window.confirm(
+                  "Are you sure you want to post this article?"
+                );
+              }
+              return false;
+            }}
           />
         </>
       )}

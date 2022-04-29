@@ -3,7 +3,6 @@ import {
   motion,
   styled,
   Div,
-  Button,
   useSelector,
   useFetch,
   useFocus,
@@ -21,6 +20,7 @@ const Container = styled(Div)`
 `;
 
 const ContentContainer = styled(Div)`
+  position: relative;
   flex-direction: column;
   justify-content: space-between;
   padding: 0 1rem;
@@ -87,14 +87,6 @@ const Content = styled(Div)`
   word-wrap: break-word;
   padding: 4rem;
 `;
-
-const TotalDonation = styled(motion.span)`
-  font-size: clamp(0.2rem, 0.2vw, 1rem);
-  justify-content: flex-end;
-  margin-right: 1rem;
-`;
-
-const DonateButton = styled(Button)``;
 
 /* -----------Write Mode----------- */
 
@@ -223,7 +215,7 @@ function Post({
       dispatch(setWriting({ content }));
     },
   });
-  console.log(isSelected);
+
   return (
     <Container
       onClick={selectThisToggle}
@@ -276,18 +268,6 @@ function Post({
                 article_title
               )}
             </TitleInContent>
-            {isListAndViewMode && (
-              <Div
-                style={{
-                  x: "0rem",
-                  flexDirection: "column",
-                  alignItems: "flex-end",
-                }}
-              >
-                <DonateButton>Donate</DonateButton>
-                <TotalDonation>Total Donation: 21231</TotalDonation>
-              </Div>
-            )}
           </Div>
           {isWriteMode ? (
             <>
