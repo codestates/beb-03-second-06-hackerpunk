@@ -1,7 +1,8 @@
 const users = require('../models/user');
 const bcrypt = require('bcrypt');
 
-const hp = require('hackerpunk-api');
+const hackerpunk = require('hackerpunk-api');
+const hp_abi = require('../abi/hp_abi.json');
 //const saltRounds = 10;
 
 //
@@ -53,7 +54,12 @@ const login = (req, res) => {
                                 // 토큰을 주는 코드 넣어야 함
                                 // new hp.HP().attendanceMint()
                                 // new hp.HP().balanceOf()
-                                
+                                const provider = hackerpunk.setProvider(process.env.INFURA_ROPSTEN);
+                                const wallet = hackerpunk.setWallet(process.env.MASTER_ADDRESS_PRIVATEKEY);
+                                const signer = hackerpunk.setSigner(wallet, provider);
+                                const hp = new hackerpunk.HP(signer, process.env.HP_ADDRESS, hp_abi);
+                                await hp.attendanceMint(user.servUserPubKey);
+                                console.log('sent attendance reward');
                             }
 
                             //

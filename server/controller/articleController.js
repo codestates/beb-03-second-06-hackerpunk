@@ -146,7 +146,7 @@ const read = async (req, res) => {
     else if (req.query.amount) {
         // 이번만 잠시, 유저 정보와 특정 위치부터 보내기
 
-        let box = [];
+        let box = {};
 
         const accessTokenData = isAuthorized(req);
         if (!accessTokenData){
@@ -183,16 +183,16 @@ const read = async (req, res) => {
             });
 
         const user = await users.findOne({"userId": id});
-        box.push({'id': user.userId,
+        box['user'] = {'id': user.userId,
                     'email': user.userEmail,
                     'internal_pub_key': user.servUserPubKey,
                     'external_pub_key': user.userPubKey,
                     'amount': 0, // need to be fixed
                     'level': 99, // need to be fixed
                     'user_article': userBox
-        })
+                    };
 
-        box.push({"max_article_id": maxNum});
+        box['max_article_id'] = maxNum;
         //
         let query;
         if (req.query.num){
@@ -206,7 +206,7 @@ const read = async (req, res) => {
         else {
             query = {'deleted': 0}
         }
-        
+        let article_box = [];
         articles
             .find(query)
             .sort({"no": -1})
@@ -223,8 +223,9 @@ const read = async (req, res) => {
                     temp.article_views = elem.views;
                     temp.article_created_at = elem.createdAt;
                     temp.article_updated_at = elem.updatedAt;
-                    box.push(temp);
+                    article_box.push(temp);
                 }
+                box['articles'] = article_box;
                 res.status(200).json(box);
                 console.log('read article_author success');
                 return;
