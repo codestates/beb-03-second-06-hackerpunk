@@ -27,7 +27,11 @@ class HP {
    * @method initial minting once, only admin
    */
   async init() {
-    await this.contract.init();
+    try {
+      await this.contract.init();
+    } catch (err: any) {
+      throw new Error(err);
+    }
   }
 
   /**

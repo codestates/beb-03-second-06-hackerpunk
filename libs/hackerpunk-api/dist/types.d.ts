@@ -105,16 +105,16 @@ export class ExternalHP {
      * @param fee send value of Wei as string or BigInt
      */
     setSignupFee(credentialType: number, fee: string | BigInt): Promise<void>;
-    signupFee(credentialType: number): Promise<BigInt | Error>;
+    signupFee(credentialType: number): Promise<BigInt>;
     /**
      * @method onlyOwner
      */
-    getAllInternalAddresses(): Promise<string[] | Error>;
-    registerAddress(internalAddress: string): Promise<boolean | Error>;
-    isRegistered(internalAddress: string): Promise<boolean | Error>;
-    isAuthenticated(internalAddress: string): Promise<boolean | Error>;
-    checkExternalAuthenticated(internalAddress: string, externalAddress: string): Promise<boolean | Error>;
-    getCredentialType(internalAddress: string): Promise<number | Error>;
+    getAllInternalAddresses(): Promise<string[]>;
+    registerAddress(internalAddress: string): Promise<object>;
+    isRegistered(internalAddress: string): Promise<boolean>;
+    isAuthenticated(internalAddress: string): Promise<boolean>;
+    checkExternalAuthenticated(internalAddress: string, externalAddress: string): Promise<boolean>;
+    getCredentialType(internalAddress: string): Promise<number>;
     /**
      * @param provider url
      */

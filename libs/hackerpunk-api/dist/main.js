@@ -66,7 +66,11 @@ class $4f2d27e7bb08be92$export$2f4fd17aff4e7fc {
     /**
    * @method initial minting once, only admin
    */ async init() {
-        await this.contract.init();
+        try {
+            await this.contract.init();
+        } catch (err) {
+            throw new Error(err);
+        }
     }
     /**
    * @method enable ExternalHP Contract to mint
@@ -190,65 +194,30 @@ class $1bdf165e5fb3c2c0$export$7fb3e24a412a5622 {
    * @method onlyOwner
    * @param fee send value of Wei as string or BigInt
    */ async setSignupFee(credentialType, fee) {
-        try {
-            await this.contract.setSignupFee(credentialType, fee);
-        } catch (err) {
-            throw new Error(err);
-        }
+        await this.contract.setSignupFee(credentialType, fee);
     }
     async signupFee(credentialType) {
-        try {
-            const fee = await this.contract.signupFee(credentialType);
-            return fee;
-        } catch (err) {
-            return new Error(err);
-        }
+        return await this.contract.signupFee(credentialType);
     }
     /**
    * @method onlyOwner
    */ async getAllInternalAddresses() {
-        try {
-            const addresses = await this.contract.getAllInternalAddresses();
-            return addresses;
-        } catch (err) {
-            return new Error(err);
-        }
+        return await this.contract.getAllInternalAddresses();
     }
     async registerAddress(internalAddress) {
-        try {
-            const ok = await this.contract.registerAddress(internalAddress);
-            return ok;
-        } catch (err) {
-            return new Error(err);
-        }
+        return await this.contract.registerAddress(internalAddress);
     }
     async isRegistered(internalAddress) {
-        try {
-            return await this.contract.isRegistered(internalAddress);
-        } catch (err) {
-            return new Error(err);
-        }
+        return await this.contract.isRegistered(internalAddress);
     }
     async isAuthenticated(internalAddress) {
-        try {
-            return await this.contract.isAuthenticated(internalAddress);
-        } catch (err) {
-            return new Error(err);
-        }
+        return await this.contract.isAuthenticated(internalAddress);
     }
     async checkExternalAuthenticated(internalAddress, externalAddress) {
-        try {
-            return await this.contract.checkExternalAuthenticated(internalAddress, externalAddress);
-        } catch (err) {
-            return new Error(err);
-        }
+        return await this.contract.checkExternalAuthenticated(internalAddress, externalAddress);
     }
     async getCredentialType(internalAddress) {
-        try {
-            return await this.contract.getCredentialType(internalAddress);
-        } catch (err) {
-            return new Error(err);
-        }
+        return await this.contract.getCredentialType(internalAddress);
     }
     /**
    * @param provider url

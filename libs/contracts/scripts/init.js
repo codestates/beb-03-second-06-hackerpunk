@@ -75,3 +75,17 @@ task("setLocktime", "setLocktime of token donated to article")
 
     console.log(result);
   });
+
+task("isRegistered", "check whether registered")
+  .addParam("address", "check")
+  .setAction(async (taskArgs, hre) => {
+    const ehp = await getContract(
+      "ExternalHP",
+      getEnvVariable("EHP_ADDRESS"),
+      hre
+    );
+
+    // 0x44674fc98c55d93c26501c285a92c6daed97566a
+    const result = await ehp.isRegistered(taskArgs.address);
+    console.log(result);
+  });
