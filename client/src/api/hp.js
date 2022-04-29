@@ -32,7 +32,6 @@ class HackerPunkAPI {
       this.account = account;
       this.provider.on("accountsChanged", ([newAccount]) => {
         this.account = newAccount;
-        console.log(this.account);
       });
       this.web3 = new Web3(this.provider);
       this.hpMethods = new this.web3.eth.Contract(

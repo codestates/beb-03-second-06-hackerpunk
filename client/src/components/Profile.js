@@ -171,9 +171,14 @@ function ConectWalletHelper() {
 
 function Profile() {
   const dispatch = useDispatch();
-  const { id, internal_pub_key, external_pub_key, level, amount } = useSelector(
-    (state) => state.user
-  );
+  const {
+    id,
+    internal_pub_key,
+    external_pub_key,
+    level,
+    amount,
+    latestDonationAmount,
+  } = useSelector((state) => state.user);
   const {
     prevSelected,
     selected,
@@ -286,17 +291,39 @@ function Profile() {
         <>
           <SubmitButton
             fetch={{
-              key: "post_post",
+              key: "donate",
               data: {
-                article_title: writingTitle,
-                article_content: writingContent,
+                article_id: currentContentId,
+                amount: latestDonationAmount,
               },
             }}
             succeedCallback={() => {
               dispatch(setSelected(0));
-              dispatch(setWriting({ title: "", content: "" }));
             }}
-            onClick={() => writingTitle && writingContent}
+            onClick={() => {
+              const donateAmount = window.prompt(
+                "how much do you want to donate?"
+              );
+              if (
+                typeof amount !== "number" ||
+                donateAmount <= 0 ||
+                donateAmount > amount
+              ) {
+                window.alert(
+                  `the amount of donation must be larger than 0 and smaller than ${amount}`
+                );
+                return false;
+              }
+              if (
+                window.confirm(
+                  "Are you sure you want to donate to this article?"
+                ) === false
+              )
+                return false;
+
+              dispatch(setUser({ latestDonationAmount: donateAmount }));
+              return true;
+            }}
           >
             Donate
           </SubmitButton>
@@ -308,25 +335,22 @@ function Profile() {
               y: "0rem",
             }}
             animate={{
-              opacity: 1,
+              opacity: 0.6,
               border: "none",
               boxShadow: "none",
               fontSize: "0.7rem",
-              color: "#af497080",
               position: "absolute",
               x: "-16.5rem",
               y: "0rem",
               width: "75%",
             }}
           >
-            Total Donation:
+            Total Donation:{" "}
             <span
               style={{
-                color: "#888823ff",
                 fontSize: "0.8rem",
               }}
             >
-              {" "}
               292929
             </span>
           </CancelButton>
@@ -347,7 +371,14 @@ function Profile() {
               dispatch(setSelected(0));
               dispatch(setWriting({ title: "", content: "" }));
             }}
-            onClick={() => writingTitle && writingContent}
+            onClick={() => {
+              if (writingTitle && writingContent) {
+                return window.confirm(
+                  "Are you sure you want to post this article?"
+                );
+              }
+              return false;
+            }}
           />
         </>
       )}

@@ -44,7 +44,6 @@ function Board() {
   const { selected, contents } = useSelector((state) => state.posts);
 
   const containerRef = useRef(null);
-  console.log(selected);
   return (
     <AsyncBoundary
       fallback={

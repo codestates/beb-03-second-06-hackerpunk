@@ -23,6 +23,12 @@ const resolvers = ({ options = {}, state: { id, data } = {} } = {}) => {
       data,
       ...options,
     },
+    donate: {
+      url: url(""),
+      method: "post",
+      data,
+      ...options,
+    },
     get_signature: {
       url: url("connect"),
       method: "get",

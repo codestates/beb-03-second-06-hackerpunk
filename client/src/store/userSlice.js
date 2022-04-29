@@ -7,6 +7,7 @@ const initialState = {
   internal_pub_key: "",
   external_pub_key: "",
   amount: 0,
+  latestDonationAmount: 0,
   level: 0,
 };
 
@@ -18,7 +19,6 @@ export const userSlice = createSlice({
       const { access_token, ...userData } = action.payload;
 
       setToken(access_token);
-      console.log(userData, "qwdqwdqwdw");
       Object.assign(state, userData);
     },
   },
