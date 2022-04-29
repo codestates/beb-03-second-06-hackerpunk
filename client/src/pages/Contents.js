@@ -22,7 +22,6 @@ function Contents() {
       id,
     },
   });
-
   useEffect(() => {
     if (user) dispatch(setUser(user));
   }, [dispatch, user]);

@@ -10,8 +10,6 @@ import {
   useRef,
   addValues,
   Spinner,
-  useParams,
-  useEffect,
 } from "../common";
 
 import Post from "./Post";
@@ -46,7 +44,6 @@ function Board() {
   const { selected, contents } = useSelector((state) => state.posts);
 
   const containerRef = useRef(null);
-  console.log(selected);
   return (
     <AsyncBoundary
       fallback={

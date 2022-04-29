@@ -7,6 +7,7 @@ const initialState = {
   internal_pub_key: "",
   external_pub_key: "",
   amount: 0,
+  latestDonationAmount: 0,
   level: 0,
 };
 
