@@ -134,9 +134,7 @@ class ExternalHP {
   }
 
   async singupEventListener(callback: ethers.providers.Listener) {
-    this.contract.on("Signup", (internalAddress, externalAddress, event) => {
-      callback(internalAddress, externalAddress, event);
-    });
+    this.contract.on("Signup", callback);
   }
 }
 
