@@ -61,3 +61,17 @@ task("revokeMinterRole", "revoke minter role of hp")
 
     console.log(result);
   });
+
+task("setLocktime", "setLocktime of token donated to article")
+  .addParam("locktime", "locktime of article")
+  .setAction(async (taskArgs, hre) => {
+    const hptl = await getContract(
+      "HPTimeLock",
+      getEnvVariable("HPTL_ADDRESS"),
+      hre
+    );
+
+    const result = await hptl.setLocktime(taskArgs.locktime);
+
+    console.log(result);
+  });
