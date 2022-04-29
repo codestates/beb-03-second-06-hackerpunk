@@ -277,9 +277,7 @@ class $1bdf165e5fb3c2c0$export$7fb3e24a412a5622 {
         }
     }
     async singupEventListener(callback) {
-        this.contract.on("Signup", (internalAddress, externalAddress, event)=>{
-            callback(internalAddress, externalAddress, event);
-        });
+        this.contract.on("Signup", callback);
     }
 }
 
