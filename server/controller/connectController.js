@@ -18,6 +18,12 @@ const connect = async (req, res) => {
     users
         .findOne({'userId': id})
         .then( async (user) => {
+            if (user.userPubKey !== '0x0'){
+                res.status(400).json({message: 'fail'});
+                console.log('already registered');
+                return;
+            }
+
             const provider = hackerpunk.setProvider(process.env.INFURA_ROPSTEN_HTTPS);
             const wallet = hackerpunk.setWallet(process.env.MASTER_ADDRESS_PRIVATEKEY);
             const signer = hackerpunk.setSigner(wallet, provider);

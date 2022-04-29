@@ -60,7 +60,7 @@ const confirm = async (req, res) => {
                     const today = new Date();
                     userModel.userDate = today.getFullYear() + '.' + today.getMonth() + '.' + today.getDate();
                     //처음 들어올 때 출석하면서 바로 보상 주는 코드 작성해야
-
+                    userModel.userDonated = 0;
                     userModel.userPubKey = '0x0';
 
                     const { privateKey, mnemonic, address } = await hackerpunk.createWallet(password);

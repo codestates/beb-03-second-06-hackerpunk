@@ -1,6 +1,8 @@
 const users = require('../models/user');
 const bcrypt = require('bcrypt');
 
+const dotenv = require('dotenv');
+dotenv.config();
 const hackerpunk = require('hackerpunk-api');
 const hp_abi = require('../abi/hp_abi.json');
 //const saltRounds = 10;

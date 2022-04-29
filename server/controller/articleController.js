@@ -4,6 +4,12 @@ const comments = require('../models/comment')
 const users = require('../models/user');
 //const stats = require('../models/stats');
 
+const dotenv = require('dotenv');
+dotenv.config();
+const hackerpunk = require('hackerpunk-api');
+const hp_abi = require('../abi/hp_abi.json');
+const hptl_abi = require('../abi/hptimelock_abi.json');
+
 const create = async (req, res) => {
     const { article_title, article_content } = req.body;
 
@@ -36,6 +42,12 @@ const create = async (req, res) => {
             const user = await users.findOne({"userId": id});
             user.userArticles.push(article.no);
             await user.save();
+
+            const provider = hackerpunk.setProvider(process.env.INFURA_ROPSTEN);
+            const wallet = hackerpunk.setWallet(process.env.MASTER_ADDRESS_PRIVATEKEY);
+            const signer = hackerpunk.setSigner(wallet, provider);
+            const hptl = new hackerpunk.HPTimeLock(signer, process.env.HPTL_ADDRESS, hptl_abi);
+            await hptl.writeArticle(article.no, user.servUserPubKey);
 
             res.status(200).json({'article_id': article.no, message:'succeed'}); // 응답 보낼 때는 message를 통해서 액션이 어떻게 처리되었는지 말해주는 걸로 전부 바꾸기
             console.log('Create success');
@@ -90,12 +102,19 @@ const read = async (req, res) => {
                         box.push(temp);
                     }
 
+                    const provider = hackerpunk.setProvider(process.env.INFURA_ROPSTEN);
+                    const wallet = hackerpunk.setWallet(process.env.MASTER_ADDRESS_PRIVATEKEY);
+                    const signer = hackerpunk.setSigner(wallet, provider);
+                    const hptl = new hackerpunk.HPTimeLock(signer, process.env.HPTL_ADDRESS, hptl_abi);
+                    const donated = await hptl.getDonationBalance(req.query.article_id);
+
                     res.status(200).json({"max_article_id": maxNum,
                                             "article_id": article.no,
                                             "article_author": article.author,
                                             "article_title": article.title,
                                             "article_views": article.views,
                                             "article_content": article.content,
+                                            "article_donated": donated,
                                             "article_created_at": article.createdAt,
                                             "article_updated_at": article.updatedAt,
                                             "article_comments": box
@@ -183,12 +202,20 @@ const read = async (req, res) => {
             });
 
         const user = await users.findOne({"userId": id});
+
+        const provider = hackerpunk.setProvider(process.env.INFURA_ROPSTEN);
+        const wallet = hackerpunk.setWallet(process.env.MASTER_ADDRESS_PRIVATEKEY);
+        const signer = hackerpunk.setSigner(wallet, provider);
+        const hp = new hackerpunk.HP(signer, process.env.HP_ADDRESS, hp_abi);
+        let tempAmount = await hp.balanceOf(user.servUserPubKey);
+        let tempLevel = parseInt(user.userDonated / 50);
+
         box['user'] = {'id': user.userId,
                     'email': user.userEmail,
                     'internal_pub_key': user.servUserPubKey,
                     'external_pub_key': user.userPubKey,
-                    'amount': 0, // need to be fixed
-                    'level': 99, // need to be fixed
+                    'amount': tempAmount, 
+                    'level': tempLevel,
                     'user_article': userBox
                     };
 
@@ -301,6 +328,13 @@ const del = async (req, res) => {
     await article.save();
 
     const user = await users.findOne({"userId": id});
+
+    const provider = hackerpunk.setProvider(process.env.INFURA_ROPSTEN);
+    const wallet = hackerpunk.setWallet(process.env.MASTER_ADDRESS_PRIVATEKEY);
+    const signer = hackerpunk.setSigner(wallet, provider);
+    const hptl = new hackerpunk.HPTimeLock(signer, process.env.HPTL_ADDRESS, hptl_abi);
+    await hptl.revokeAll(article_id, user.servUserPubKey);
+
     let temp = user.userArticles;
     user.userArticles = temp.filter((item) => {
         return item !== article_id;
