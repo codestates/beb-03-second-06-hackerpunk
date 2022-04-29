@@ -61,8 +61,6 @@ function LoginBox() {
   const [FocusPasswordRef, focusPassword] = useFocus({ start: false });
 
   useEffect(() => {
-    console.log("token", getToken());
-
     if (memoId.value.length > 0) {
       focusPassword();
     } else {
@@ -102,7 +100,6 @@ function LoginBox() {
 
   useEffect(() => {
     if (access_token) {
-      console.log("setToken", access_token);
       setToken(access_token); // storing data - token only
       setSubmit(false);
       navigate("/contents");

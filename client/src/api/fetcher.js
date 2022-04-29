@@ -1,5 +1,5 @@
 import axios from "axios";
-import { getToken, getTokenHeader } from "../common";
+import { getTokenHeader } from "../common";
 
 import { url } from "./constants";
 
@@ -24,7 +24,7 @@ const resolvers = ({ options = {}, state: { id, data } = {} } = {}) => {
       ...options,
     },
     get_user_posts: {
-      url: url("article?amount=30"),
+      url: url(`article?amount=30${id ? `&num=${id}` : ""}`),
       method: "get",
       headers: getTokenHeader(),
       nextMut([user, ...posts]) {
@@ -40,7 +40,6 @@ const resolvers = ({ options = {}, state: { id, data } = {} } = {}) => {
       method: "get",
       headers: getTokenHeader(),
       nextMut(posts) {
-        console.log(posts);
         return posts;
       },
       ...options,
@@ -53,6 +52,18 @@ const resolvers = ({ options = {}, state: { id, data } = {} } = {}) => {
       nextMut({ article_id } = {}) {
         return { id: article_id };
       },
+    },
+    put_post: {
+      url: url("article"),
+      method: "put",
+      headers: getTokenHeader(),
+      data,
+    },
+    delete_post: {
+      url: url("article"),
+      method: "delete",
+      headers: getTokenHeader(),
+      data,
     },
   };
 };

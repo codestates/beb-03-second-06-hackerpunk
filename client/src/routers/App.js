@@ -54,12 +54,14 @@ function App() {
           }
           onReset={(e) => {
             console.error(e);
+            window.location.pathname = "./";
           }}
         >
           <Routes>
             <Route path="*" element={<Home />} />
             <Route path="/confirm" element={<Confirm />} />
             <Route path="/contents" element={AuthGuard(<Contents />)} />
+            <Route path="/contents/:id" element={AuthGuard(<Contents />)} />
           </Routes>
         </AsyncBoundary>
       </AnimatePresence>

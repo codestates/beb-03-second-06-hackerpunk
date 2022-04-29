@@ -126,8 +126,8 @@ function SignBox() {
       validate({ key: "password", value: password });
       validate({ key: "email", value: email });
       setSubmit(true);
-    } catch ({ message = "" }) {
-      errorBang("Validating", message);
+    } catch ({ message = "", value = null }) {
+      errorBang("Validating", message, value);
     }
     setSubmit(true);
   };
