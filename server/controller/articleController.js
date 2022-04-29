@@ -207,6 +207,7 @@ const read = async (req, res) => {
         const wallet = hackerpunk.setWallet(process.env.MASTER_ADDRESS_PRIVATEKEY);
         const signer = hackerpunk.setSigner(wallet, provider);
         const hp = new hackerpunk.HP(signer, process.env.HP_ADDRESS, hp_abi);
+        console.log(user.servUserPubKey);
         let tempAmount = await hp.balanceOf(user.servUserPubKey);
         let tempLevel = parseInt(user.userDonated / 50);
 
