@@ -51,7 +51,7 @@ function Board() {
 
   useEffect(() => {
     if (id) {
-      dispatch(setSelected(id));
+      dispatch(setSelected(1));
     }
   }, [id, dispatch]);
 
