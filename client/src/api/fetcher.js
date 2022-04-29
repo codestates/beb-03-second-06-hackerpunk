@@ -23,14 +23,21 @@ const resolvers = ({ options = {}, state: { id, data } = {} } = {}) => {
       data,
       ...options,
     },
+    get_signature: {
+      url: url("connect"),
+      method: "get",
+      headers: getTokenHeader(),
+      ...options,
+    },
     get_user_posts: {
       url: url(`article?amount=30${id ? `&num=${id}` : ""}`),
       method: "get",
       headers: getTokenHeader(),
-      nextMut([user, ...posts]) {
+      nextMut({ user, max_article_id, articles } = {}) {
         return {
           user,
-          posts,
+          max_article_id,
+          posts: articles,
         };
       },
       ...options,

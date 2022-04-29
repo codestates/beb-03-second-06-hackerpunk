@@ -18,7 +18,6 @@ import {
   MAX_ID_LENGTH,
   MAX_PASSWORD_LENGTH,
   setToken,
-  getToken,
 } from "../common";
 
 const Container = styled(Div)`

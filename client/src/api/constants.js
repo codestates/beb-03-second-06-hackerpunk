@@ -4,6 +4,6 @@ export const url = (...args) => {
   return BASE_URL + args.join("/");
 };
 
-export const CONTRACT_ADDR = "0x1463f630821741211409ec48920b2D891EA1f8C2";
+export const CONTRACT_ADDR = "0xD796124e5cF66C4e08767BE03AF2D745FD7EAD5e";
 
 export const EXTERNAL_WALLET_TIER = 1;

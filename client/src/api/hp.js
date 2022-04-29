@@ -1,6 +1,8 @@
 import Web3 from "web3";
 import externalHpAbi from "../assets/abis/externalHpAbi";
-import { CONTRACT_ADDR, EXTERNAL_WALLET_TIER } from "./constants";
+import { CONTRACT_ADDR, EXTERNAL_WALLET_TIER, url } from "./constants";
+import axios from "axios";
+import { getTokenHeader } from "../common/functions/getToken";
 
 class HackerPunkAPI {
   get isEnabled() {
@@ -41,13 +43,24 @@ class HackerPunkAPI {
     }
     // Throw new Error
     // EXTERNAL_WALLET_TIER temporary
-    const signature = "12313"; // TODO! from server
 
-    const fee = await this.methods.signupFee(EXTERNAL_WALLET_TIER).call();
-    await this.methods.authenticate(internalWalletAddr, signature).send({
-      from: this.account,
-      value: fee,
+    const result = await axios({
+      url: url("connect"),
+      method: "get",
+      headers: getTokenHeader(),
     });
+
+    if (result) {
+      const { data: { sign: { hashedMessage, v, r, s } = {} } = {} } = result;
+
+      const fee = await this.methods.signupFee(EXTERNAL_WALLET_TIER).call();
+      await this.methods
+        .authenticate(internalWalletAddr, hashedMessage, v, r, s)
+        .send({
+          from: this.account,
+          value: fee,
+        });
+    }
   }
 }
 
