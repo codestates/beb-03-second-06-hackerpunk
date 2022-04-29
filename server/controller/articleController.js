@@ -10,6 +10,26 @@ const hackerpunk = require('hackerpunk-api');
 const hp_abi = require('../abi/hp_abi.json');
 const hptl_abi = require('../abi/hptimelock_abi.json');
 
+const cutting = function (num) {
+    let res;
+    if (num.length < 16){
+      res= '0';
+    }
+    else if (num.length > 18){
+       res = num.slice(0,-18) + '.' + num.slice(-18, -15);
+    }
+    else if (num.length == 18){
+      res = '0.' + num.slice(0, -15);
+    }
+    else if (num.length == 17){
+      res = '0.0' + num.slice(0, -15);
+    }
+    else if (num.length == 16){
+      res = '0.00' + num.slice(0, -15);
+    }
+    return res;
+};
+
 const create = async (req, res) => {
     const { article_title, article_content } = req.body;
 
@@ -114,7 +134,7 @@ const read = async (req, res) => {
                                             "article_title": article.title,
                                             "article_views": article.views,
                                             "article_content": article.content,
-                                            "article_donated": donated,
+                                            "article_donated": Number(donated.toString()),
                                             "article_created_at": article.createdAt,
                                             "article_updated_at": article.updatedAt,
                                             "article_comments": box
@@ -215,7 +235,7 @@ const read = async (req, res) => {
                     'email': user.userEmail,
                     'internal_pub_key': user.servUserPubKey,
                     'external_pub_key': user.userPubKey,
-                    'amount': tempAmount, 
+                    'amount': Number(cutting(tempAmount.toString())), 
                     'level': tempLevel,
                     'user_article': userBox
                     };
