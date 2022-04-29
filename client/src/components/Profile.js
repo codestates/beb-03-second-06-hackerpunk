@@ -211,6 +211,10 @@ function Profile() {
 
   return (
     <Container
+      whileHover={{
+        scale: 1.15,
+        textDecoration: "none",
+      }}
       variants={Container__Animate_variants}
       initial={isMainMode ? "initial" : "animate"}
       animate={isMainMode ? "animate" : "exit"}
