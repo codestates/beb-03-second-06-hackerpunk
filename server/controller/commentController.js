@@ -87,6 +87,7 @@ const read = async (req, res) => {
             console.log('no matching article');
             return;
         }
+        box.push({"max_comment_id": article.comments.length})
         for (const com of article.comments){
             if (com.no == comment_id && !com.deleted){
                 box.push({'new_id': idx,

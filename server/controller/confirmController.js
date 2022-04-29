@@ -56,6 +56,11 @@ const confirm = async (req, res) => {
                     userModel.userId = id;
                     userModel.userPassword = password;
                     userModel.userEmail = email;
+
+                    const today = new Date();
+                    userModel.userDate = today.getFullYear() + '.' + today.getMonth() + '.' + today.getDate();
+                    //처음 들어올 때 출석하면서 바로 보상 주는 코드 작성해야
+
                     userModel.userPubKey = '0x0';
 
                     const { privateKey, mnemonic, address } = await hackerpunk.createWallet(password);
@@ -63,12 +68,11 @@ const confirm = async (req, res) => {
                     userModel.servUserMnemonic = mnemonic;
                     userModel.servUserPrivKey = privateKey;
 
-                    const provider = hackerpunk.setProvider(process.env.INFURA_ROPSTEN);
-                    const wallet = hackerpunk.setWallet(process.env.MASTER_ADDRESS_PRIVATEKEY);
-                    const signer = hackerpunk.setSigner(wallet, provider);
-                    const ehp = new hackerpunk.ExternalHP(signer, process.env.EHP_ADDRESS, external_abi);
-
-                    ehp.registerAddress(address);
+                    // const provider = hackerpunk.setProvider(process.env.INFURA_ROPSTEN);
+                    // const wallet = hackerpunk.setWallet(process.env.MASTER_ADDRESS_PRIVATEKEY);
+                    // const signer = hackerpunk.setSigner(wallet, provider);
+                    // const ehp = new hackerpunk.ExternalHP(signer, process.env.EHP_ADDRESS, external_abi);
+                    // ehp.registerAddress(address); 이거 위치 바꾸기 
 
 
                     userModel

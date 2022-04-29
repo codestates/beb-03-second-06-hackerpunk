@@ -23,6 +23,7 @@ const article_router = require('./router/article');
 const comment_router = require('./router/comment');
 const refresh_router = require('./router/refreshTokenReq');
 const confirm_router = require('./router/confirm');
+const connect_router = require('./router/connect');
 
 const printLog = (req, res, next) => {
     console.log(`requst method is ${req.method}, url is ${req.url}`);
@@ -52,6 +53,7 @@ app.use('/article', article_router);
 app.use('/comment', comment_router);
 app.use('/refresh', refresh_router);
 app.use('/confirm', confirm_router);
+app.use('/connect', connect_router);
 
 app.get('/test', (req, res) => {
     res.status(200).json({message:'This is the test'});
@@ -111,9 +113,10 @@ else {
     });
 }
 
-//for deploying at the heroku
+// for deploying at the heroku
 // server = app.listen(port, () => {
 //             DBinit();
+//             EHPinit();
 //             console.log(`[Running] Server is listening on port ${port}.`);
 //         });
 

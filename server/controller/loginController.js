@@ -1,5 +1,7 @@
 const users = require('../models/user');
 const bcrypt = require('bcrypt');
+
+const hp = require('hackerpunk-api');
 //const saltRounds = 10;
 
 //
@@ -23,7 +25,7 @@ const login = (req, res) => {
 
     users
         .findOne({"userId": id})
-        .then((user) => {
+        .then( (user) => {
             if (!user) {
                 res.status(404).json({message: "user not found"});
                 console.log("Login Fail, no user");
@@ -36,13 +38,25 @@ const login = (req, res) => {
             // }
             else {
                 bcrypt.compare(password, user.userPassword)
-                    .then((result) => {
+                    .then( async (result) => {
                         if (!result){
                             res.status(404).json({message: "wrong password"});
                             console.log("Login Fail, wrong password")
                             return;
                         }
                         else {
+                            const today = new Date();
+                            const currentTime = today.getFullYear() + '.' + today.getMonth() + '.' + today.getDate();
+                            if (user.userDate !== currentTime){
+                                user.userDate = currentTime;
+                                await user.save();
+                                // 토큰을 주는 코드 넣어야 함
+                                // new hp.HP().attendanceMint()
+                                // new hp.HP().balanceOf()
+                                
+                            }
+
+                            //
                             const access_token = generateAccessToken({'id': user.userId});
                             const refresh_token = generateRefreshToken({'id': user.userId});
 

@@ -12,6 +12,8 @@ const userSchema = new mongoose.Schema({
     userPassword: String,
     userEmail: String,
 
+    userDate: String,
+
     userDonated: Number, // calculate the level with donated tokens amount
 
     userPubKey: String,

@@ -51,6 +51,8 @@ const create = async (req, res) => {
 
 const read = async (req, res) => {
     // 글 읽을 때마다 views 올라가야 함
+    let maxNum = await articles.countDocuments({});
+
     if (req.query.article_id) {
         articles
             .findOne({"no": req.query.article_id})
@@ -70,6 +72,7 @@ const read = async (req, res) => {
                     await article.save();
 
                     let box = [];
+                    box.push({"max_comment_id": article.comments.length})
                     let idx = 1;
                     for (const elem of article.comments){
                         if (elem.deleted){
@@ -87,7 +90,8 @@ const read = async (req, res) => {
                         box.push(temp);
                     }
 
-                    res.status(200).json({"article_id": article.no,
+                    res.status(200).json({"max_article_id": maxNum,
+                                            "article_id": article.no,
                                             "article_author": article.author,
                                             "article_title": article.title,
                                             "article_views": article.views,
@@ -112,6 +116,7 @@ const read = async (req, res) => {
             .find({"author": req.query.article_author})
             .then((results) => {
                 let box = [];
+                box.push({"max_article_id": maxNum});
                 let idx = 1;
                 for (const elem of results){
                     if (elem.deleted){
@@ -186,10 +191,17 @@ const read = async (req, res) => {
                     'level': 99, // need to be fixed
                     'user_article': userBox
         })
+
+        box.push({"max_article_id": maxNum});
         //
         let query;
         if (req.query.num){
             query = {'deleted': 0, 'no': {'$lte': req.query.num}}
+            // if (req.query.num < 1 || req.query.num > maxNum){
+            //     res.status(400).json({message: 'wrong request'});
+            //     console.log('[error] wrogn num');
+            //     return;
+            // }
         }
         else {
             query = {'deleted': 0}
