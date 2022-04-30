@@ -32,11 +32,14 @@ const Container = styled(Div)`
   width: 11.5rem;
   height: 6.5rem;
   border: solid 1px whitesmoke;
-  border-radius: 2px;
+  border-radius: 4px;
   padding: 10px;
   flex-direction: column;
   font-family: "Gill Sans", sans-serif;
   background-color: rgb(10, 10, 10, 0.6);
+  color: #fff;
+  text-shadow: 0 0 1px #fff, 0 0 7px #fff, 0 0 10px #fff, 0 0 20px #bc13fe,
+    0 0 40px #bc13fe, 0 0 50px #bc13fe, 0 0 100px #bc13fe, 0 0 150px #bc13fe;
 `;
 
 const InnerContainer = styled(Div)`
