@@ -219,7 +219,6 @@ function Profile() {
     latestDonationAmount,
   } = useSelector((state) => state.user);
   const {
-    prevSelected,
     selected,
     contents,
     writingTitle,

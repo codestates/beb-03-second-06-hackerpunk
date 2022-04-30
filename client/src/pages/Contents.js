@@ -7,6 +7,7 @@ import {
   useParams,
   setSelected,
   useEffect,
+  VideoLogo,
 } from "../common";
 import Profile from "../components/Profile";
 import Board from "../components/Board";
@@ -34,6 +35,16 @@ function Contents() {
 
   return (
     <>
+      <VideoLogo
+        size={["200px", "100px"]}
+        style={{
+          position: "absolute",
+          width: "fit-content",
+          height: "fit-content",
+          left: "0vw",
+          top: "0vh",
+        }}
+      />
       {user && <Profile />}
       {posts && <Board />}
     </>
