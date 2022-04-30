@@ -1,4 +1,8 @@
-export const BASE_URL = "https://hacker-punk.herokuapp.com/";
+export const URL = "https://hacker-punk.herokuapp.com";
+
+export const PROXY = URL;
+
+export const BASE_URL = `${PROXY}/`; // "https://hacker-punk.herokuapp.com/";
 
 export const url = (...args) => {
   return BASE_URL + args.join("/");
