@@ -5,6 +5,7 @@ import {
   Div,
   Logo,
   useState,
+  useFetch,
   useDispatch,
   useSelector,
   useAnimation,
@@ -15,6 +16,7 @@ import {
   setUser,
   useSWRConfig,
   setCurrentContentBody,
+  setCurrentDonationAmount,
 } from "../common";
 import hp from "../api/hp";
 
@@ -23,7 +25,7 @@ import SubmitButton from "./writing/SubmitButton";
 import CancelButton from "./writing/CancelButton";
 
 import TokenIcon from "../assets/images/hptoken.png";
-
+// wow
 const Container = styled(Div)`
   z-index: 999;
   position: absolute;
@@ -169,6 +171,43 @@ function ConectWalletHelper() {
   );
 }
 
+function DonationDisplay({ amount = 0, ...props }) {
+  return (
+    <CancelButton
+      style={{
+        backgroundColor: "rgba(0,0,0,0)",
+        border: "none",
+        boxShadow: "none",
+        fontSize: "0.6rem",
+        position: "absolute",
+        display: "flex",
+        flexDirection: "column",
+        justifyContent: "space-between",
+        alignItems: "flex-end",
+      }}
+      initial={{
+        opacity: 0,
+      }}
+      animate={{
+        opacity: 0.7,
+        x: "-16.7rem",
+        y: "0rem",
+        width: "75%",
+      }}
+      {...props}
+    >
+      Total Donation
+      <span
+        style={{
+          fontSize: "0.74rem",
+        }}
+      >
+        {amount}
+      </span>
+    </CancelButton>
+  );
+}
+
 function Profile() {
   const dispatch = useDispatch();
   const {
@@ -187,6 +226,7 @@ function Profile() {
     writingContent,
     currentContentId,
     currentContentBody,
+    currentDonationAmount,
   } = useSelector((state) => state.posts);
 
   let current_author, current_title;
@@ -222,6 +262,37 @@ function Profile() {
     hasConnectedWallet = external_pub_key.length > 3;
 
   const { cache } = useSWRConfig();
+
+  const getPostResult = useFetch({
+    key: "get_post",
+    args: {
+      id: currentContentId,
+    },
+    condition: selected > 0,
+  });
+  if (getPostResult.data) {
+    const { article_donated } = getPostResult.data;
+    dispatch(setCurrentDonationAmount(article_donated));
+  }
+
+  const [withdrawAmount, setWithdrawAmount] = useState(0);
+
+  const withdrawWallet = (amount) => {
+    setWithdrawAmount(amount);
+  };
+
+  const withdrawResult = useFetch({
+    key: "withdraw",
+    args: {
+      data: {
+        amount: withdrawAmount,
+      },
+    },
+    condition: withdrawAmount > 0,
+  });
+  if (withdrawResult.data) {
+    setWithdrawAmount(0);
+  }
 
   return (
     <Container
@@ -265,6 +336,50 @@ function Profile() {
               {connectWalletHelper}
             </>
           )}
+          {hasConnectedWallet && (
+            <ConnectWallet
+              variants={{
+                blocked: {
+                  pointerEvents: "none",
+                  opacity: 0.3,
+                  scale: 0.8,
+                },
+                unBlocked: {
+                  pointerEvents: "auto",
+                  opacity: 1,
+                  scale: 1,
+                },
+              }}
+              animate={walletControl}
+              {...ConnectWallet__Animate}
+              onClick={() => {
+                const withdrawAmount = +window.prompt(
+                  "how much do you want to withdraw?"
+                );
+                if (withdrawAmount == null) return;
+                if (
+                  typeof amount !== "number" ||
+                  withdrawAmount <= 0 ||
+                  withdrawAmount > amount
+                ) {
+                  window.alert(
+                    `the amount of withdraw must be larger than 0 and smaller than ${amount}`
+                  );
+                  return;
+                }
+                if (
+                  window.confirm(
+                    "Are you sure you want to withdraw to this amount?"
+                  ) === false
+                )
+                  return;
+
+                withdrawWallet(withdrawAmount);
+              }}
+            >
+              Withdraw To External Wallet
+            </ConnectWallet>
+          )}
           <InnerContainer>
             <StyledLogo />
             <ProfileInnerContainer>
@@ -305,9 +420,10 @@ function Profile() {
               dispatch(setSelected(0));
             }}
             onClick={() => {
-              const donateAmount = window.prompt(
+              const donateAmount = +window.prompt(
                 "how much do you want to donate?"
               );
+              if (donateAmount == null) return;
               if (
                 typeof amount !== "number" ||
                 donateAmount <= 0 ||
@@ -331,33 +447,7 @@ function Profile() {
           >
             Donate
           </SubmitButton>
-          <CancelButton
-            initial={{
-              opacity: 0,
-              fontSize: "0.7rem",
-              x: "0rem",
-              y: "0rem",
-            }}
-            animate={{
-              opacity: 0.6,
-              border: "none",
-              boxShadow: "none",
-              fontSize: "0.7rem",
-              position: "absolute",
-              x: "-16.5rem",
-              y: "0rem",
-              width: "75%",
-            }}
-          >
-            Total Donation:{" "}
-            <span
-              style={{
-                fontSize: "0.8rem",
-              }}
-            >
-              292929
-            </span>
-          </CancelButton>
+          <DonationDisplay amount={currentDonationAmount} />
         </>
       )}
       {isWriteMode && (
@@ -388,6 +478,15 @@ function Profile() {
       )}
       {isMyViewMode && (
         <>
+          <DonationDisplay
+            animate={{
+              opacity: 0.7,
+              x: "-21.2rem",
+              y: "0rem",
+              width: "75%",
+            }}
+            amount={currentDonationAmount}
+          />
           <CancelButton
             onClick={() => {
               dispatch(

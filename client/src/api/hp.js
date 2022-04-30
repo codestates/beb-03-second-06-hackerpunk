@@ -28,7 +28,9 @@ class HackerPunkAPI {
   async init() {
     if (!this.provider) return;
     try {
-      const [account] = await this.provider.enable();
+      const [account] = await this.provider.request({
+        method: "eth_requestAccounts",
+      });
       this.account = account;
       this.provider.on("accountsChanged", ([newAccount]) => {
         this.account = newAccount;
