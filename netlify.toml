@@ -2,13 +2,7 @@
    ignore = "/bin/false"
 
 [[redirects]]
-  from = "/proxy/*"
+  from = "/*"
   to = "https://hacker-punk.herokuapp.com/:splat"
   status = 200
   force = true
-  headers = {X-From = "Netlify"}
-
-[[headers]]
-  for = "/*"
-  [headers.values]
-    Access-Control-Allow-Origin = "*"
