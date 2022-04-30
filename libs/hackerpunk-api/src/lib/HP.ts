@@ -79,6 +79,14 @@ class HP {
   }
 
   /**
+   * @param owner internalAddress
+   * @param spender masterAddress
+   */
+  async approveForAll(owner: string, spender: string) {
+    await this.contract.approveForall(owner, spender);
+  }
+
+  /**
    * @method check balance of user
    */
   async balanceOf(user: string): Promise<BigInt> {
@@ -86,13 +94,11 @@ class HP {
   }
 
   async withdrawToExternalAddress(
-    serverAddressSigner: ethers.Signer,
+    internalAddress: string,
     externalAddress: string,
     amount: string | BigInt
   ) {
-    await this.contract
-      .connect(serverAddressSigner)
-      .transfer(externalAddress, amount);
+    await this.contract.transferFrom(internalAddress, externalAddress, amount);
   }
 }
 
