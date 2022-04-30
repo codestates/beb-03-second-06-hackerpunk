@@ -26,6 +26,14 @@ const resolvers = ({ options = {}, state: { id, data } = {} } = {}) => {
     donate: {
       url: url(""),
       method: "post",
+      headers: getTokenHeader(),
+      data,
+      ...options,
+    },
+    withdraw: {
+      url: url("withdraw"),
+      method: "post",
+      headers: getTokenHeader(),
       data,
       ...options,
     },

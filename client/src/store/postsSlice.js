@@ -6,6 +6,7 @@ const initialState = {
   contents: [],
   currentContentId: 0,
   currentContentBody: "",
+  currentDonationAmount: 0,
   lastArticleId: 0,
   writingTitle: "",
   writingContent: "",
@@ -53,6 +54,10 @@ export const postsSlice = createSlice({
       const id = action.payload;
       if (typeof id === "number") state.currentContentId = id;
     },
+    setCurrentDonationAmount: (state, action) => {
+      const id = action.payload;
+      if (typeof id === "number") state.currentDonationAmount = id;
+    },
     setCurrentContentBody: (state, action) => {
       const body = action.payload;
       if (typeof body === "string") state.currentContentBody = body;
@@ -67,6 +72,7 @@ export const {
   deletePost,
   setCurrentContentId,
   setCurrentContentBody,
+  setCurrentDonationAmount,
 } = postsSlice.actions;
 
 export default postsSlice.reducer;
