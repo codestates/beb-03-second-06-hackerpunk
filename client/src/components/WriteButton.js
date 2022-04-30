@@ -1,4 +1,4 @@
-import { React, styled, Button, useDispatch, setSelected } from "../common";
+import { React, styled, Button, useDispatch, addValues } from "../common";
 
 const StyledButton = styled(Button)`
   font-size: 0.7rem;
@@ -30,7 +30,7 @@ function WriteButton({ message = "Write", ...props }) {
     <StyledButton
       {...StyledButton__Animate}
       onClick={() => {
-        dispatch(setSelected(-1));
+        dispatch(addValues({ mode: "write" }));
       }}
       {...props}
     >

@@ -1,11 +1,15 @@
-export const BASE_URL = "https://hacker-punk.herokuapp.com/";
+export const URL = "https://hacker-punk.herokuapp.com";
+
+export const PROXY = URL;
+
+export const BASE_URL = `${PROXY}/`;
 
 export const url = (...args) => {
   return BASE_URL + args.join("/");
 };
 
-export const CONTRACT_ADDR = "0xD796124e5cF66C4e08767BE03AF2D745FD7EAD5e";
+export const CONTRACT_ADDR = "0x15341C93220040198102Ff63D7041041A473ad10";
 
-export const HP_CONTRACT_ADDR = "0xb09b86902cC13fa51E7CAad4F534aaddD4d3b67b";
+export const HP_CONTRACT_ADDR = "0xc294b0F91ecd455bd383d6784c63129C151E4E15";
 
 export const EXTERNAL_WALLET_TIER = 1;
