@@ -69,13 +69,22 @@ contract HPTimeLock is Ownable {
         lockInfo.startTime = block.timestamp;
     }
 
-    function donate(uint256 articleId, address donator, uint256 amount) public onlyOwner {
+    function donate(uint256 articleId, address writer, address donator, uint256 amount) public onlyOwner {
         DonationStatus ds = checkDonationStatus(articleId);
-        require(ds == DonationStatus.DonationStatus_Proceeding, "Donation not proceeding");
+        require(ds == DonationStatus.DonationStatus_NotStarted || ds == DonationStatus.DonationStatus_Proceeding, "Donation not proceeding");
+
+        LockInfo storage lockInfo = articleToLockInfo[articleId];
+        DonationInfo storage donationInfo = articleToDonationInfo[articleId];
+
+        if (ds == DonationStatus.DonationStatus_NotStarted) {
+            donationInfo.donationStatus = DonationStatus.DonationStatus_Proceeding;
+            donationInfo.writer = writer;
+            lockInfo.writer = writer;
+            lockInfo.startTime = block.timestamp;  
+        }
 
         uint256 balance = token().balanceOf(donator);
         require(balance >= amount, "Not enough balance");
-        LockInfo storage lockInfo = articleToLockInfo[articleId];
         uint256 fee = (amount / 100) * 3;
 
         token().safeTransferFrom(donator, msg.sender, fee);
