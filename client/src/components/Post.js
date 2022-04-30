@@ -8,9 +8,9 @@ import {
   useFocus,
   useInput,
   useDispatch,
-  setWriting,
-  useLayoutEffect,
-  setCurrentContentBody,
+  useParams,
+  addValues,
+  useNavigate,
 } from "../common";
 
 const Container = styled(Div)`
@@ -25,6 +25,10 @@ const ContentContainer = styled(Div)`
   justify-content: space-between;
   padding: 0 1rem;
   padding-top: 0rem;
+`;
+
+const ContentHeaderContainer = styled(Div)`
+  height: 30%;
 `;
 
 const Block = styled(Div)`
@@ -86,6 +90,13 @@ const Content = styled(Div)`
   align-items: flex-start;
   word-wrap: break-word;
   padding: 4rem;
+  /* Hide scrollbar for Chrome, Safari and Opera */
+  &::-webkit-scrollbar {
+    display: none;
+  }
+  /* Hide scrollbar for IE, Edge and Firefox */
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
 `;
 
 /* -----------Write Mode----------- */
@@ -120,6 +131,7 @@ const TextArea = styled(motion.textarea)`
   border: 1px solid black;
   border-top: 1px solid #222222;
   padding: 2.5rem 0.5rem;
+  overflow: hidden;
   resize: none;
   color: whitesmoke;
   font-size: clamp(1.2rem, 2vw, 1.4rem);
@@ -128,13 +140,6 @@ const TextArea = styled(motion.textarea)`
   &::placeholder {
     opacity: 0.15;
   }
-  /* Hide scrollbar for Chrome, Safari and Opera */
-  &::-webkit-scrollbar {
-    display: none;
-  }
-  /* Hide scrollbar for IE, Edge and Firefox */
-  -ms-overflow-style: none; /* IE and Edge */
-  scrollbar-width: none; /* Firefox */
 `;
 
 const ContentCancel = styled(Div)`
@@ -159,8 +164,6 @@ const variants = {
 };
 
 function Post({
-  myKey = -1,
-  selectedKey = -1,
   selectThisToggle = () => {},
   data: {
     new_id,
@@ -169,161 +172,180 @@ function Post({
     article_views,
     article_author,
     article_created_at,
-    article_updated_at,
   } = {},
 }) {
-  // const isMainMode = selectedKey === 0;
-  const isListAndViewMode = selectedKey >= 0;
-  const isWriteMode = selectedKey === -1 || selectedKey === -2;
+  let article_content;
 
-  const isSelected = myKey === selectedKey;
-  const isNotSelected = selectedKey > 0 && !isSelected;
+  const params = useParams();
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
 
-  const { id } = useSelector((state) => state.user);
-  const { writingTitle, writingContent, currentContentBody } = useSelector(
-    (state) => state.posts
+  const paramArticleId = ~~params.article_id;
+
+  // mode <- none / write / edit
+  const { mode, writingTitle, writingContent } = useSelector(
+    (state) => state.values
   );
 
   const { data } = useFetch({
     key: "get_post",
     args: {
-      id: article_id,
+      id: paramArticleId,
     },
-    condition: isSelected && article_id > 0 && currentContentBody === "",
+    condition: paramArticleId > 0,
   });
 
-  const dispatch = useDispatch();
-  useLayoutEffect(() => {
-    if (data && typeof data === "object") {
-      const { article_content } = data;
-      dispatch(setCurrentContentBody(article_content));
-    }
-  }, [dispatch, data]);
+  if (data) {
+    article_id = data.article_id;
+    article_title = data.article_title;
+    article_views = data.article_views;
+    article_author = data.article_author;
+    article_created_at = data.article_created_at;
+    article_content = data.article_content;
+  }
+
+  const PostContainer = ({ children }) => {
+    return (
+      <Container
+        onClick={() => {
+          if (paramArticleId) {
+            dispatch(addValues({ mode: "none" }));
+            navigate("../");
+          } else {
+            dispatch(addValues({ mode: "view" }));
+            navigate(`./${article_id}`);
+          }
+        }}
+        variants={variants}
+        animate={
+          paramArticleId && paramArticleId !== article_id ? "closed" : "opened"
+        }
+        exit="closed"
+        whileHover={{
+          border: "1px solid whitesmoke",
+        }}
+        transition={{ type: "spring", stiffness: 100, duration: 1 }}
+      >
+        {children}
+      </Container>
+    );
+  };
 
   const [FocusTitleRef] = useFocus();
   // eslint-disable-next-line no-unused-vars
   const [_, inputTitle, setTitle] = useInput({
     initialValue: writingTitle,
     middleware: (title) => {
-      dispatch(setWriting({ title }));
+      dispatch(addValues({ writingTitle: title }));
     },
   });
   // eslint-disable-next-line no-unused-vars
   const [__, inputContent, setContent] = useInput({
     initialValue: writingContent,
     middleware: (content) => {
-      dispatch(setWriting({ content }));
+      dispatch(addValues({ writingContent: content }));
     },
   });
 
-  return (
-    <Container
-      onClick={selectThisToggle}
-      variants={variants}
-      animate={isSelected ? "opened" : isNotSelected ? "closed" : "opened"}
-      exit="closed"
-      whileHover={
-        isListAndViewMode && {
-          border: "1px solid whitesmoke",
-        }
-      }
-      transition={{ type: "spring", stiffness: 100, duration: 1 }}
-    >
-      {isSelected ? (
+  switch (mode) {
+    case "edit":
+    case "write":
+      if (mode === "write" && new_id !== 1) return;
+      return (
         <ContentContainer>
-          <Div
-            style={{
-              height: "30%",
-            }}
-          >
-            <AuthorInContent>
-              {isWriteMode ? id : article_author}
-            </AuthorInContent>
+          <ContentHeaderContainer>
+            <AuthorInContent>{article_author}</AuthorInContent>
             <TitleInContent>
-              {isWriteMode ? (
-                <>
-                  <InputTitle
-                    tabIndex={1}
-                    ref={FocusTitleRef}
-                    placeholder="Title"
-                    {...inputTitle}
-                  />
-                  <InputTitleCancel>
-                    <CancelButton
-                      onClick={() => {
-                        dispatch(setWriting({ title: "" }));
-                        setTitle("");
-                      }}
-                      whileHover={{
-                        color: "rgba(250, 150, 120, 0.9)",
-                        scale: 1.02,
-                      }}
-                      whileTap={{ scale: 0.8 }}
-                    >
-                      X
-                    </CancelButton>
-                  </InputTitleCancel>
-                </>
-              ) : (
-                article_title
-              )}
-            </TitleInContent>
-          </Div>
-          {isWriteMode ? (
-            <>
-              <Content>
-                <TextArea
-                  tabIndex={2}
-                  placeholder="Content"
-                  onKeyDown={(e) => {
-                    if (e.key === "Tab") {
-                      e.preventDefault();
-                    }
-                  }}
-                  {...inputContent}
-                ></TextArea>
-              </Content>
-              <ContentCancel>
+              <InputTitle
+                tabIndex={1}
+                ref={FocusTitleRef}
+                placeholder="Title"
+                {...inputTitle}
+              />
+              <InputTitleCancel>
                 <CancelButton
+                  onClick={() => {
+                    dispatch(addValues({ writingTitle: "" }));
+                    setTitle("");
+                  }}
                   whileHover={{
                     color: "rgba(250, 150, 120, 0.9)",
                     scale: 1.02,
                   }}
                   whileTap={{ scale: 0.8 }}
-                  onClick={() => {
-                    dispatch(setWriting({ content: "" }));
-                    setContent("");
-                  }}
                 >
                   X
                 </CancelButton>
-              </ContentCancel>
-            </>
-          ) : (
-            <Content>{currentContentBody}</Content>
-          )}
-          {isListAndViewMode && (
-            <Div
-              style={{
-                height: "10%",
-                justifyContent: "space-between",
+              </InputTitleCancel>
+            </TitleInContent>
+          </ContentHeaderContainer>
+
+          <Content>
+            <TextArea
+              tabIndex={2}
+              placeholder="Content"
+              onKeyDown={(e) => {
+                if (e.key === "Tab") {
+                  e.preventDefault();
+                }
+              }}
+              {...inputContent}
+            ></TextArea>
+          </Content>
+          <ContentCancel>
+            <CancelButton
+              whileHover={{
+                color: "rgba(250, 150, 120, 0.9)",
+                scale: 1.02,
+              }}
+              whileTap={{ scale: 0.8 }}
+              onClick={() => {
+                dispatch(addValues({ writingContent: "" }));
+                setContent("");
               }}
             >
-              <ViewsInContent>views: {article_views}</ViewsInContent>
-              <CreatedAtInContent>{article_created_at}</CreatedAtInContent>
-            </Div>
-          )}
+              X
+            </CancelButton>
+          </ContentCancel>
         </ContentContainer>
-      ) : (
-        <Block>
-          <Author>{article_author}</Author>
-          <Title>{article_title}</Title>
-          <CreatedAt>{article_created_at}</CreatedAt>
-          <Views>{article_views}</Views>
-        </Block>
-      )}
-    </Container>
-  );
+      );
+    default: // else mode
+      if (paramArticleId) {
+        // view mode
+        return (
+          <PostContainer>
+            <ContentContainer>
+              <ContentHeaderContainer>
+                <AuthorInContent>{article_author}</AuthorInContent>
+                <TitleInContent>{article_title}</TitleInContent>
+              </ContentHeaderContainer>
+              <Content>{article_content}</Content>
+              <Div
+                style={{
+                  height: "10%",
+                  justifyContent: "space-between",
+                }}
+              >
+                <ViewsInContent>views: {article_views}</ViewsInContent>
+                <CreatedAtInContent>{article_created_at}</CreatedAtInContent>
+              </Div>
+            </ContentContainer>
+          </PostContainer>
+        );
+      } else {
+        // list mode
+        return (
+          <PostContainer>
+            <Block>
+              <Author>{article_author}</Author>
+              <Title>{article_title}</Title>
+              <CreatedAt>{article_created_at}</CreatedAt>
+              <Views>{article_views}</Views>
+            </Block>
+          </PostContainer>
+        );
+      }
+  }
 }
 
 export default Post;

@@ -6,17 +6,14 @@ import {
   Logo,
   useState,
   useFetch,
+  useParams,
   useDispatch,
   useSelector,
-  useAnimation,
   toSummary,
-  setSelected,
-  setWriting,
-  deletePost,
-  setUser,
+  addValues,
   useSWRConfig,
-  setCurrentContentBody,
-  setCurrentDonationAmount,
+  useAnimation,
+  useLayoutEffect,
 } from "../common";
 import hp from "../api/hp";
 
@@ -25,6 +22,7 @@ import SubmitButton from "./writing/SubmitButton";
 import CancelButton from "./writing/CancelButton";
 
 import TokenIcon from "../assets/images/hptoken.png";
+import useErrorBang from "../hooks/useErrorBang";
 // wow
 const Container = styled(Div)`
   z-index: 999;
@@ -102,19 +100,16 @@ const ConnectWallet = styled(motion.div)`
 // ---------- Animation ----------
 const Container__Animate_variants = {
   initial: {
-    opacity: 0,
     y: -30,
     height: "11%",
   },
-  animate: {
-    opacity: 1,
+  big: {
     x: 12,
     y: 0,
     scale: 1.1,
     height: "11%",
   },
-  exit: {
-    opacity: 1,
+  small: {
     position: "absolute",
     borderRadius: "0.15rem",
     x: "-4vw",
@@ -159,12 +154,24 @@ const Helper = styled(Div)`
   text-justify: auto;
 `;
 
-function ConectWalletHelper() {
+function ConectWalletHelper(props) {
   return (
     <Helper
-      initial={{ x: "-14rem", y: "-14rem" }}
-      animate={{ x: "-11rem", y: "-6rem" }}
-      exit={{ x: "-14rem", y: "-14rem" }}
+      initial="hidden"
+      variants={{
+        visible: {
+          display: "block",
+          x: "-11rem",
+          y: "-6rem",
+        },
+        hidden: {
+          display: "none",
+          x: "-14rem",
+          y: "-14rem",
+        },
+      }}
+      exit="hidden"
+      {...props}
     >
       If you want to withdraw your hp tokens, Please connect to your own wallet.
     </Helper>
@@ -208,80 +215,107 @@ function DonationDisplay({ amount = 0, ...props }) {
   );
 }
 
+const ProfileContainer = ({ children, big, data: { level, amount } = {} }) => (
+  <Container
+    variants={Container__Animate_variants}
+    initial="initial"
+    animate={big ? "big" : "small"}
+  >
+    {children}
+    <InnerContainer>
+      <Span>Lv.{level}</Span>
+      <img
+        style={{
+          width: "0.86rem",
+        }}
+        src={TokenIcon}
+        alt="hpicon"
+      />
+      <Token>{amount}</Token>
+      <Span>hp</Span>
+    </InnerContainer>
+  </Container>
+);
+
 function Profile() {
   const dispatch = useDispatch();
+  const errorBang = useErrorBang();
+  const { cache } = useSWRConfig();
+
+  const walletHelperControl = useAnimation();
+
+  const params = useParams();
+
+  const paramArticleId = ~~params["*"];
+
+  useLayoutEffect(() => {
+    if (paramArticleId) {
+      dispatch(addValues({ mode: "view" }));
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   const {
-    id,
-    internal_pub_key,
-    external_pub_key,
-    level,
-    amount,
-    latestDonationAmount,
-  } = useSelector((state) => state.user);
+    data: {
+      user: { id, internal_pub_key, external_pub_key, level, amount },
+      // posts,
+      // max_article_id,
+    },
+  } = useFetch({
+    key: "get_user_posts",
+    args: {
+      id: paramArticleId,
+    },
+  });
+
   const {
-    prevSelected,
-    selected,
-    contents,
-    writingTitle,
-    writingContent,
-    currentContentId,
-    currentContentBody,
-    currentDonationAmount,
-  } = useSelector((state) => state.posts);
+    data: {
+      article_id,
+      article_author,
+      article_title,
+      // article_views,
+      article_content,
+      // article_donated,
+      // article_created_at,
+    } = {},
+  } = useFetch({
+    key: "get_post",
+    args: {
+      id: paramArticleId,
+    },
+    condition: paramArticleId > 0,
+  });
 
-  let current_author, current_title;
+  const isMyViewMode = article_author === id;
 
-  if (selected > 0) {
-    const current_article = contents[selected - 1];
-    current_author = current_article.article_author;
-    current_title = current_article.article_title;
-  }
+  const { mode, writingTitle, writingContent, waitingAPI } = useSelector(
+    (state) => state.values
+  );
 
-  const walletControl = useAnimation();
-
-  const connectWallet = () => {
-    walletControl.start("blocked");
+  const connectWallet = async () => {
+    dispatch(addValues({ waitingAPI: true }));
     hp.connectToExternalWallet(internal_pub_key)
       .then((amount) => {
         if (amount) {
-          dispatch(setUser({ external_pub_key: hp.account, amount }));
+          cache.clear();
         }
       })
+      .catch(({ message } = {}) => {
+        errorBang("Conneted To External Wallet", message);
+      })
       .finally(() => {
-        walletControl.start("unBlocked");
+        dispatch(addValues({ waitingAPI: false }));
       });
   };
 
-  const [connectWalletHelper, setConnectWalletHelper] = useState("");
+  const hasConnectedWallet = external_pub_key.length > 3;
 
-  const isWriteMode = selected === -1,
-    isEditMode = selected === -2,
-    isMainMode = selected === 0,
-    isViewMode = selected > 0 && current_author !== id,
-    isMyViewMode = selected > 0 && current_author === id,
-    hasConnectedWallet = external_pub_key.length > 3;
-
-  const { cache } = useSWRConfig();
-
-  const getPostResult = useFetch({
-    key: "get_post",
-    args: {
-      id: currentContentId,
-    },
-    condition: selected > 0,
-  });
-  if (getPostResult.data) {
-    const { article_donated } = getPostResult.data;
-    dispatch(setCurrentDonationAmount(article_donated));
-  }
-
+  /* Donate */
+  const [donationAmount, setDonationAmount] = useState(0);
+  /* Withdraw */
   const [withdrawAmount, setWithdrawAmount] = useState(0);
 
-  const withdrawWallet = (amount) => {
-    setWithdrawAmount(amount);
-  };
-
-  const withdrawResult = useFetch({
+  const { data } = useFetch({
     key: "withdraw",
     args: {
       data: {
@@ -290,50 +324,178 @@ function Profile() {
     },
     condition: withdrawAmount > 0,
   });
-  if (withdrawResult.data) {
+  if (data) {
     setWithdrawAmount(0);
+    dispatch(addValues({ waitingAPI: false }));
   }
+  /* ******** */
 
-  return (
-    <Container
-      variants={Container__Animate_variants}
-      initial={isMainMode ? "initial" : "animate"}
-      animate={isMainMode ? "animate" : "exit"}
-      exit="exit"
-    >
-      {isMainMode && (
-        <>
-          <WriteButton message="Write" />
-          {hasConnectedWallet === false && (
+  switch (mode) {
+    case "write":
+      return (
+        <ProfileContainer big={mode === "none"} data={{ level, amount }}>
+          <CancelButton onClick={() => dispatch(addValues({ mode: "none" }))} />
+          <SubmitButton
+            fetch={{
+              key: "post_post",
+              data: {
+                article_title: writingTitle,
+                article_content: writingContent,
+              },
+            }}
+            succeedCallback={() => {
+              dispatch(addValues({ mode: "none" }));
+              dispatch(addValues({ writingTitle: "", writingContent: "" }));
+            }}
+            onClick={() => {
+              if (writingTitle && writingContent) {
+                return window.confirm(
+                  "Are you sure you want to post this article?"
+                );
+              }
+              return false;
+            }}
+          />
+        </ProfileContainer>
+      );
+    case "edit":
+      return (
+        <ProfileContainer big={mode === "none"} data={{ level, amount }}>
+          <CancelButton
+            onClick={() => {
+              dispatch(addValues({ mode: "view" }));
+            }}
+          >
+            Cancel
+          </CancelButton>
+          <SubmitButton
+            fetch={{
+              key: "put_post",
+              data: {
+                article_id,
+                article_title: writingTitle,
+                article_content: writingContent,
+              },
+            }}
+            succeedCallback={() => {
+              cache.clear();
+              dispatch(addValues({ mode: "none" }));
+              dispatch(addValues({ writingTitle: "", writingContent: "" }));
+            }}
+            onClick={() => {
+              if (article_id) {
+                return window.confirm(
+                  "Are you sure you want to update this article?"
+                );
+              }
+              return false;
+            }}
+          >
+            Confirm
+          </SubmitButton>
+        </ProfileContainer>
+      );
+    case "view":
+      return (
+        <ProfileContainer big={mode === "none"} data={{ level, amount }}>
+          <SubmitButton
+            fetch={{
+              key: "donate",
+              data: {
+                article_id,
+                amount: donationAmount,
+              },
+            }}
+            succeedCallback={() => {
+              dispatch(addValues({ mode: "none" }));
+            }}
+            onClick={() => {
+              const getDonationAmount = +window.prompt(
+                "how much do you want to donate?"
+              );
+              if (getDonationAmount == null) return;
+              if (
+                typeof amount !== "number" ||
+                getDonationAmount <= 0 ||
+                getDonationAmount > amount
+              ) {
+                window.alert(
+                  `the amount of donation must be larger than 0 and smaller than ${amount}`
+                );
+                return false;
+              }
+              if (
+                window.confirm(
+                  "Are you sure you want to donate to this article?"
+                ) === false
+              )
+                return false;
+
+              setDonationAmount(getDonationAmount);
+              return true;
+            }}
+          >
+            Donate
+          </SubmitButton>
+          <DonationDisplay amount={donationAmount} />
+          {isMyViewMode && (
             <>
-              <ConnectWallet
-                variants={{
-                  blocked: {
-                    pointerEvents: "none",
-                    opacity: 0.3,
-                    scale: 0.8,
-                  },
-                  unBlocked: {
-                    pointerEvents: "auto",
-                    opacity: 1,
-                    scale: 1,
+              <DonationDisplay
+                animate={{
+                  opacity: 0.7,
+                  x: "-21.2rem",
+                  y: "0rem",
+                  width: "75%",
+                }}
+                amount={donationAmount}
+              />
+              <CancelButton
+                onClick={() => {
+                  dispatch(
+                    addValues({
+                      writingTitle: article_title,
+                      writingContent: article_content,
+                    })
+                  );
+                  dispatch(addValues({ mode: "edit" }));
+                }}
+              >
+                Edit
+              </CancelButton>
+              <SubmitButton
+                fetch={{
+                  key: "delete_post",
+                  data: {
+                    article_id,
                   },
                 }}
-                animate={walletControl}
-                {...ConnectWallet__Animate}
-                onClick={connectWallet}
-                onMouseEnter={() =>
-                  setConnectWalletHelper(<ConectWalletHelper />)
-                }
-                onMouseLeave={() => setConnectWalletHelper("")}
+                succeedCallback={() => {
+                  dispatch(addValues({ mode: "none" }));
+                }}
+                onClick={() => {
+                  if (article_id > 0) {
+                    return window.confirm(
+                      "Are you sure you want to delete this article?"
+                    );
+                  }
+                  return false;
+                }}
               >
-                ❕ Connect To External Wallet
-              </ConnectWallet>
-              {connectWalletHelper}
+                Delete
+              </SubmitButton>
             </>
           )}
-          {hasConnectedWallet && (
+        </ProfileContainer>
+      );
+
+    default:
+      return (
+        <ProfileContainer big={mode === "none"} data={{ level, amount }}>
+          <WriteButton message="Write" />
+          {hasConnectedWallet ? (
             <ConnectWallet
+              initial={waitingAPI ? "blocked" : "unBlocked"}
+              animate={waitingAPI ? "blocked" : "unBlocked"}
               variants={{
                 blocked: {
                   pointerEvents: "none",
@@ -346,7 +508,6 @@ function Profile() {
                   scale: 1,
                 },
               }}
-              animate={walletControl}
               {...ConnectWallet__Animate}
               onClick={() => {
                 const withdrawAmount = +window.prompt(
@@ -369,12 +530,38 @@ function Profile() {
                   ) === false
                 )
                   return;
-
-                withdrawWallet(withdrawAmount);
+                dispatch(addValues({ waitingAPI: true }));
+                setWithdrawAmount(withdrawAmount);
               }}
             >
               Withdraw To External Wallet
             </ConnectWallet>
+          ) : (
+            <>
+              <ConnectWallet
+                initial={waitingAPI ? "blocked" : "unBlocked"}
+                animate={waitingAPI ? "blocked" : "unBlocked"}
+                variants={{
+                  blocked: {
+                    pointerEvents: "none",
+                    opacity: 0.3,
+                    scale: 0.8,
+                  },
+                  unBlocked: {
+                    pointerEvents: "auto",
+                    opacity: 1,
+                    scale: 1,
+                  },
+                }}
+                {...ConnectWallet__Animate}
+                onClick={connectWallet}
+                onMouseEnter={() => walletHelperControl.start("visible")}
+                onMouseLeave={() => walletHelperControl.start("hidden")}
+              >
+                ❕ Connect To External Wallet
+              </ConnectWallet>
+              <ConectWalletHelper animate={walletHelperControl} />
+            </>
           )}
           <InnerContainer>
             <StyledLogo />
@@ -400,178 +587,9 @@ function Profile() {
               </Address>
             </ProfileInnerContainer>
           </InnerContainer>
-        </>
-      )}
-      {isViewMode && (
-        <>
-          <SubmitButton
-            fetch={{
-              key: "donate",
-              data: {
-                article_id: currentContentId,
-                amount: latestDonationAmount,
-              },
-            }}
-            succeedCallback={() => {
-              dispatch(setSelected(0));
-            }}
-            onClick={() => {
-              const donateAmount = +window.prompt(
-                "how much do you want to donate?"
-              );
-              if (donateAmount == null) return;
-              if (
-                typeof amount !== "number" ||
-                donateAmount <= 0 ||
-                donateAmount > amount
-              ) {
-                window.alert(
-                  `the amount of donation must be larger than 0 and smaller than ${amount}`
-                );
-                return false;
-              }
-              if (
-                window.confirm(
-                  "Are you sure you want to donate to this article?"
-                ) === false
-              )
-                return false;
-
-              dispatch(setUser({ latestDonationAmount: donateAmount }));
-              return true;
-            }}
-          >
-            Donate
-          </SubmitButton>
-          <DonationDisplay amount={currentDonationAmount} />
-        </>
-      )}
-      {isWriteMode && (
-        <>
-          <CancelButton onClick={() => dispatch(setSelected(0))} />
-          <SubmitButton
-            fetch={{
-              key: "post_post",
-              data: {
-                article_title: writingTitle,
-                article_content: writingContent,
-              },
-            }}
-            succeedCallback={() => {
-              dispatch(setSelected(0));
-              dispatch(setWriting({ title: "", content: "" }));
-            }}
-            onClick={() => {
-              if (writingTitle && writingContent) {
-                return window.confirm(
-                  "Are you sure you want to post this article?"
-                );
-              }
-              return false;
-            }}
-          />
-        </>
-      )}
-      {isMyViewMode && (
-        <>
-          <DonationDisplay
-            animate={{
-              opacity: 0.7,
-              x: "-21.2rem",
-              y: "0rem",
-              width: "75%",
-            }}
-            amount={currentDonationAmount}
-          />
-          <CancelButton
-            onClick={() => {
-              dispatch(
-                setWriting({
-                  title: current_title,
-                  content: currentContentBody,
-                })
-              );
-              dispatch(setSelected(-2));
-            }}
-          >
-            Edit
-          </CancelButton>
-          <SubmitButton
-            fetch={{
-              key: "delete_post",
-              data: {
-                article_id: currentContentId,
-              },
-            }}
-            succeedCallback={() => {
-              dispatch(deletePost(selected));
-              dispatch(setSelected(0));
-            }}
-            onClick={() => {
-              if (currentContentId > 0) {
-                return window.confirm(
-                  "Are you sure you want to delete this article?"
-                );
-              }
-              return false;
-            }}
-          >
-            Delete
-          </SubmitButton>
-        </>
-      )}
-      {isEditMode && (
-        <>
-          <CancelButton
-            onClick={() => {
-              dispatch(setSelected(prevSelected));
-            }}
-          >
-            Cancel
-          </CancelButton>
-          <SubmitButton
-            fetch={{
-              key: "put_post",
-              data: {
-                article_id: currentContentId,
-                article_title: writingTitle,
-                article_content: writingContent,
-              },
-            }}
-            succeedCallback={() => {
-              cache.clear();
-              dispatch(setSelected(0));
-              dispatch(setCurrentContentBody(writingContent));
-              dispatch(setWriting({ title: "", content: "" }));
-            }}
-            onClick={() => {
-              if (currentContentId > 0) {
-                return window.confirm(
-                  "Are you sure you want to update this article?"
-                );
-              }
-              return false;
-            }}
-          >
-            Confirm
-          </SubmitButton>
-        </>
-      )}
-
-      <InnerContainer>
-        <Span>Lv.{level}</Span>
-        <img
-          style={{
-            width: "0.86rem",
-          }}
-          src={TokenIcon}
-          alt="hpicon"
-        />
-        <Token>{amount}</Token>
-        <Span>hp</Span>
-      </InnerContainer>
-    </Container>
-  );
+        </ProfileContainer>
+      );
+  }
 }
 
 export default Profile;

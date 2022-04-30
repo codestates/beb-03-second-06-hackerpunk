@@ -3,15 +3,15 @@ import {
   React,
   Routes,
   Route,
-  Background,
-  Footer,
-  Div,
   styled,
-  useLocation,
-  AsyncBoundary,
-  LoadingBox,
-  AnimatePresence,
   getToken,
+  useLocation,
+  Div,
+  Footer,
+  Background,
+  LoadingBox,
+  AsyncBoundary,
+  AnimatePresence,
 } from "../common";
 
 import Home from "../pages/Home";
@@ -60,8 +60,7 @@ function App() {
           <Routes>
             <Route path="*" element={<Home />} />
             <Route path="/confirm" element={<Confirm />} />
-            <Route path="/contents" element={AuthGuard(<Contents />)} />
-            <Route path="/contents/:id" element={AuthGuard(<Contents />)} />
+            <Route path="/contents/*" element={AuthGuard(<Contents />)} />
           </Routes>
         </AsyncBoundary>
       </AnimatePresence>
