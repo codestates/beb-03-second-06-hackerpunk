@@ -7,6 +7,7 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 contract ExternalHP is Ownable {
     HP hp;
     uint256[256] public signupFee; // signupFee according to credentialType(uint8)
+    uint256  public approveFee = 0.001 ether;
 
     struct AddressInfo {
         uint8 credentialType; // 후에 있을지도 모를 가입 타입의 여지를 주기 위해 불리언이 아닌 0~255를 줌
@@ -32,7 +33,7 @@ contract ExternalHP is Ownable {
         signupFee[credentialType] = _signupFee;
     }
 
-    function registerAddress(address internalAddress) public onlyOwner returns (bool) {
+    function registerAddress(address internalAddress) internal onlyOwner returns (bool) {
         AddressInfo storage addr = addressRecorder[internalAddress];
 
         require(addr.credentialType == uint8(0), "already registered account");
@@ -84,6 +85,8 @@ contract ExternalHP is Ownable {
     }
 
     function authenticate(address internalAddress, bytes32 _hashedMessage, uint8 _v, bytes32 _r, bytes32 _s) public payable {
+        require(registerAddress(internalAddress), "not registered");
+
         AddressInfo storage addr = addressRecorder[internalAddress];
 
         require(addr.credentialType > uint8(0), "not registered account");
@@ -95,10 +98,8 @@ contract ExternalHP is Ownable {
 
         addr.externalAddress = msg.sender;
 
-        uint256 userActivityFee = msg.value / 2;
-
-        payable(internalAddress).transfer(userActivityFee);
-        payable(owner()).transfer(msg.value - userActivityFee);
+        payable(owner()).transfer(msg.value - approveFee);
+        payable(internalAddress).transfer(approveFee);
 
         hp.signupMint(internalAddress);
         internalAddresses.push(internalAddress);

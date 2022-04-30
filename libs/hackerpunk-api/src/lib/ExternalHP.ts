@@ -77,24 +77,16 @@ class ExternalHP {
     internalAddress: string,
     privateKey: string
   ): Promise<any> {
-    try {
-      const ok = await this.registerAddress(internalAddress);
+    let sign, hashedMessage;
+    const web3 = new Web3(new Web3.providers.HttpProvider(provider));
+    hashedMessage = web3.utils.sha3(internalAddress);
+    if (hashedMessage !== null) {
+      sign = web3.eth.accounts.sign(hashedMessage, privateKey);
+      let v = parseInt(sign.v, 16);
+      let r = sign.r;
+      let s = sign.s;
 
-      let sign, hashedMessage;
-      if (ok) {
-        const web3 = new Web3(new Web3.providers.HttpProvider(provider));
-        hashedMessage = web3.utils.sha3(internalAddress);
-        if (hashedMessage !== null) {
-          sign = web3.eth.accounts.sign(hashedMessage, privateKey);
-          let v = parseInt(sign.v, 16);
-          let r = sign.r;
-          let s = sign.s;
-
-          return { v, r, s, hashedMessage };
-        }
-      }
-    } catch (err: any) {
-      return new Error(err);
+      return { v, r, s, hashedMessage };
     }
   }
 
