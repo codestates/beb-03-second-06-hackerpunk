@@ -1,14 +1,11 @@
 import {
   React,
   AsyncBoundary,
-  useSelector,
   useNavigate,
-  useDispatch,
-  setSelected,
   styled,
+  Route,
+  Routes,
   Div,
-  useRef,
-  addValues,
   Spinner,
 } from "../common";
 
@@ -39,11 +36,6 @@ const Container = styled(Div)`
 
 function Board() {
   const navigate = useNavigate();
-  const dispatch = useDispatch();
-
-  const { selected, contents } = useSelector((state) => state.posts);
-
-  const containerRef = useRef(null);
   return (
     <AsyncBoundary
       fallback={
@@ -57,31 +49,11 @@ function Board() {
         navigate("/");
       }}
     >
-      <Container
-        ref={containerRef}
-        animate={{ opacity: 1, height: "70%" }}
-        onScroll={({ target }) => {
-          if (selected === 0)
-            dispatch(
-              addValues({
-                boardScrollTop: target.scrollTop,
-              })
-            );
-        }}
-      >
-        {/* selected === -1 => Writing Box */}
-        {selected === -1 || selected === -2 ? (
-          <Post />
-        ) : (
-          <Posts
-            // scrollToOrigin={scrollToOrigin}
-            selected={selected}
-            contents={contents}
-            selectedCallback={(selected) => {
-              dispatch(setSelected(selected));
-            }}
-          />
-        )}
+      <Container animate={{ opacity: 1, height: "70%" }}>
+        <Routes>
+          <Route path="/:article_id" element={<Post />} />
+          <Route path="/" element={<Posts />} />
+        </Routes>
       </Container>
     </AsyncBoundary>
   );

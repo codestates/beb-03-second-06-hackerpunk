@@ -1,6 +1,11 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-const initialState = {};
+const initialState = {
+  mode: "none",
+  writingTitle: "",
+  writingContent: "",
+  waitingAPI: false,
+};
 
 export const valuesSlice = createSlice({
   name: "values",

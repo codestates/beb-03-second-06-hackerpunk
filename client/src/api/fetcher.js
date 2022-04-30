@@ -3,6 +3,8 @@ import { getTokenHeader } from "../common";
 
 import { url } from "./constants";
 
+// axios.defaults.withCredentials = true;
+
 const resolvers = ({ options = {}, state: { id, data } = {} } = {}) => {
   return {
     login: {
@@ -24,7 +26,21 @@ const resolvers = ({ options = {}, state: { id, data } = {} } = {}) => {
       ...options,
     },
     donate: {
-      url: url(""),
+      url: url("donate"),
+      method: "post",
+      headers: getTokenHeader(),
+      data,
+      ...options,
+    },
+    donateCancel: {
+      url: url("donate", "cancel"),
+      method: "post",
+      headers: getTokenHeader(),
+      data,
+      ...options,
+    },
+    donateReward: {
+      url: url("donate", "reward"),
       method: "post",
       headers: getTokenHeader(),
       data,
