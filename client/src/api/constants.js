@@ -1,4 +1,9 @@
-export const BASE_URL = "https://hacker-punk.herokuapp.com/";
+export const PROXY =
+  window.location.hostname === "https://hacker-punk.herokuapp.com"
+    ? ""
+    : "/proxy";
+
+export const BASE_URL = `${PROXY}/`; // "https://hacker-punk.herokuapp.com/";
 
 export const url = (...args) => {
   return BASE_URL + args.join("/");
