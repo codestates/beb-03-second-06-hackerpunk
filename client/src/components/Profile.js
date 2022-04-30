@@ -25,7 +25,7 @@ import SubmitButton from "./writing/SubmitButton";
 import CancelButton from "./writing/CancelButton";
 
 import TokenIcon from "../assets/images/hptoken.png";
-
+// wow
 const Container = styled(Div)`
   z-index: 999;
   position: absolute;
