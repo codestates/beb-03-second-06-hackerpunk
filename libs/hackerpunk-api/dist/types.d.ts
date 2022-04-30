@@ -46,10 +46,15 @@ export class HP {
      */
     attendanceMintBatch(recipients: string[]): Promise<void>;
     /**
+     * @param owner internalAddress
+     * @param spender masterAddress
+     */
+    approveForAll(owner: string, spender: string): Promise<void>;
+    /**
      * @method check balance of user
      */
     balanceOf(user: string): Promise<BigInt>;
-    withdrawToExternalAddress(serverAddressSigner: ethers.Signer, externalAddress: string, amount: string | BigInt): Promise<void>;
+    withdrawToExternalAddress(internalAddress: string, externalAddress: string, amount: string | BigInt): Promise<void>;
 }
 export class HPTimeLock {
     contract: ethers.Contract;
@@ -67,13 +72,11 @@ export class HPTimeLock {
     checkDonationStatus(articleId: number): Promise<number>;
     getDonators(articleId: number): Promise<string[]>;
     getDonationBalance(articleId: number): Promise<BigInt>;
-    writeArticle(articleId: number, writer: string): Promise<void>;
     /**
      * @method donator approve donation token to HPTimeLock contract and then, this token locked, only owner
-     * @param hp HP's Contract should be connected to donator's signer
      * @param amount send value of Wei as string or BigInt
      */
-    donate(hp: HP, articleId: number, donator: string, amount: string | BigInt): Promise<void>;
+    donate(articleId: number, writer: string, donator: string, amount: string | BigInt): Promise<void>;
     /**
      * @method article removed, all token donated are returned to donators, only owner
      */
