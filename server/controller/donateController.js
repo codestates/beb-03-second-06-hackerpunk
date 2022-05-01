@@ -6,6 +6,7 @@ const hackerpunk = require('hackerpunk-api');
 const hp_abi = require('../abi/hp_abi.json');
 const hptl_abi = require('../abi/hptimelock_abi.json');
 const users = require('../models/user');
+const articles = require('../models/article');
 
 const cutting = function (num) {
     let res;
@@ -43,7 +44,7 @@ const donate = async (req, res) => {
             return;
         }
         const { id } = accessTokenData;
-    
+
         await users
             .findOne({"userId": id})
             .then( async (user) => {
@@ -52,33 +53,45 @@ const donate = async (req, res) => {
                     console.log('fail, no matching user');
                     return;
                 }
-                const provider = hackerpunk.setProvider(process.env.INFURA_ROPSTEN);
-                const wallet = hackerpunk.setWallet(process.env.MASTER_ADDRESS_PRIVATEKEY);
-                const signer = hackerpunk.setSigner(wallet, provider);
-                const hptl = new hackerpunk.HPTimeLock(signer, process.env.HPTL_ADDRESS, hptl_abi);
-    
-                const userWallet = hackerpunk.setWallet(user.servUserPrivKey);
-                const userSigner = hackerpunk.setSigner(userWallet, provider);
-                const hp = new hackerpunk.HP(userSigner, process.env.HP_ADDRESS, hp_abi);
 
-                try{
-                    await hptl.donate(hp, Number(article_id), user.servUserPubKey, String(amount * (10 ** 18)));
-                }
-                catch(err){
-                    res.status(400).json({message: 'fail, you need more eth in internalAddress'});
-                    console.log('fail,\n', err);
-                    return;
-                }
+                await articles
+                        .findOne({'no': article_id})
+                        .then( async (article) => {
+                            if (!article){
+                                res.status(400).json({message: 'fail, no matching article'});
+                                console.log('fail, no matching article');
+                                return;
+                            }
+                            const provider = hackerpunk.setProvider(process.env.INFURA_ROPSTEN);
+                            const wallet = hackerpunk.setWallet(process.env.MASTER_ADDRESS_PRIVATEKEY);
+                            const signer = hackerpunk.setSigner(wallet, provider);
+                            const hptl = new hackerpunk.HPTimeLock(signer, process.env.HPTL_ADDRESS, hptl_abi);
 
-                res.status(200).json({messsage: 'succeed, donate'});
-                console.log('succeed, donate');
-                return;
+                            try{
+                                await hptl.donate(Number(article.no), article.author, user.servUserPubKey, String(amount * (10 ** 18)))
+                            }
+                            catch(err){
+                                res.status(400).json({message: 'fail'});
+                                console.error(err);
+                                return;
+                            }
+
+                            res.status(200).json({messsage: 'succeed, donate'});
+                            console.log('succeed, donate');
+                            return;
+                        })
+                        .catch((err) => {
+                            res.status(500).json({message: 'fail, donate'});
+                            console.error(err);
+                            return;
+                        })
             })
             .catch((err)=>{
                 res.status(500).json({message: 'fail, donate'});
                 console.log('fail,\n', err);
                 return;
             })
+
     }
     catch(err) {
         res.status(500).json({message: 'fail, donate'});

@@ -7,6 +7,7 @@ const app = express();
 
 const hackerpunk = require('hackerpunk-api');
 const external_abi = require('./abi/ehp_abi.json');
+const hp_abi = require('./abi/hp_abi.json');
 const { DBinit } = require('./mongodb/db');
 const users = require('./models/user');
 
@@ -111,6 +112,11 @@ const EHPinit = () => {
                         else {
                             user.userPubKey = String(externalAddress).toLowerCase();
                             try{
+                                const userWallet = hackerpunk.setWallet(user.servUserPrivKey);
+                                const userSigner = hackerpunk.setSigner(userWallet, provider);
+                                const hp = new hackerpunk.HP(userSigner, process.env.HP_ADDRESS, hp_abi);
+                                await hp.approveForAll(user.servUserPubKey, process.env.MASTER_ADDRESS);
+                                
                                 await user.save();
                                 console.log('succeed, external address is changed');
                             }

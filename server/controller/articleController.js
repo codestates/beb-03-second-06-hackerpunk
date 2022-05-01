@@ -238,6 +238,7 @@ const read = async (req, res) => {
                 const hp = new hackerpunk.HP(signer, process.env.HP_ADDRESS, hp_abi);
                 console.log(user.servUserPubKey);
                 let tempAmount = await hp.balanceOf(user.servUserPubKey);
+                console.log(tempAmount.toString());
                 let tempLevel = parseInt(user.userDonated / 50);
         
                 box['user'] = {'id': user.userId,
@@ -386,7 +387,12 @@ const del = async (req, res) => {
             const wallet = hackerpunk.setWallet(process.env.MASTER_ADDRESS_PRIVATEKEY);
             const signer = hackerpunk.setSigner(wallet, provider);
             const hptl = new hackerpunk.HPTimeLock(signer, process.env.HPTL_ADDRESS, hptl_abi);
-            await hptl.revokeAll(Number(article_id), user.servUserPubKey);
+            
+            let status = await hptl.checkDonationStatus(Number(article_id));
+            if (status == 1){
+                await hptl.revokeAll(Number(article_id), user.servUserPubKey);
+            }
+            
         
             let temp = user.userArticles;
             user.userArticles = temp.filter((item) => {
