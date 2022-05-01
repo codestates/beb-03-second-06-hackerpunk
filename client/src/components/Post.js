@@ -11,6 +11,7 @@ import {
   useParams,
   addValues,
   useNavigate,
+  useLayoutEffect,
 } from "../common";
 
 const Container = styled(Div)`
@@ -234,18 +235,38 @@ function Post({
   const [FocusTitleRef] = useFocus();
   // eslint-disable-next-line no-unused-vars
   const [_, inputTitle, setTitle] = useInput({
-    initialValue: writingTitle,
     middleware: (title) => {
       dispatch(addValues({ writingTitle: title }));
     },
   });
   // eslint-disable-next-line no-unused-vars
   const [__, inputContent, setContent] = useInput({
-    initialValue: writingContent,
     middleware: (content) => {
       dispatch(addValues({ writingContent: content }));
     },
   });
+
+  useLayoutEffect(() => {
+    switch (mode) {
+      case "edit":
+        setTitle(article_title);
+        setContent(article_content);
+        break;
+      case "write":
+        setTitle(writingTitle);
+        setContent(writingContent);
+        break;
+      default:
+    }
+  }, [
+    article_content,
+    article_title,
+    mode,
+    setContent,
+    setTitle,
+    writingContent,
+    writingTitle,
+  ]);
 
   switch (mode) {
     case "edit":
