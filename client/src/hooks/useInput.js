@@ -1,4 +1,4 @@
-import { useState, useCallback } from "../common";
+import { useState, useCallback, useLayoutEffect } from "../common";
 /**
  *
  * @param {*} middleware
@@ -6,13 +6,17 @@ import { useState, useCallback } from "../common";
  * @returns [value, { value, onChange }, setValue]
  */
 const useInput = ({ middleware = (...v) => v, initialValue = "" } = {}) => {
-  const [value, _setValue] = useState(
-    typeof initialValue === "object" ? initialValue.value : initialValue
-  );
+  const [value, _setValue] = useState("");
+
+  useLayoutEffect(() => {
+    _setValue(
+      typeof initialValue === "object" ? initialValue.value : initialValue
+    );
+  }, [initialValue]);
 
   const setValue = useCallback(
     (v) => {
-      _setValue(v);
+      _setValue(middleware(v));
       if (typeof initialValue === "object") {
         initialValue.value = v;
       }

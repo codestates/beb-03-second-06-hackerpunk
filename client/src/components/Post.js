@@ -11,7 +11,6 @@ import {
   useParams,
   addValues,
   useNavigate,
-  useLayoutEffect,
 } from "../common";
 
 const Container = styled(Div)`
@@ -234,6 +233,7 @@ function Post({
   const [FocusTitleRef] = useFocus();
   // eslint-disable-next-line no-unused-vars
   const [_, inputTitle, setTitle] = useInput({
+    initialValue: mode === "write" ? writingTitle : editingTitle,
     middleware: (title) => {
       switch (mode) {
         case "edit":
@@ -248,6 +248,7 @@ function Post({
   });
   // eslint-disable-next-line no-unused-vars
   const [__, inputContent, setContent] = useInput({
+    initialValue: mode === "write" ? writingContent : editingContent,
     middleware: (content) => {
       switch (mode) {
         case "edit":
@@ -260,21 +261,6 @@ function Post({
       }
     },
   });
-
-  useLayoutEffect(() => {
-    switch (mode) {
-      case "edit":
-        setTitle(article_title);
-        setContent(article_content);
-        break;
-      case "write":
-        setTitle(writingTitle);
-        setContent(writingContent);
-        break;
-      default:
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [mode, setTitle, setContent]);
 
   switch (mode) {
     case "edit":

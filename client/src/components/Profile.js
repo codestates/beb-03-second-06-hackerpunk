@@ -15,6 +15,8 @@ import {
   useAnimation,
   useNavigate,
   useLayoutEffect,
+  MIN_WITHDRAW_AMOUNT,
+  MIN_DONATE_AMOUNT,
 } from "../common";
 import hp from "../api/hp";
 
@@ -24,14 +26,17 @@ import CancelButton from "./writing/CancelButton";
 
 import TokenIcon from "../assets/images/hptoken.png";
 import useErrorBang from "../hooks/useErrorBang";
+
 // wow
+const LOCKED_COLOR = "#F66B0E";
+
 const Container = styled(Div)`
   z-index: 999;
   position: absolute;
   right: 10vw;
   top: 11vh;
   width: 11.5rem;
-  height: 6.5rem;
+  height: 11%;
   border: solid 1px whitesmoke;
   border-radius: 4px;
   padding: 10px;
@@ -119,6 +124,10 @@ const Container__Animate_variants = {
     y: "0vh",
     height: "2.2%",
   },
+  exit: {
+    y: -30,
+    height: "11%",
+  },
 };
 
 const ConnectWallet__Animate = {
@@ -181,7 +190,7 @@ function ConectWalletHelper(props) {
   );
 }
 
-function DonationDisplay({ amount = 0, ...props }) {
+function DonationDisplay({ message = "Total Donation", amount = 0, ...props }) {
   return (
     <CancelButton
       style={{
@@ -204,9 +213,12 @@ function DonationDisplay({ amount = 0, ...props }) {
         y: "0rem",
         width: "75%",
       }}
+      exit={{
+        opacity: 0,
+      }}
       {...props}
     >
-      Total Donation
+      {message}
       <span
         style={{
           fontSize: "0.74rem",
@@ -223,6 +235,7 @@ const ProfileContainer = ({ children, big, data: { level, amount } = {} }) => (
     variants={Container__Animate_variants}
     initial="initial"
     animate={big ? "big" : "small"}
+    exit="exit"
   >
     {children}
     <InnerContainer>
@@ -262,7 +275,14 @@ function Profile() {
 
   const {
     data: {
-      user: { id, internal_pub_key, external_pub_key, level, amount },
+      user: {
+        id,
+        internal_pub_key,
+        external_pub_key,
+        level,
+        amount,
+        donate_article_id,
+      },
       // posts,
       // max_article_id,
     },
@@ -280,7 +300,9 @@ function Profile() {
       article_title,
       // article_views,
       article_content,
-      // article_donated,
+      article_donated,
+      article_donate_status,
+      article_donate_remain_time,
       // article_created_at,
     } = {},
   } = useFetch({
@@ -290,6 +312,10 @@ function Profile() {
     },
     condition: paramArticleId > 0,
   });
+
+  const canBeLocked = article_donate_status === 2;
+  const isLocked = article_donate_status === 3;
+  const didIDonate = donate_article_id.find((v) => v === article_id);
 
   const isMyViewMode = article_author === id;
 
@@ -310,8 +336,8 @@ function Profile() {
           cache.clear();
         }
       })
-      .catch(({ message } = {}) => {
-        errorBang("Conneted To External Wallet", message);
+      .catch(({ message = "" } = {}) => {
+        errorBang("Conneted To External Wallet", message.slice(0, 30));
       })
       .finally(() => {
         dispatch(addValues({ waitingAPI: false }));
@@ -406,49 +432,26 @@ function Profile() {
         </ProfileContainer>
       );
     case "view":
-      return (
-        <ProfileContainer big={mode === "none"} data={{ level, amount }}>
-          <SubmitButton
-            fetch={{
-              key: "donate",
-              data: {
-                article_id,
-                amount: donationAmount,
-              },
-            }}
-            succeedCallback={() => {
-              dispatch(addValues({ mode: "none" }));
-            }}
-            onClick={() => {
-              const getDonationAmount = +window.prompt(
-                "how much do you want to donate?"
-              );
-              if (getDonationAmount == null) return;
-              if (
-                typeof amount !== "number" ||
-                getDonationAmount <= 0 ||
-                getDonationAmount > amount
-              ) {
-                window.alert(
-                  `the amount of donation must be larger than 0 and smaller than ${amount}`
-                );
-                return false;
-              }
-              if (
-                window.confirm(
-                  "Are you sure you want to donate to this article?"
-                ) === false
-              )
-                return false;
-
-              setDonationAmount(getDonationAmount);
-              return true;
-            }}
-          >
-            Donate
-          </SubmitButton>
-          {isMyViewMode ? (
-            <>
+      if (isLocked) {
+        return (
+          <ProfileContainer big={mode === "none"} data={{ level, amount }}>
+            <DonationDisplay
+              animate={{
+                opacity: 0.7,
+                x: "-11rem",
+                y: "0rem",
+                width: "75%",
+                color: LOCKED_COLOR,
+              }}
+              amount={article_donated}
+            />
+          </ProfileContainer>
+        );
+      }
+      if (isMyViewMode) {
+        if (article_donated <= 0) {
+          return (
+            <ProfileContainer big={mode === "none"} data={{ level, amount }}>
               <DonationDisplay
                 animate={{
                   opacity: 0.7,
@@ -456,7 +459,7 @@ function Profile() {
                   y: "0rem",
                   width: "75%",
                 }}
-                amount={donationAmount}
+                amount={article_donated}
               />
               <CancelButton
                 onClick={() => {
@@ -493,12 +496,172 @@ function Profile() {
               >
                 Delete
               </SubmitButton>
-            </>
-          ) : (
-            <DonationDisplay amount={donationAmount} />
-          )}
-        </ProfileContainer>
-      );
+            </ProfileContainer>
+          );
+        } else if (canBeLocked) {
+          return (
+            <ProfileContainer big={mode === "none"} data={{ level, amount }}>
+              <DonationDisplay amount={article_donated} />
+              <SubmitButton
+                fetch={{
+                  key: "donateReward",
+                  data: {
+                    article_id,
+                  },
+                }}
+                succeedCallback={() => {
+                  navigate("./");
+                  // dispatch(addValues({ mode: "none" }));
+                  // if (paramArticleId > 0) navigate("../");
+                }}
+                onClick={() => {
+                  if (article_id > 0) {
+                    return window.confirm(
+                      "Are you sure you want to lock this article?"
+                    );
+                  }
+                  return false;
+                }}
+              >
+                Lock
+              </SubmitButton>
+            </ProfileContainer>
+          );
+        } else {
+          return (
+            <ProfileContainer big={mode === "none"} data={{ level, amount }}>
+              <DonationDisplay
+                message="remain"
+                amount={article_donate_remain_time}
+              />
+              <DonationDisplay
+                amount={article_donated}
+                animate={{
+                  opacity: 0.7,
+                  x: "-22rem",
+                  y: "0rem",
+                  width: "75%",
+                }}
+              />
+              <SubmitButton
+                style={{
+                  pointerEvents: "none",
+                  border: "rgba(0,0,0,0.5)",
+                  opacity: 0.4,
+                  scale: 0.84,
+                }}
+              >
+                Pending...
+              </SubmitButton>
+            </ProfileContainer>
+          );
+        }
+      } else {
+        // not my articles view mode
+        if (canBeLocked) {
+          return (
+            <ProfileContainer big={mode === "none"} data={{ level, amount }}>
+              <DonationDisplay amount={article_donated} />
+              <SubmitButton
+                style={{
+                  pointerEvents: "none",
+                  border: "rgba(0,0,0,0.5)",
+                  opacity: 0.4,
+                  scale: 0.84,
+                }}
+              >
+                Locking...
+              </SubmitButton>
+            </ProfileContainer>
+          );
+        }
+        if (didIDonate) {
+          return (
+            <ProfileContainer big={mode === "none"} data={{ level, amount }}>
+              <DonationDisplay
+                message="remain"
+                amount={article_donate_remain_time}
+              />
+              <DonationDisplay
+                amount={article_donated}
+                animate={{
+                  opacity: 0.7,
+                  x: "-22rem",
+                  y: "0rem",
+                  width: "75%",
+                }}
+              />
+              <SubmitButton
+                fetch={{
+                  key: "donateCancel",
+                  data: {
+                    article_id,
+                  },
+                }}
+                succeedCallback={() => {
+                  navigate("./");
+                  // dispatch(addValues({ mode: "none" }));
+                }}
+                onClick={() => {
+                  if (article_id > 0) {
+                    return window.confirm(
+                      "Are you sure you want to un-donate this article?" // TODO! output donation amount
+                    );
+                  }
+                  return false;
+                }}
+              >
+                UnDonate
+              </SubmitButton>
+            </ProfileContainer>
+          );
+        } else {
+          return (
+            <ProfileContainer big={mode === "none"} data={{ level, amount }}>
+              <DonationDisplay amount={article_donated} />
+              <SubmitButton
+                fetch={{
+                  key: "donate",
+                  data: {
+                    article_id,
+                    amount: donationAmount,
+                  },
+                }}
+                succeedCallback={() => {
+                  dispatch(addValues({ mode: "none" }));
+                }}
+                onClick={() => {
+                  const getDonationAmount = +window.prompt(
+                    `how much do you want to donate? (at least more than ${MIN_DONATE_AMOUNT})`
+                  );
+                  if (getDonationAmount == null) return;
+                  if (
+                    typeof amount !== "number" ||
+                    getDonationAmount <= 0 ||
+                    getDonationAmount > amount
+                  ) {
+                    window.alert(
+                      `the amount of donation must be larger than ${MIN_DONATE_AMOUNT} and smaller than ${amount}`
+                    );
+                    return false;
+                  }
+                  if (
+                    window.confirm(
+                      "Are you sure you want to donate to this article?"
+                    ) === false
+                  )
+                    return false;
+
+                  setDonationAmount(getDonationAmount);
+                  return true;
+                }}
+              >
+                Donate
+              </SubmitButton>
+            </ProfileContainer>
+          );
+        }
+      }
 
     default:
       return (
@@ -523,7 +686,7 @@ function Profile() {
               {...ConnectWallet__Animate}
               onClick={() => {
                 const withdrawAmount = +window.prompt(
-                  "how much do you want to withdraw?"
+                  `how much do you want to withdraw? (at least more than ${MIN_WITHDRAW_AMOUNT})`
                 );
                 if (withdrawAmount == null) return;
                 if (
@@ -532,7 +695,7 @@ function Profile() {
                   withdrawAmount > amount
                 ) {
                   window.alert(
-                    `the amount of withdraw must be larger than 0 and smaller than ${amount}`
+                    `the amount of withdraw must be larger than ${MIN_WITHDRAW_AMOUNT} and smaller than ${amount}`
                   );
                   return;
                 }
