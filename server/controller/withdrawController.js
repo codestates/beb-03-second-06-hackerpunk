@@ -1,38 +1,63 @@
-const users = require('../models/user');
-const { isAuthorized } = require('./tokenFunc');
-
 const dotenv = require('dotenv');
 dotenv.config();
+
+const { isAuthorized } = require('./tokenFunc');
+const users = require('../models/user');
 const hackerpunk = require('hackerpunk-api');
 const hp_abi = require('../abi/hp_abi.json');
 
 const withdraw = async (req, res) => {
-    const { amount } = req.body;
-    const accessTokenData = isAuthorized(req);
-    if (!accessTokenData){
-        res.status(400).json({message: 'invalid access token'});
-        console.log('invalid access token');
+    try{
+        const { amount } = req.body;
+        if (!amount){
+            res.status(400).json({message: 'fail, need amount'});
+            console.log('fail, need amount');
+            return;
+        }
+    
+        const accessTokenData = isAuthorized(req);
+        if (!accessTokenData){
+            res.status(400).json({message: 'fail, invalid access token'});
+            console.log('fail, invalid access token');
+            return;
+        }
+        const { id } = accessTokenData;
+    
+        await users
+            .findOne({"userId": id})
+            .then( async (user) => {
+                if (!user){
+                    res.status(400).json({message: 'fail, no matching user'});
+                    console.log('fail, no matching user');
+                    return;
+                }
+                const provider = hackerpunk.setProvider(process.env.INFURA_ROPSTEN);
+                const wallet = hackerpunk.setWallet(user.servUserPrivKey);
+                const signer = hackerpunk.setSigner(wallet, provider);
+                const hp = new hackerpunk.HP(signer, process.env.HP_ADDRESS, hp_abi);
+                try{
+                    await hp.withdrawToExternalAddress(signer, user.userPubKey, String(amount));
+                }
+                catch(err){
+                    res.status(500).json({message: 'fail, withdraw'});
+                    console.log('fail, withdraw');
+                    return;
+                }
+                res.status(200).json({message: 'succeed, withdraw'});
+                console.log('succeed, withdraw');
+                return;
+            })
+            .catch((err) => {
+                res.status(500).json({message: err});
+                console.log('[ERROR compare] \n', err);
+                return;
+            })
+    }
+    catch(err){
+        res.status(400).json({message: 'fail, withdraw'});
+        console.log('fail,\n', err);
         return;
     }
-    const { id } = accessTokenData;
-
-    users
-        .findOne({"userId": id})
-        .then( async (user) => {
-            const provider = hackerpunk.setProvider(process.env.INFURA_ROPSTEN);
-            const wallet = hackerpunk.setWallet(users.servUserPrivKey);
-            const signer = hackerpunk.setSigner(wallet, provider);
-            const hp = new hackerpunk.HP(signer, process.env.HP_ADDRESS, hp_abi);
-            await withdrawToExternalAddress(signer, users.userPubKey, amount);
-            res.status(200).json({message: 'succeed'});
-            console.log('withdraw succeed');
-            return;
-        })
-        .catch((err) => {
-            res.status(500).json({message: err});
-            console.log('[ERROR compare] \n', err);
-            return;
-        })
 }
 
 module.exports = {

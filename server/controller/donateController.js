@@ -7,6 +7,26 @@ const hp_abi = require('../abi/hp_abi.json');
 const hptl_abi = require('../abi/hptimelock_abi.json');
 const users = require('../models/user');
 
+const cutting = function (num) {
+    let res;
+    if (num.length < 16){
+      res= '0';
+    }
+    else if (num.length > 18){
+       res = num.slice(0,-18) + '.' + num.slice(-18, -15);
+    }
+    else if (num.length == 18){
+      res = '0.' + num.slice(0, -15);
+    }
+    else if (num.length == 17){
+      res = '0.0' + num.slice(0, -15);
+    }
+    else if (num.length == 16){
+      res = '0.00' + num.slice(0, -15);
+    }
+    return res;
+};
+
 const donate = async (req, res) => {
     try{
         const { article_id, amount } = req.body;
@@ -27,6 +47,11 @@ const donate = async (req, res) => {
         await users
             .findOne({"userId": id})
             .then( async (user) => {
+                if (!user){
+                    res.status(400).json({message: 'fail, no matching user'});
+                    console.log('fail, no matching user');
+                    return;
+                }
                 const provider = hackerpunk.setProvider(process.env.INFURA_ROPSTEN);
                 const wallet = hackerpunk.setWallet(process.env.MASTER_ADDRESS_PRIVATEKEY);
                 const signer = hackerpunk.setSigner(wallet, provider);
@@ -37,7 +62,7 @@ const donate = async (req, res) => {
                 const hp = new hackerpunk.HP(userSigner, process.env.HP_ADDRESS, hp_abi);
 
                 try{
-                    await hptl.donate(hp, Number(article_id), user.servUserPubKey, String(amount));
+                    await hptl.donate(hp, Number(article_id), user.servUserPubKey, String(amount * (10 ** 18)));
                 }
                 catch(err){
                     res.status(400).json({message: 'fail, you need more eth in internalAddress'});
@@ -83,6 +108,11 @@ const cancel = async (req, res) => {
         await users
             .findOne({"userId": id})
             .then( async (user) => {
+                if (!user){
+                    res.status(400).json({message: 'fail, no matching user'});
+                    console.log('fail, no matching user');
+                    return;
+                }
                 const provider = hackerpunk.setProvider(process.env.INFURA_ROPSTEN);
                 const wallet = hackerpunk.setWallet(process.env.MASTER_ADDRESS_PRIVATEKEY);
                 const signer = hackerpunk.setSigner(wallet, provider);
@@ -134,6 +164,11 @@ const reward = async (req, res) => {
         await users
             .findOne({"userId": id})
             .then( async (user) => {
+                if (!user){
+                    res.status(400).json({message: 'fail, no matching user'});
+                    console.log('fail, no matching user');
+                    return;
+                }
                 const provider = hackerpunk.setProvider(process.env.INFURA_ROPSTEN);
                 const wallet = hackerpunk.setWallet(process.env.MASTER_ADDRESS_PRIVATEKEY);
                 const signer = hackerpunk.setSigner(wallet, provider);
@@ -142,7 +177,7 @@ const reward = async (req, res) => {
                 try{
                     await hptl.release(Number(article_id), user.servUserPubKey);
                     const totalDonated = await hptl.getDonationBalance(Number(article_id));
-                    user.userDonated = user.userDonated + Number(totalDonated.toString());
+                    user.userDonated = user.userDonated + Number(cutting(totalDonated.toString()));
                     await user.save();
                 }
                 catch(err){

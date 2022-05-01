@@ -115,6 +115,11 @@
         },
         {
           "internalType": "address",
+          "name": "writer",
+          "type": "address"
+        },
+        {
+          "internalType": "address",
           "name": "donator",
           "type": "address"
         },
