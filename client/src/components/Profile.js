@@ -13,6 +13,7 @@ import {
   addValues,
   useSWRConfig,
   useAnimation,
+  useNavigate,
   useLayoutEffect,
 } from "../common";
 import hp from "../api/hp";
@@ -244,6 +245,8 @@ function Profile() {
   const errorBang = useErrorBang();
   const { cache } = useSWRConfig();
 
+  const navigate = useNavigate();
+
   const walletHelperControl = useAnimation();
 
   const params = useParams();
@@ -439,8 +442,7 @@ function Profile() {
           >
             Donate
           </SubmitButton>
-          <DonationDisplay amount={donationAmount} />
-          {isMyViewMode && (
+          {isMyViewMode ? (
             <>
               <DonationDisplay
                 animate={{
@@ -473,6 +475,7 @@ function Profile() {
                 }}
                 succeedCallback={() => {
                   dispatch(addValues({ mode: "none" }));
+                  if (paramArticleId > 0) navigate("../");
                 }}
                 onClick={() => {
                   if (article_id > 0) {
@@ -486,6 +489,8 @@ function Profile() {
                 Delete
               </SubmitButton>
             </>
+          ) : (
+            <DonationDisplay amount={donationAmount} />
           )}
         </ProfileContainer>
       );
