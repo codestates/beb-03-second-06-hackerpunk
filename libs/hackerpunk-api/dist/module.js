@@ -48,7 +48,11 @@ class $6472a0cc883e062f$export$2f4fd17aff4e7fc {
     /**
    * @method initial minting once, only admin
    */ async init() {
-        await this.contract.init();
+        try {
+            await this.contract.init();
+        } catch (err) {
+            throw new Error(err);
+        }
     }
     /**
    * @method enable ExternalHP Contract to mint
@@ -83,12 +87,18 @@ class $6472a0cc883e062f$export$2f4fd17aff4e7fc {
         await this.contract.attendanceMintBatch();
     }
     /**
+   * @param owner internalAddress
+   * @param spender masterAddress
+   */ async approveForAll(owner, spender) {
+        await this.contract.approveForall(owner, spender);
+    }
+    /**
    * @method check balance of user
    */ async balanceOf(user) {
         return await this.contract.balanceOf(user);
     }
-    async withdrawToExternalAddress(serverAddressSigner, externalAddress, amount) {
-        await this.contract.connect(serverAddressSigner).transfer(externalAddress, amount);
+    async withdrawToExternalAddress(internalAddress, externalAddress, amount) {
+        await this.contract.transferFrom(internalAddress, externalAddress, amount);
     }
 }
 
@@ -117,16 +127,11 @@ class $b5c9f8736c9df79f$export$948472b202b3236b {
     async getDonationBalance(articleId) {
         return await this.contract.getDonationBalance(articleId);
     }
-    async writeArticle(articleId, writer) {
-        await this.contract.writeArticle(articleId, writer);
-    }
     /**
    * @method donator approve donation token to HPTimeLock contract and then, this token locked, only owner
-   * @param hp HP's Contract should be connected to donator's signer
    * @param amount send value of Wei as string or BigInt
-   */ async donate(hp, articleId, donator, amount) {
-        await hp.contract.approve(this.contract.address, amount);
-        await this.contract.donate(articleId, donator, amount);
+   */ async donate(articleId, writer, donator, amount) {
+        await this.contract.donate(articleId, writer, donator, amount);
     }
     /**
    * @method article removed, all token donated are returned to donators, only owner
@@ -172,90 +177,48 @@ class $97915d9b045fee21$export$7fb3e24a412a5622 {
    * @method onlyOwner
    * @param fee send value of Wei as string or BigInt
    */ async setSignupFee(credentialType, fee) {
-        try {
-            await this.contract.setSignupFee(credentialType, fee);
-        } catch (err) {
-            throw new Error(err);
-        }
+        await this.contract.setSignupFee(credentialType, fee);
     }
     async signupFee(credentialType) {
-        try {
-            const fee = await this.contract.signupFee(credentialType);
-            return fee;
-        } catch (err) {
-            return new Error(err);
-        }
+        return await this.contract.signupFee(credentialType);
     }
     /**
    * @method onlyOwner
    */ async getAllInternalAddresses() {
-        try {
-            const addresses = await this.contract.getAllInternalAddresses();
-            return addresses;
-        } catch (err) {
-            return new Error(err);
-        }
+        return await this.contract.getAllInternalAddresses();
     }
     async registerAddress(internalAddress) {
-        try {
-            const ok = await this.contract.registerAddress(internalAddress);
-            return ok;
-        } catch (err) {
-            return new Error(err);
-        }
+        return await this.contract.registerAddress(internalAddress);
     }
     async isRegistered(internalAddress) {
-        try {
-            return await this.contract.isRegistered(internalAddress);
-        } catch (err) {
-            return new Error(err);
-        }
+        return await this.contract.isRegistered(internalAddress);
     }
     async isAuthenticated(internalAddress) {
-        try {
-            return await this.contract.isAuthenticated(internalAddress);
-        } catch (err) {
-            return new Error(err);
-        }
+        return await this.contract.isAuthenticated(internalAddress);
     }
     async checkExternalAuthenticated(internalAddress, externalAddress) {
-        try {
-            return await this.contract.checkExternalAuthenticated(internalAddress, externalAddress);
-        } catch (err) {
-            return new Error(err);
-        }
+        return await this.contract.checkExternalAuthenticated(internalAddress, externalAddress);
     }
     async getCredentialType(internalAddress) {
-        try {
-            return await this.contract.getCredentialType(internalAddress);
-        } catch (err) {
-            return new Error(err);
-        }
+        return await this.contract.getCredentialType(internalAddress);
     }
     /**
    * @param provider url
    */ async getSignature(provider, internalAddress, privateKey) {
-        try {
-            const ok = await this.registerAddress(internalAddress);
-            let sign, hashedMessage;
-            if (ok) {
-                const web3 = new $hgUW1$web3(new $hgUW1$web3.providers.HttpProvider(provider));
-                hashedMessage = web3.utils.sha3(internalAddress);
-                if (hashedMessage !== null) {
-                    sign = web3.eth.accounts.sign(hashedMessage, privateKey);
-                    let v = parseInt(sign.v, 16);
-                    let r = sign.r;
-                    let s = sign.s;
-                    return {
-                        v: v,
-                        r: r,
-                        s: s,
-                        hashedMessage: hashedMessage
-                    };
-                }
-            }
-        } catch (err) {
-            return new Error(err);
+        let sign, hashedMessage;
+        const web3 = new $hgUW1$web3(new $hgUW1$web3.providers.HttpProvider(provider));
+        hashedMessage = web3.utils.sha3(internalAddress);
+        if (hashedMessage !== null) {
+            sign = web3.eth.accounts.sign(hashedMessage, privateKey);
+            let v = parseInt(sign.v, 16);
+            let r = sign.r;
+            let s = sign.s;
+            return {
+                v: v,
+                r: r,
+                s: s,
+                hashedMessage: hashedMessage
+            };
         }
     }
     async singupEventListener(callback) {
@@ -355,17 +318,6 @@ const $24ea454e7ad63d7f$export$e61ca58b6d981800 = (privateKey)=>{
 };
 const $24ea454e7ad63d7f$export$5e413b7d07c04d66 = (wallet, provider)=>{
     return wallet.connect(provider);
-};
-const $24ea454e7ad63d7f$export$1bf88e5ba7d651d1 = async (internalAddress, signer)=>{
-    const balance = await signer.getBalance(internalAddress);
-    if (balance.lt($hgUW1$ethers.utils.parseEther("0.001"))) {
-        signer.sendTransaction({
-            to: internalAddress,
-            value: $hgUW1$ethers.utils.parseEther("0.002")
-        });
-        return true;
-    }
-    return false;
 };
 
 
