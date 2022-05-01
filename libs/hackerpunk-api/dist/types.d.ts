@@ -1,4 +1,5 @@
 import { ethers } from "ethers";
+import Web3 from "web3";
 /**
  * @method: returns address and privateKey
  * @param {string} pwd user password
@@ -124,6 +125,7 @@ export class ExternalHP {
     getSignature(provider: string, internalAddress: string, privateKey: string): Promise<any>;
     singupEventListener(callback: ethers.providers.Listener): Promise<void>;
 }
+export { Web3 };
 export class HPA {
     contract: ethers.Contract;
     contractAddress: string;

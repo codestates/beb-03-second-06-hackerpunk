@@ -20,6 +20,7 @@ $parcel$export(module.exports, "HPAStakingSystem", () => $0f2effce3e5d2a70$expor
 $parcel$export(module.exports, "setWallet", () => $844002365fcdc02f$export$e61ca58b6d981800);
 $parcel$export(module.exports, "setSigner", () => $844002365fcdc02f$export$5e413b7d07c04d66);
 $parcel$export(module.exports, "createWallet", () => $a3136578afa07f27$export$41bdf21621ec4e24);
+$parcel$export(module.exports, "Web3", () => $1bdf165e5fb3c2c0$import$3a9e00449556c6e1$2e2bcd8739ae039);
 
 /**
  * @method: returns address and privateKey
