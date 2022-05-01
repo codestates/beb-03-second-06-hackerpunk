@@ -49,32 +49,47 @@
       "type": "event"
     },
     {
-      "inputs": [
+      "inputs": [],
+      "name": "approveFee",
+      "outputs": [
         {
-          "internalType": "address",
-          "name": "internalAddress",
-          "type": "address"
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
         }
       ],
-      "name": "authenticate",
-      "outputs": [],
-      "stateMutability": "payable",
+      "stateMutability": "view",
       "type": "function"
     },
     {
       "inputs": [
         {
-          "internalType": "uint8",
-          "name": "credentialType",
-          "type": "uint8"
-        },
-        {
           "internalType": "address",
           "name": "internalAddress",
           "type": "address"
+        },
+        {
+          "internalType": "bytes32",
+          "name": "_hashedMessage",
+          "type": "bytes32"
+        },
+        {
+          "internalType": "uint8",
+          "name": "_v",
+          "type": "uint8"
+        },
+        {
+          "internalType": "bytes32",
+          "name": "_r",
+          "type": "bytes32"
+        },
+        {
+          "internalType": "bytes32",
+          "name": "_s",
+          "type": "bytes32"
         }
       ],
-      "name": "changeCredentialType",
+      "name": "authenticate",
       "outputs": [],
       "stateMutability": "payable",
       "type": "function"
@@ -187,19 +202,6 @@
       "type": "function"
     },
     {
-      "inputs": [
-        {
-          "internalType": "address",
-          "name": "internalAddress",
-          "type": "address"
-        }
-      ],
-      "name": "registerAddress",
-      "outputs": [],
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
       "inputs": [],
       "name": "renounceOwnership",
       "outputs": [],
@@ -257,4 +259,3 @@
       "type": "function"
     }
   ]
-  

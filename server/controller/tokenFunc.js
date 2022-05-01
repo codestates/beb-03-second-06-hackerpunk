@@ -11,20 +11,20 @@ module.exports = {
         return sign(data, process.env.REFRESH_SECRET, { expiresIn: "30d" });
     },
     
-    sendRefreshToken: (res, refreshToken) => {
-        res.cookie("refreshToken", refreshToken, {
+    sendRefreshToken: (res, refresh_token) => {
+        res.cookie("refresh_token", refresh_token, {
             httpOnly: true,
             secure: true,
             sameSite: 'none',
         });
     },
 
-    sendAccessToken: (res, accessToken) => {
-        res.json({ accessToken, message: "ok" });
+    sendAccessToken: (res, access_token) => {
+        res.json({ access_token, message: "succeed" });
     },
 
-    resendAccessToken: (res, accessToken, data) => {
-        res.json({ accessToken, message: "ok" });
+    resendAccessToken: (res, access_token, data) => {
+        res.json({ access_token, message: "succeed" });
     },
 
     isAuthorized: (req) => {
@@ -40,9 +40,9 @@ module.exports = {
         }
       },
 
-    checkRefeshToken: (refreshToken) => {
+    checkRefeshToken: (refresh_token) => {
         try {
-            return verify(refreshToken, process.env.REFRESH_SECRET);
+            return verify(refresh_token, process.env.REFRESH_SECRET);
         } catch (err) {
             return null; // return null if refresh token is not valid
         }

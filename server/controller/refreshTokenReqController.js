@@ -6,44 +6,49 @@ const {
     sendAccessToken,
 } = require('./tokenFunc');
 
-const refresh = (req, res) => {
-    const refreshToken = req.cookies.refreshToken;
-
-    if (!refreshToken){
-        res.status(400).json({message: 'refresh token has not provided'});
-        console.log('no refresh token');
-        return;
-    }
-
-    const refreshTokenData = checkRefeshToken(refreshToken);
-    if (!refreshTokenData) {
-        res.status(400).json({message: 'invalid refresh token'});
-        console.log('invalid refresh token');
-        return;
-    }
-    else{
-        const { id } = refreshTokenData;
-        users
-            .findOne({"userId": id})
-            .then((user) => {
-                if (!user) {
-                    res.status(404).json({message: 'old refreshToken'});
-                    console.log('old refreshToken');
+const refresh = async (req, res) => {
+    try{
+        const refresh_token = req.cookies.refresh_token;
+        if (!refresh_token){
+            res.status(400).json({message: 'fail, refresh token has not provided'});
+            console.log('fail, refresh token has not provided');
+            return;
+        }
+    
+        const refreshTokenData = checkRefeshToken(refresh_token);
+        if (!refreshTokenData) {
+            res.status(400).json({message: 'fail, invalid refresh token'});
+            console.log('fail, invalid refresh token');
+            return;
+        }
+        else{
+            const { id } = refreshTokenData;
+            await users
+                .findOne({"userId": id})
+                .then((user) => {
+                    if (!user) {
+                        res.status(404).json({message: 'fail, old refreshToken'});
+                        console.log('fail, old refreshToken');
+                        return;
+                    }
+                    else {
+                        const access_token = generateAccessToken({'id': id});
+                        sendAccessToken(res, access_token);
+                        console.log('succeed, sent new accessToken');
+                        return;
+                    }
+                })
+                .catch((err) => {
+                    res.status(500).json({message: 'fail'});
+                    console.error(err);
                     return;
-                }
-                else {
-                    const newAccessToken = generateAccessToken({'id': id});
-                    sendAccessToken(res, newAccessToken);
-                    console.log('sent new accessToken');
-                    return;
-                }
-            })
-            .catch((err) => {
-                res.status(500).json({message: err});
-                console.log('[ERROR refresh] \n', err);
-                return;
-            })
-
+                })
+        }
+    }
+    catch(err){
+        res.status(400).json({message: 'fail, refresh'});
+        console.error(err);
+        return;
     }
 }
 

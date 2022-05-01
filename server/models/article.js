@@ -1,14 +1,27 @@
 const mongoose = require('mongoose');
 
-const contentSchema = new mongoose.Schema({
+
+const commentSchema = new mongoose.Schema({
+    no: Number, // comment_id
+    articleId: Number, // article_id
+    author: String, // comment_author
+    title: String, // comment_title
+    content: String, // comment_content
+    deleted: Boolean, // 0: false(available), 1: true(not available)
+}, {timestamps: true}); //createdAt -> article_created_at, updatedAt -> article_updated_at
+
+
+const articleSchema = new mongoose.Schema({
     no: Number, // article_id
     author: String, // article_author
     title: String, // article_title
     views: {type: Number, default:0}, // article_views
     content: String,
+    deleted: Boolean, // 0: false(available), 1: true(not available)
+    comments: [commentSchema],
 }, {timestamps: true}); //createdAt -> article_created_at, updatedAt -> article_updated_at
 
-module.exports = mongoose.model('Content', contentSchema);
+module.exports = mongoose.model('Article', articleSchema);
 
 //content에 대해서 각각의 답글을 map으로 한다면, 그 map안에 답글을 어떠한 구조로 만들지 생각해봐야 함.
 
