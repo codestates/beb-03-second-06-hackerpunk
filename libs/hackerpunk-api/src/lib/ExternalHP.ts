@@ -95,4 +95,4 @@ class ExternalHP {
   }
 }
 
-export { ExternalHP };
+export { ExternalHP, Web3 };

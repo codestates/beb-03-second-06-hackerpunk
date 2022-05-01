@@ -1,6 +1,6 @@
 import {keystore as $hgUW1$keystore} from "eth-lightwallet";
 import {ethers as $hgUW1$ethers} from "ethers";
-import $hgUW1$web3 from "web3";
+import $97915d9b045fee21$import$3a9e00449556c6e1$2e2bcd8739ae039 from "web3";
 
 
 /**
@@ -206,7 +206,7 @@ class $97915d9b045fee21$export$7fb3e24a412a5622 {
    * @param provider url
    */ async getSignature(provider, internalAddress, privateKey) {
         let sign, hashedMessage;
-        const web3 = new $hgUW1$web3(new $hgUW1$web3.providers.HttpProvider(provider));
+        const web3 = new $97915d9b045fee21$import$3a9e00449556c6e1$2e2bcd8739ae039(new $97915d9b045fee21$import$3a9e00449556c6e1$2e2bcd8739ae039.providers.HttpProvider(provider));
         hashedMessage = web3.utils.sha3(internalAddress);
         if (hashedMessage !== null) {
             sign = web3.eth.accounts.sign(hashedMessage, privateKey);
@@ -323,5 +323,5 @@ const $24ea454e7ad63d7f$export$5e413b7d07c04d66 = (wallet, provider)=>{
 
 
 
-export {$6472a0cc883e062f$export$2f4fd17aff4e7fc as HP, $b5c9f8736c9df79f$export$948472b202b3236b as HPTimeLock, $92f5f3ce1cbfe1f8$export$2a9ff338dd4da85e as PHPTimeLock, $97915d9b045fee21$export$7fb3e24a412a5622 as ExternalHP, $24ea454e7ad63d7f$export$1572b3eade6662f9 as setProvider, $ff828080d65d0e5e$export$5878c2c4222e4fe7 as HPA, $9bc8ebefd3c8fa6e$export$75e463e960baeac as PHP, $b8fb54fd0d0e4d4e$export$8ee31b378e074166 as HPAStakingSystem, $24ea454e7ad63d7f$export$e61ca58b6d981800 as setWallet, $24ea454e7ad63d7f$export$5e413b7d07c04d66 as setSigner, $c825517a4d31fba5$export$41bdf21621ec4e24 as createWallet};
+export {$6472a0cc883e062f$export$2f4fd17aff4e7fc as HP, $b5c9f8736c9df79f$export$948472b202b3236b as HPTimeLock, $92f5f3ce1cbfe1f8$export$2a9ff338dd4da85e as PHPTimeLock, $97915d9b045fee21$export$7fb3e24a412a5622 as ExternalHP, $24ea454e7ad63d7f$export$1572b3eade6662f9 as setProvider, $ff828080d65d0e5e$export$5878c2c4222e4fe7 as HPA, $9bc8ebefd3c8fa6e$export$75e463e960baeac as PHP, $b8fb54fd0d0e4d4e$export$8ee31b378e074166 as HPAStakingSystem, $24ea454e7ad63d7f$export$e61ca58b6d981800 as setWallet, $24ea454e7ad63d7f$export$5e413b7d07c04d66 as setSigner, $c825517a4d31fba5$export$41bdf21621ec4e24 as createWallet, $97915d9b045fee21$import$3a9e00449556c6e1$2e2bcd8739ae039 as Web3};
 //# sourceMappingURL=module.js.map
