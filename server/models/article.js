@@ -15,6 +15,7 @@ const articleSchema = new mongoose.Schema({
     title: String, // article_title
     views: {type: Number, default:0}, // article_views
     content: String,
+    donateEnd: Number,
     deleted: Boolean, // 0: false(available), 1: true(not available)
     comments: [commentSchema],
 }, {timestamps: true}); //createdAt -> article_created_at, updatedAt -> article_updated_at

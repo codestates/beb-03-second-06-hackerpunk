@@ -3,7 +3,6 @@ dotenv.config();
 
 const { isAuthorized } = require('./tokenFunc');
 const hackerpunk = require('hackerpunk-api');
-const hp_abi = require('../abi/hp_abi.json');
 const hptl_abi = require('../abi/hptimelock_abi.json');
 const users = require('../models/user');
 const articles = require('../models/article');
@@ -68,6 +67,12 @@ const donate = async (req, res) => {
                             const hptl = new hackerpunk.HPTimeLock(signer, process.env.HPTL_ADDRESS, hptl_abi);
 
                             try{
+                                let status = await hptl.checkDonationStatus(Number(article_id));
+                                if (status == 0){
+                                    article.donateEnd = Date.now() + process.env.LOCK_TIME; // unit : [ms]
+                                    await article.save();
+                                }
+
                                 await hptl.donate(Number(article.no), article.author, user.servUserPubKey, String(amount * (10 ** 18)))
                             }
                             catch(err){
@@ -76,15 +81,19 @@ const donate = async (req, res) => {
                                 return;
                             }
 
-                            res.status(200).json({messsage: 'succeed, donate'});
-                            console.log('succeed, donate');
-                            return;
                         })
                         .catch((err) => {
                             res.status(500).json({message: 'fail, donate'});
                             console.error(err);
                             return;
                         })
+                
+                user.donateArticles.push(Number(article_id));
+                await user.save();
+                
+                res.status(200).json({messsage: 'succeed, donate'});
+                console.log('succeed, donate');
+                return;
             })
             .catch((err)=>{
                 res.status(500).json({message: 'fail, donate'});
@@ -133,6 +142,12 @@ const cancel = async (req, res) => {
     
                 try{
                     await hptl.revokeDonate(Number(article_id), user.servUserPubKey);
+
+                    let temp = user.donateArticles;
+                    user.donateArticles = temp.filter((item) => {
+                        return item !== Number(article_id);
+                    });
+                    await user.save();
                 }
                 catch(err){
                     res.status(400).json({message: 'fail, cancel'});
@@ -191,6 +206,7 @@ const reward = async (req, res) => {
                     await hptl.release(Number(article_id), user.servUserPubKey);
                     const totalDonated = await hptl.getDonationBalance(Number(article_id));
                     user.userDonated = user.userDonated + Number(cutting(totalDonated.toString()));
+                    user.rewardedArticles.push(Number(article_id));
                     await user.save();
                 }
                 catch(err){
