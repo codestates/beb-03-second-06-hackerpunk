@@ -97,7 +97,7 @@ const ConnectWallet = styled(motion.div)`
   display: flex;
   justify-content: center;
   align-items: center;
-  width: 86%;
+  width: 88%;
 `;
 
 // ---------- Animation ----------
@@ -165,7 +165,7 @@ function ConectWalletHelper(props) {
         visible: {
           display: "block",
           x: "-11rem",
-          y: "-6rem",
+          y: "-5rem",
         },
         hidden: {
           display: "none",
@@ -293,9 +293,14 @@ function Profile() {
 
   const isMyViewMode = article_author === id;
 
-  const { mode, writingTitle, writingContent, waitingAPI } = useSelector(
-    (state) => state.values
-  );
+  const {
+    mode,
+    writingTitle,
+    writingContent,
+    editingTitle,
+    editingContent,
+    waitingAPI,
+  } = useSelector((state) => state.values);
 
   const connectWallet = async () => {
     dispatch(addValues({ waitingAPI: true }));
@@ -378,17 +383,17 @@ function Profile() {
               key: "put_post",
               data: {
                 article_id,
-                article_title: writingTitle,
-                article_content: writingContent,
+                article_title: editingTitle,
+                article_content: editingContent,
               },
             }}
             succeedCallback={() => {
               cache.clear();
               dispatch(addValues({ mode: "none" }));
-              dispatch(addValues({ writingTitle: "", writingContent: "" }));
+              dispatch(addValues({ editingTitle: "", editingContent: "" }));
             }}
             onClick={() => {
-              if (article_id) {
+              if (article_id && editingTitle && editingContent) {
                 return window.confirm(
                   "Are you sure you want to update this article?"
                 );
@@ -457,8 +462,8 @@ function Profile() {
                 onClick={() => {
                   dispatch(
                     addValues({
-                      writingTitle: article_title,
-                      writingContent: article_content,
+                      editingTitle: article_title,
+                      editingContent: article_content,
                     })
                   );
                   dispatch(addValues({ mode: "edit" }));
