@@ -37,9 +37,6 @@ const Container = styled(Div)`
   flex-direction: column;
   font-family: "Gill Sans", sans-serif;
   background-color: rgb(10, 10, 10, 0.6);
-  color: #fff;
-  text-shadow: 0 0 1px #fff, 0 0 7px #fff, 0 0 10px #fff, 0 0 20px #bc13fe,
-    0 0 40px #bc13fe, 0 0 50px #bc13fe, 0 0 100px #bc13fe, 0 0 150px #bc13fe;
 `;
 
 const InnerContainer = styled(Div)`
@@ -85,7 +82,9 @@ const Address = styled(Div)`
 
 const Token = styled.p`
   font-size: 0.77rem;
-  color: white;
+  color: #fff;
+  text-shadow: 0 0 1px #fff, 0 0 7px #fff, 0 0 10px #fff, 0 0 20px #bc13fe,
+    0 0 40px #bc13fe, 0 0 50px #bc13fe, 0 0 100px #bc13fe, 0 0 150px #bc13fe;
 `;
 
 const ConnectWallet = styled(motion.div)`
