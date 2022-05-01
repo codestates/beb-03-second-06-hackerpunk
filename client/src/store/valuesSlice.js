@@ -4,6 +4,8 @@ const initialState = {
   mode: "none",
   writingTitle: "",
   writingContent: "",
+  editingTitle: "",
+  editingContent: "",
   waitingAPI: false,
 };
 

@@ -5,7 +5,7 @@ import { useState, useCallback } from "../common";
  * @param {*} initialValue if the type is object, setValue will set object.value too
  * @returns [value, { value, onChange }, setValue]
  */
-const useInput = ({ middleware = (v) => v, initialValue = "" } = {}) => {
+const useInput = ({ middleware = (...v) => v, initialValue = "" } = {}) => {
   const [value, _setValue] = useState(
     typeof initialValue === "object" ? initialValue.value : initialValue
   );
@@ -17,7 +17,7 @@ const useInput = ({ middleware = (v) => v, initialValue = "" } = {}) => {
         initialValue.value = v;
       }
     },
-    [initialValue]
+    [initialValue, middleware]
   );
 
   const onChange = useCallback(
