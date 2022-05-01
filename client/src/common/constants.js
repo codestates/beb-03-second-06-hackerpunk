@@ -11,3 +11,6 @@ export const WhitespaceRegex = /\s+/g;
 export const removeWhitespace = (str) => str.replace(WhitespaceRegex, "");
 
 export const TOKEN_NAME = "token";
+
+export const MIN_WITHDRAW_AMOUNT = 0.5;
+export const MIN_DONATE_AMOUNT = 0.5;
