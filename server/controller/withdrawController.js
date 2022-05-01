@@ -14,6 +14,12 @@ const withdraw = async (req, res) => {
             console.log('fail, need amount');
             return;
         }
+
+        if (amount < 0.5){
+            res.status(400).json({message: 'fail, minimum withdraw amount is 0.5'});
+            console.log('fail, minimum withdraw amount is 0.5');
+            return;
+        }
     
         const accessTokenData = isAuthorized(req);
         if (!accessTokenData){

@@ -35,6 +35,12 @@ const donate = async (req, res) => {
             console.log('fail, need article_id & amount');
             return;
         }
+        
+        if (amount < 0.1){
+            res.status(400).json({message: 'fail, minimum donate amount is 0.1'});
+            console.log('fail, minimum donate amount is 0.1');
+            return;
+        }
 
         const accessTokenData = isAuthorized(req);
         if (!accessTokenData){

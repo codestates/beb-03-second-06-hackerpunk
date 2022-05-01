@@ -28,6 +28,32 @@ const cutting = function (num) {
     return res;
 };
 
+const calc = function (start, end){
+    if (start > end){
+        return '0'
+    }
+    let sec = parseInt((end - start)/1000);
+    let day = parseInt(sec/60/60/24);
+    sec = sec - (day * 60 * 60 * 24);
+    let hour = parseInt(sec/60/60);
+    sec = sec - (hour * 60 * 60);
+    let min = parseInt(sec/60);
+    sec = sec - (min * 60);
+
+    day = day + 'D '
+    if (hour < 10){
+        hour = '0' + hour;
+    }
+    if (min < 10){
+        min = '0' + min;
+    }
+    if (sec < 10){
+        sec = '0' + sec;
+    }
+
+    return day + hour + ':' + min + ':' + sec;
+}
+
 const create = async (req, res) => {
     try{
         const { article_title, article_content } = req.body;
@@ -142,7 +168,7 @@ const read = async (req, res) => {
                             const donated = await hptl.getDonationBalance(req.query.article_id);
 
                             let donateStatus;
-                            let donateEnd = new Date(article.donateEnd);
+                            let remainTime = calc(Date.now(), article.donateEnd);
                             if (article.donateEnd == 0){
                                 donateStatus = 0;
                             }
@@ -161,7 +187,7 @@ const read = async (req, res) => {
                                                     "article_content": article.content,
                                                     "article_donated": Number(cutting(donated.toString())),
                                                     "article_donate_status": donateStatus,
-                                                    "article_donate_end_time": donateEnd,
+                                                    "article_donate_remain_time": remainTime,
                                                     "article_created_at": article.createdAt,
                                                     "article_updated_at": article.updatedAt,
                                                     "article_comments": box
@@ -220,7 +246,7 @@ const read = async (req, res) => {
 
             await articles
                 .find({"author": id})
-                .then((results) => {
+                .then( async (results) => {
                     let idx = 1;
                     for (const elem of results){
                         if (elem.deleted){
@@ -273,10 +299,16 @@ const read = async (req, res) => {
                 let tempLevel = parseInt(user.userDonated / 50);
 
                 let tempDonateArticles = user.donateArticles;
-                tempDonateArticles = tempDonateArticles.filter((item_id) => { // item이 article_id에 해당
+                tempDonateArticles = tempDonateArticles.filter( async (item_id) => { // item이 article_id에 해당
                     try{
-                        let article = await articles.findOne({"no": item_id});
-                        return article.donateEnd > Date.now(); //환불 받는 시간을 작성자가 reward 신청하기 전까지로 하면, 여기 부분 바꿔야
+                        const hptl = new hackerpunk.HPTimeLock(signer, process.env.HPTL_ADDRESS, hptl_abi);
+                        let flag = await hptl.checkDonationStatus(Number(item_id));
+                        if (flag == 2){
+                            return false;
+                        }
+                        else if (flag == 1){
+                            return true;
+                        }
                     }
                     catch(err){
                         res.status(500).json({message: 'fail'});
@@ -322,7 +354,7 @@ const read = async (req, res) => {
                         let temp = {};
 
                         let donateStatus;
-                        let donateEnd = new Date(elem.donateEnd);
+                        let remainTime = calc(Date.now(), elem.donateEnd);
                         if (elem.donateEnd == 0){
                             donateStatus = 0;
                         }
@@ -330,7 +362,22 @@ const read = async (req, res) => {
                             donateStatus = 1;
                         }
                         else {
-                            donateStatus = 2;
+                            const provider = hackerpunk.setProvider(process.env.INFURA_ROPSTEN);
+                            const wallet = hackerpunk.setWallet(process.env.MASTER_ADDRESS_PRIVATEKEY);
+                            const signer = hackerpunk.setSigner(wallet, provider);
+                            const hptl = new hackerpunk.HPTimeLock(signer, process.env.HPTL_ADDRESS, hptl_abi);
+                            let flag = await hptl.checkDonationStatus(Number(elem.no));
+                            if (flag == 1){
+                                donateStatus = 2;
+                            }
+                            else if (flag == 2){
+                                donateStatus = 3;
+                            }
+                            else {
+                                res.status(500).json({message: 'fail'});
+                                console.log('fail');
+                                return;
+                            }
                         }
 
                         temp.new_id = idx;
@@ -340,7 +387,7 @@ const read = async (req, res) => {
                         temp.article_title = elem.title;
                         temp.article_views = elem.views;
                         temp.article_donate_status = donateStatus;
-                        temp.article_donate_end_time = donateEnd;
+                        temp.article_donate_remain_time = remainTime;
                         temp.article_created_at = elem.createdAt;
                         temp.article_updated_at = elem.updatedAt;
                         article_box.push(temp);
@@ -391,6 +438,11 @@ const update = async (req, res) => {
             if (article.author !== id || article.deleted){
                 res.status(400).json({message: 'fail, wrong author or deleted article'});
                 console.log('fail, wrong author or deleted article');
+                return;
+            }
+            if (article.donateEnd !== 0){
+                res.status(400).json({message: 'fail, article has got the donation'});
+                console.log('fail, article has got the donation');
                 return;
             }
             article.title = String(article_title);
