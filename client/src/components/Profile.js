@@ -13,6 +13,7 @@ import {
   addValues,
   useSWRConfig,
   useAnimation,
+  useNavigate,
   useLayoutEffect,
 } from "../common";
 import hp from "../api/hp";
@@ -37,9 +38,6 @@ const Container = styled(Div)`
   flex-direction: column;
   font-family: "Gill Sans", sans-serif;
   background-color: rgb(10, 10, 10, 0.6);
-  color: #fff;
-  text-shadow: 0 0 1px #fff, 0 0 7px #fff, 0 0 10px #fff, 0 0 20px #bc13fe,
-    0 0 40px #bc13fe, 0 0 50px #bc13fe, 0 0 100px #bc13fe, 0 0 150px #bc13fe;
 `;
 
 const InnerContainer = styled(Div)`
@@ -85,7 +83,9 @@ const Address = styled(Div)`
 
 const Token = styled.p`
   font-size: 0.77rem;
-  color: white;
+  color: #fff;
+  text-shadow: 0 0 1px #fff, 0 0 7px #fff, 0 0 10px #fff, 0 0 20px #bc13fe,
+    0 0 40px #bc13fe, 0 0 50px #bc13fe, 0 0 100px #bc13fe, 0 0 150px #bc13fe;
 `;
 
 const ConnectWallet = styled(motion.div)`
@@ -97,7 +97,7 @@ const ConnectWallet = styled(motion.div)`
   display: flex;
   justify-content: center;
   align-items: center;
-  width: 86%;
+  width: 88%;
 `;
 
 // ---------- Animation ----------
@@ -165,7 +165,7 @@ function ConectWalletHelper(props) {
         visible: {
           display: "block",
           x: "-11rem",
-          y: "-6rem",
+          y: "-5rem",
         },
         hidden: {
           display: "none",
@@ -245,6 +245,8 @@ function Profile() {
   const errorBang = useErrorBang();
   const { cache } = useSWRConfig();
 
+  const navigate = useNavigate();
+
   const walletHelperControl = useAnimation();
 
   const params = useParams();
@@ -291,9 +293,14 @@ function Profile() {
 
   const isMyViewMode = article_author === id;
 
-  const { mode, writingTitle, writingContent, waitingAPI } = useSelector(
-    (state) => state.values
-  );
+  const {
+    mode,
+    writingTitle,
+    writingContent,
+    editingTitle,
+    editingContent,
+    waitingAPI,
+  } = useSelector((state) => state.values);
 
   const connectWallet = async () => {
     dispatch(addValues({ waitingAPI: true }));
@@ -376,17 +383,17 @@ function Profile() {
               key: "put_post",
               data: {
                 article_id,
-                article_title: writingTitle,
-                article_content: writingContent,
+                article_title: editingTitle,
+                article_content: editingContent,
               },
             }}
             succeedCallback={() => {
               cache.clear();
               dispatch(addValues({ mode: "none" }));
-              dispatch(addValues({ writingTitle: "", writingContent: "" }));
+              dispatch(addValues({ editingTitle: "", editingContent: "" }));
             }}
             onClick={() => {
-              if (article_id) {
+              if (article_id && editingTitle && editingContent) {
                 return window.confirm(
                   "Are you sure you want to update this article?"
                 );
@@ -440,8 +447,7 @@ function Profile() {
           >
             Donate
           </SubmitButton>
-          <DonationDisplay amount={donationAmount} />
-          {isMyViewMode && (
+          {isMyViewMode ? (
             <>
               <DonationDisplay
                 animate={{
@@ -456,8 +462,8 @@ function Profile() {
                 onClick={() => {
                   dispatch(
                     addValues({
-                      writingTitle: article_title,
-                      writingContent: article_content,
+                      editingTitle: article_title,
+                      editingContent: article_content,
                     })
                   );
                   dispatch(addValues({ mode: "edit" }));
@@ -474,6 +480,7 @@ function Profile() {
                 }}
                 succeedCallback={() => {
                   dispatch(addValues({ mode: "none" }));
+                  if (paramArticleId > 0) navigate("../");
                 }}
                 onClick={() => {
                   if (article_id > 0) {
@@ -487,6 +494,8 @@ function Profile() {
                 Delete
               </SubmitButton>
             </>
+          ) : (
+            <DonationDisplay amount={donationAmount} />
           )}
         </ProfileContainer>
       );

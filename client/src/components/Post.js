@@ -11,6 +11,7 @@ import {
   useParams,
   addValues,
   useNavigate,
+  useLayoutEffect,
 } from "../common";
 
 const Container = styled(Div)`
@@ -183,9 +184,8 @@ function Post({
   const paramArticleId = ~~params.article_id;
 
   // mode <- none / write / edit
-  const { mode, writingTitle, writingContent } = useSelector(
-    (state) => state.values
-  );
+  const { mode, writingTitle, writingContent, editingTitle, editingContent } =
+    useSelector((state) => state.values);
 
   const { data } = useFetch({
     key: "get_post",
@@ -234,18 +234,47 @@ function Post({
   const [FocusTitleRef] = useFocus();
   // eslint-disable-next-line no-unused-vars
   const [_, inputTitle, setTitle] = useInput({
-    initialValue: writingTitle,
     middleware: (title) => {
-      dispatch(addValues({ writingTitle: title }));
+      switch (mode) {
+        case "edit":
+          dispatch(addValues({ editingTitle: title }));
+          break;
+        case "write":
+          dispatch(addValues({ writingTitle: title }));
+          break;
+        default:
+      }
     },
   });
   // eslint-disable-next-line no-unused-vars
   const [__, inputContent, setContent] = useInput({
-    initialValue: writingContent,
     middleware: (content) => {
-      dispatch(addValues({ writingContent: content }));
+      switch (mode) {
+        case "edit":
+          dispatch(addValues({ editingContent: content }));
+          break;
+        case "write":
+          dispatch(addValues({ writingContent: content }));
+          break;
+        default:
+      }
     },
   });
+
+  useLayoutEffect(() => {
+    switch (mode) {
+      case "edit":
+        setTitle(article_title);
+        setContent(article_content);
+        break;
+      case "write":
+        setTitle(writingTitle);
+        setContent(writingContent);
+        break;
+      default:
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [mode, setTitle, setContent]);
 
   switch (mode) {
     case "edit":
@@ -265,7 +294,7 @@ function Post({
               <InputTitleCancel>
                 <CancelButton
                   onClick={() => {
-                    dispatch(addValues({ writingTitle: "" }));
+                    dispatch(addValues({ writingTitle: "", editingTitle: "" }));
                     setTitle("");
                   }}
                   whileHover={{
@@ -300,7 +329,7 @@ function Post({
               }}
               whileTap={{ scale: 0.8 }}
               onClick={() => {
-                dispatch(addValues({ writingContent: "" }));
+                dispatch(addValues({ writingContent: "", editingContent: "" }));
                 setContent("");
               }}
             >
