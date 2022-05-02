@@ -45,9 +45,11 @@ const withdraw = async (req, res) => {
                     let stop = hp.withdrawToExternalAddress(user.servUserPubKey, user.userPubKey, String(amount * (10 ** 18)));
                     stop
                         .wait()
-                        .then( async () => {
+                        .then()
+                        .catch(console.error)
+                        .finally(() => {
                             user.userAction = 0;
-                            await user.save();
+                            user.save().catch(console.error);
                         })
                 }
                 catch(err){

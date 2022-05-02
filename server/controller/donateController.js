@@ -88,10 +88,14 @@ const donate = async (req, res) => {
                                 let stop = await hptl.donate(Number(article.no), article.authorPubKey, user.servUserPubKey, String(amount * (10 ** 18)));
                                 stop
                                     .wait()
-                                    .then( async ()=> {
+                                    .then()
+                                    .catch((err) => {
+                                        console.error(err);
+                                    })
+                                    .finally(() => {
                                         user.userAction = 0;
                                         user.donateArticles.push(Number(article_id));
-                                        await user.save();
+                                        user.save().catch(console.error);
                                     });
                             }
                             catch(err){
@@ -169,15 +173,16 @@ const cancel = async (req, res) => {
                     let stop = await hptl.revokeDonate(Number(article_id), user.servUserPubKey);
                     stop
                         .wait()
-                        .then( async () => {
+                        .then()
+                        .catch(console.error)
+                        .finally(() => {
                             let temp = user.donateArticles;
                             user.donateArticles = temp.filter((item) => {
                                 return item !== Number(article_id);
                             });
                             user.userAction = 0;
-                            await user.save();
-                        });
-
+                            user.save().catch(console.error);
+                        })
                 }
                 catch(err){
                     res.status(400).json({message: 'fail, cancel'});
@@ -245,14 +250,20 @@ const reward = async (req, res) => {
                     let stop = await hptl.release(Number(article_id), user.servUserPubKey);
                     stop
                         .wait()
-                        .then( async () => {
-                            const totalDonated = await hptl.getDonationBalance(Number(article_id));
-                            user.userDonated = user.userDonated + Number(cutting(totalDonated.toString()));
-                            user.rewardedArticles.push(Number(article_id));
-                            user.userAction = 0;
-                            await user.save();
-                        });
-
+                        .then()
+                        .catch(console.error)
+                        .finally( async () => {
+                            try{
+                                const totalDonated = await hptl.getDonationBalance(Number(article_id));
+                                user.userDonated = user.userDonated + Number(cutting(totalDonated.toString()));
+                                user.rewardedArticles.push(Number(article_id));
+                                user.userAction = 0;
+                                await user.save();
+                            }
+                            catch(err){
+                                console.error(err);
+                            }
+                        })
                 }
                 catch(err){
                     res.status(400).json({message: 'fail, reward'});
