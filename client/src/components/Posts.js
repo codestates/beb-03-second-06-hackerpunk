@@ -2,12 +2,12 @@ import {
   React,
   styled,
   Div,
-  useRef,
-  useState,
+  // useRef,
+  // useState,
   useFetch,
-  useEffect,
-  useRerender,
-  useSWRConfig,
+  // useEffect,
+  // useRerender,
+  // useSWRConfig,
 } from "../common";
 
 import Post from "./Post";
