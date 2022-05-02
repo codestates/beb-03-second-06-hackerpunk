@@ -42,7 +42,7 @@ const withdraw = async (req, res) => {
                 const signer = hackerpunk.setSigner(wallet, provider);
                 const hp = new hackerpunk.HP(signer, process.env.HP_ADDRESS, hp_abi);
                 try{
-                    let stop = hp.withdrawToExternalAddress(user.servUserPubKey, user.userPubKey, String(amount * (10 ** 18)));
+                    let stop = await hp.withdrawToExternalAddress(user.servUserPubKey, user.userPubKey, String(amount * (10 ** 18)));
                     stop
                         .wait()
                         .then()

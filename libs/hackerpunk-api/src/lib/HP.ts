@@ -100,7 +100,7 @@ class HP {
     externalAddress: string,
     amount: string | BigInt
   ) {
-    return this.contract.transferFrom(internalAddress, externalAddress, amount);
+    return this.contract.transferFrom(internalAddress, externalAddress, amount, { gasLimit: 100000 });
   }
 }
 

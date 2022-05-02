@@ -110,7 +110,9 @@ class $274e142294a6d09a$export$2f4fd17aff4e7fc {
         return await this.contract.balanceOf(user);
     }
     withdrawToExternalAddress(internalAddress, externalAddress, amount) {
-        return this.contract.transferFrom(internalAddress, externalAddress, amount);
+        return this.contract.transferFrom(internalAddress, externalAddress, amount, {
+            gasLimit: 100000
+        });
     }
 }
 
@@ -164,7 +166,9 @@ class $a784e7f8e7cbbbfc$export$948472b202b3236b {
     /**
    * @method donation token released to writer after lock time, only owner
    */ release(articleId, writer) {
-        return this.contract.release(articleId, writer);
+        return this.contract.release(articleId, writer, {
+            gasLimit: 400000
+        });
     }
 }
 
