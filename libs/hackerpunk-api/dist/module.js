@@ -90,7 +90,7 @@ class $6472a0cc883e062f$export$2f4fd17aff4e7fc {
    * @param owner internalAddress
    * @param spender masterAddress
    */ async approveForAll(owner, spender) {
-        await this.contract.approveForall(owner, spender);
+        await this.contract.approveForAll(owner, spender);
     }
     /**
    * @method check balance of user

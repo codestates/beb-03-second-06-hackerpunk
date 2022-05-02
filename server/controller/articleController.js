@@ -256,8 +256,9 @@ const read = async (req, res) => {
 
                         let on = false;
                         if (elem.donateEnd < Date.now()){
+                            let user;
                             try{
-                                const user = await users.findOne({"userId": id});
+                                user = await users.findOne({"userId": id});
                             }
                             catch(err){
                                 res.status(400).json({messsage: 'fail'});

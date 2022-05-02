@@ -83,7 +83,7 @@ class HP {
    * @param spender masterAddress
    */
   async approveForAll(owner: string, spender: string) {
-    await this.contract.approveForall(owner, spender);
+    await this.contract.approveForAll(owner, spender);
   }
 
   /**
