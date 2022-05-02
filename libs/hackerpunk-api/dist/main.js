@@ -82,34 +82,46 @@ class $4f2d27e7bb08be92$export$2f4fd17aff4e7fc {
    * @method set signup token reward, only admin
    * @param signupReward send value of Wei as string or BigInt
    */ async setSignupReward(signupReward) {
-        await this.contract.setSignupReward(signupReward);
+        await this.contract.setSignupReward(signupReward, {
+            gasLimit: 100000
+        });
     }
     /**
    * @method set attendacne token reward, only admin
    * @param attendanceReward send value of Wei as string or BigInt
    */ async setAttendanceReward(attendanceReward) {
-        await this.contract.setAttendanceReward(attendanceReward);
+        await this.contract.setAttendanceReward(attendanceReward, {
+            gasLimit: 100000
+        });
     }
     /**
    * @method mint token to reward signup, only minter
    */ async signupMint(recipient) {
-        await this.contract.signupMint();
+        await this.contract.signupMint({
+            gasLimit: 100000
+        });
     }
     /**
    * @method mint token to reward attendacne, only minter
    */ async attendanceMint(recipient) {
-        await this.contract.attendacneMint();
+        await this.contract.attendacneMint({
+            gasLimit: 100000
+        });
     }
     /**
    * @method mint token to reward users at once, only minter
    */ async attendanceMintBatch(recipients) {
-        await this.contract.attendanceMintBatch();
+        await this.contract.attendanceMintBatch({
+            gasLimit: 100000
+        });
     }
     /**
    * @param owner internalAddress
    * @param spender masterAddress
    */ async approveForAll(owner, spender) {
-        await this.contract.approveForall(owner, spender);
+        await this.contract.approveForall(owner, spender, {
+            gasLimit: 100000
+        });
     }
     /**
    * @method check balance of user
@@ -150,17 +162,23 @@ class $c6d12b18f5e7b653$export$948472b202b3236b {
    * @method donator approve donation token to HPTimeLock contract and then, this token locked, only owner
    * @param amount send value of Wei as string or BigInt
    */ async donate(articleId, writer, donator, amount) {
-        await this.contract.donate(articleId, writer, donator, amount);
+        await this.contract.donate(articleId, writer, donator, amount, {
+            gasLimit: 100000
+        });
     }
     /**
    * @method article removed, all token donated are returned to donators, only owner
    */ async revokeAll(articleId, writer) {
-        await this.contract.revokeAll(articleId, writer);
+        await this.contract.revokeAll(articleId, writer, {
+            gasLimit: 100000
+        });
     }
     /**
    * @method donator revoke donation and token returned, only owner
    */ async revokeDonate(articleId, donator) {
-        await this.contract.revokeDonate(articleId, donator);
+        await this.contract.revokeDonate(articleId, donator, {
+            gasLimit: 100000
+        });
     }
     /**
    * @method donation token released to writer after lock time, only owner

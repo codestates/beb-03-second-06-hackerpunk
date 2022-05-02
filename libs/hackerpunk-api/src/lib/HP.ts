@@ -46,7 +46,7 @@ class HP {
    * @param signupReward send value of Wei as string or BigInt
    */
   async setSignupReward(signupReward: string | BigInt) {
-    await this.contract.setSignupReward(signupReward);
+    await this.contract.setSignupReward(signupReward, { gasLimit: 100000 });
   }
 
   /**
@@ -54,28 +54,30 @@ class HP {
    * @param attendanceReward send value of Wei as string or BigInt
    */
   async setAttendanceReward(attendanceReward: string | BigInt) {
-    await this.contract.setAttendanceReward(attendanceReward);
+    await this.contract.setAttendanceReward(attendanceReward, {
+      gasLimit: 100000,
+    });
   }
 
   /**
    * @method mint token to reward signup, only minter
    */
   async signupMint(recipient: string) {
-    await this.contract.signupMint();
+    await this.contract.signupMint({ gasLimit: 100000 });
   }
 
   /**
    * @method mint token to reward attendacne, only minter
    */
   async attendanceMint(recipient: string) {
-    await this.contract.attendacneMint();
+    await this.contract.attendacneMint({ gasLimit: 100000 });
   }
 
   /**
    * @method mint token to reward users at once, only minter
    */
   async attendanceMintBatch(recipients: string[]) {
-    await this.contract.attendanceMintBatch();
+    await this.contract.attendanceMintBatch({ gasLimit: 100000 });
   }
 
   /**
@@ -83,7 +85,7 @@ class HP {
    * @param spender masterAddress
    */
   async approveForAll(owner: string, spender: string) {
-    await this.contract.approveForall(owner, spender);
+    await this.contract.approveForall(owner, spender, { gasLimit: 100000 });
   }
 
   /**
