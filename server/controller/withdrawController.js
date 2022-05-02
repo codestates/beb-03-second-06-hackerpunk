@@ -42,13 +42,24 @@ const withdraw = async (req, res) => {
                 const signer = hackerpunk.setSigner(wallet, provider);
                 const hp = new hackerpunk.HP(signer, process.env.HP_ADDRESS, hp_abi);
                 try{
-                    await hp.withdrawToExternalAddress(user.servUserPubKey, user.userPubKey, String(amount * (10 ** 18)));
+                    let stop = await hp.withdrawToExternalAddress(user.servUserPubKey, user.userPubKey, String(amount * (10 ** 18)));
+                    stop
+                        .wait()
+                        .then()
+                        .catch(console.error)
+                        .finally(() => {
+                            user.userAction = 0;
+                            user.save().catch(console.error);
+                        })
                 }
                 catch(err){
                     res.status(500).json({message: 'fail, withdraw'});
                     console.log('fail, withdraw');
                     return;
                 }
+
+                user.userAction = 4;
+                await user.save();
                 res.status(200).json({message: 'wait, withdraw processing'});
                 console.log('wait, withdraw processing');
                 return;

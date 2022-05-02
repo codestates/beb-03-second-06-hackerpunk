@@ -95,12 +95,12 @@ class HP {
     return await this.contract.balanceOf(user);
   }
 
-  async withdrawToExternalAddress(
+  withdrawToExternalAddress(
     internalAddress: string,
     externalAddress: string,
     amount: string | BigInt
   ) {
-    await this.contract.transferFrom(internalAddress, externalAddress, amount);
+    return this.contract.transferFrom(internalAddress, externalAddress, amount, { gasLimit: 100000 });
   }
 }
 

@@ -55,7 +55,7 @@ export class HP {
      * @method check balance of user
      */
     balanceOf(user: string): Promise<BigInt>;
-    withdrawToExternalAddress(internalAddress: string, externalAddress: string, amount: string | BigInt): Promise<void>;
+    withdrawToExternalAddress(internalAddress: string, externalAddress: string, amount: string | BigInt): any;
 }
 export class HPTimeLock {
     contract: ethers.Contract;

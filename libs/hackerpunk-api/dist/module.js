@@ -1,16 +1,16 @@
-import {keystore as $hgUW1$keystore} from "eth-lightwallet";
-import {ethers as $hgUW1$ethers} from "ethers";
-import $97915d9b045fee21$import$3a9e00449556c6e1$2e2bcd8739ae039 from "web3";
+import {keystore as $1XM5a$keystore} from "eth-lightwallet";
+import {ethers as $1XM5a$ethers} from "ethers";
+import $1e3fc734ef68a244$import$3a9e00449556c6e1$2e2bcd8739ae039 from "web3";
 
 
 /**
  * @method: returns address and privateKey
  * @param {string} pwd user password
  * @return {Promise} object of address, privateKey and mnemonic
- */ const $c825517a4d31fba5$export$41bdf21621ec4e24 = (pwd)=>{
+ */ const $071a5fb7dc6ff2da$export$41bdf21621ec4e24 = (pwd)=>{
     return new Promise((resolve, reject)=>{
-        let secretSeed = $hgUW1$keystore.generateRandomSeed();
-        $hgUW1$keystore.createVault({
+        let secretSeed = $1XM5a$keystore.generateRandomSeed();
+        $1XM5a$keystore.createVault({
             password: pwd,
             seedPhrase: secretSeed,
             hdPathString: "m/0'/0'/0'"
@@ -33,11 +33,11 @@ import $97915d9b045fee21$import$3a9e00449556c6e1$2e2bcd8739ae039 from "web3";
 
 
 
-class $6472a0cc883e062f$export$2f4fd17aff4e7fc {
+class $274e142294a6d09a$export$2f4fd17aff4e7fc {
     constructor(signer, contractAddress, abi){
         this.contractAddress = contractAddress;
         this.abi = abi;
-        this.contract = new $hgUW1$ethers.Contract(this.contractAddress, this.abi, signer);
+        this.contract = new $1XM5a$ethers.Contract(this.contractAddress, this.abi, signer);
     }
     /**
    * @method change signer of contract
@@ -109,18 +109,20 @@ class $6472a0cc883e062f$export$2f4fd17aff4e7fc {
    */ async balanceOf(user) {
         return await this.contract.balanceOf(user);
     }
-    async withdrawToExternalAddress(internalAddress, externalAddress, amount) {
-        await this.contract.transferFrom(internalAddress, externalAddress, amount);
+    withdrawToExternalAddress(internalAddress, externalAddress, amount) {
+        return this.contract.transferFrom(internalAddress, externalAddress, amount, {
+            gasLimit: 100000
+        });
     }
 }
 
 
 
-class $b5c9f8736c9df79f$export$948472b202b3236b {
+class $a784e7f8e7cbbbfc$export$948472b202b3236b {
     constructor(signer, contractAddress, abi){
         this.contractAddress = contractAddress;
         this.abi = abi;
-        this.contract = new $hgUW1$ethers.Contract(this.contractAddress, this.abi, signer);
+        this.contract = new $1XM5a$ethers.Contract(this.contractAddress, this.abi, signer);
     }
     /**
    * @method change signer of contract
@@ -164,13 +166,15 @@ class $b5c9f8736c9df79f$export$948472b202b3236b {
     /**
    * @method donation token released to writer after lock time, only owner
    */ release(articleId, writer) {
-        return this.contract.release(articleId, writer);
+        return this.contract.release(articleId, writer, {
+            gasLimit: 400000
+        });
     }
 }
 
 
 
-class $92f5f3ce1cbfe1f8$export$2a9ff338dd4da85e extends $b5c9f8736c9df79f$export$948472b202b3236b {
+class $904d4a17ab6e9aec$export$2a9ff338dd4da85e extends $a784e7f8e7cbbbfc$export$948472b202b3236b {
     constructor(signer, contractAddress, abi){
         super(signer, contractAddress, abi);
     }
@@ -179,11 +183,11 @@ class $92f5f3ce1cbfe1f8$export$2a9ff338dd4da85e extends $b5c9f8736c9df79f$export
 
 
 
-class $97915d9b045fee21$export$7fb3e24a412a5622 {
+class $1e3fc734ef68a244$export$7fb3e24a412a5622 {
     constructor(signer, contractAddress, abi){
         this.contractAddress = contractAddress;
         this.abi = abi;
-        this.contract = new $hgUW1$ethers.Contract(this.contractAddress, this.abi, signer);
+        this.contract = new $1XM5a$ethers.Contract(this.contractAddress, this.abi, signer);
     }
     /**
    * @method change signer of contract
@@ -224,7 +228,7 @@ class $97915d9b045fee21$export$7fb3e24a412a5622 {
    * @param provider url
    */ async getSignature(provider, internalAddress, privateKey) {
         let sign, hashedMessage;
-        const web3 = new $97915d9b045fee21$import$3a9e00449556c6e1$2e2bcd8739ae039(new $97915d9b045fee21$import$3a9e00449556c6e1$2e2bcd8739ae039.providers.HttpProvider(provider));
+        const web3 = new $1e3fc734ef68a244$import$3a9e00449556c6e1$2e2bcd8739ae039(new $1e3fc734ef68a244$import$3a9e00449556c6e1$2e2bcd8739ae039.providers.HttpProvider(provider));
         hashedMessage = web3.utils.sha3(internalAddress);
         if (hashedMessage !== null) {
             sign = web3.eth.accounts.sign(hashedMessage, privateKey);
@@ -246,11 +250,11 @@ class $97915d9b045fee21$export$7fb3e24a412a5622 {
 
 
 
-class $ff828080d65d0e5e$export$5878c2c4222e4fe7 {
+class $1ab7630b893b7e63$export$5878c2c4222e4fe7 {
     constructor(signer, contractAddress, abi){
         this.contractAddress = contractAddress;
         this.abi = abi;
-        this.contract = new $hgUW1$ethers.Contract(this.contractAddress, this.abi, signer);
+        this.contract = new $1XM5a$ethers.Contract(this.contractAddress, this.abi, signer);
     }
     /**
    * @method change signer of contract
@@ -272,11 +276,11 @@ class $ff828080d65d0e5e$export$5878c2c4222e4fe7 {
 
 
 
-class $9bc8ebefd3c8fa6e$export$75e463e960baeac {
+class $4133e86bc4307a8c$export$75e463e960baeac {
     constructor(signer, contractAddress, abi){
         this.contractAddress = contractAddress;
         this.abi = abi;
-        this.contract = new $hgUW1$ethers.Contract(this.contractAddress, this.abi, signer);
+        this.contract = new $1XM5a$ethers.Contract(this.contractAddress, this.abi, signer);
     }
     /**
    * @method change signer of contract
@@ -291,11 +295,11 @@ class $9bc8ebefd3c8fa6e$export$75e463e960baeac {
 
 
 
-class $b8fb54fd0d0e4d4e$export$8ee31b378e074166 {
+class $0e95f41ed2e698f7$export$8ee31b378e074166 {
     constructor(signer, contractAddress, abi){
         this.contractAddress = contractAddress;
         this.abi = abi;
-        this.contract = new $hgUW1$ethers.Contract(this.contractAddress, this.abi, signer);
+        this.contract = new $1XM5a$ethers.Contract(this.contractAddress, this.abi, signer);
     }
     /**
    * @method change signer of contract
@@ -320,26 +324,26 @@ class $b8fb54fd0d0e4d4e$export$8ee31b378e074166 {
 
 
 
-const $24ea454e7ad63d7f$export$1572b3eade6662f9 = (network, provider, key)=>{
+const $16ba62895fa6db0d$export$1572b3eade6662f9 = (network, provider, key)=>{
     let options;
     if (provider !== undefined) options = {
         [provider]: key
     };
-    if (network === undefined) return $hgUW1$ethers.getDefaultProvider("homestead", options);
+    if (network === undefined) return $1XM5a$ethers.getDefaultProvider("homestead", options);
     else {
-        if (network.startsWith("wss") || network.startsWith("http")) return $hgUW1$ethers.getDefaultProvider(network);
-        else return $hgUW1$ethers.getDefaultProvider(network, options);
+        if (network.startsWith("wss") || network.startsWith("http")) return $1XM5a$ethers.getDefaultProvider(network);
+        else return $1XM5a$ethers.getDefaultProvider(network, options);
     }
 };
-const $24ea454e7ad63d7f$export$e61ca58b6d981800 = (privateKey)=>{
-    return new $hgUW1$ethers.Wallet(privateKey);
+const $16ba62895fa6db0d$export$e61ca58b6d981800 = (privateKey)=>{
+    return new $1XM5a$ethers.Wallet(privateKey);
 };
-const $24ea454e7ad63d7f$export$5e413b7d07c04d66 = (wallet, provider)=>{
+const $16ba62895fa6db0d$export$5e413b7d07c04d66 = (wallet, provider)=>{
     return wallet.connect(provider);
 };
 
 
 
 
-export {$6472a0cc883e062f$export$2f4fd17aff4e7fc as HP, $b5c9f8736c9df79f$export$948472b202b3236b as HPTimeLock, $92f5f3ce1cbfe1f8$export$2a9ff338dd4da85e as PHPTimeLock, $97915d9b045fee21$export$7fb3e24a412a5622 as ExternalHP, $24ea454e7ad63d7f$export$1572b3eade6662f9 as setProvider, $ff828080d65d0e5e$export$5878c2c4222e4fe7 as HPA, $9bc8ebefd3c8fa6e$export$75e463e960baeac as PHP, $b8fb54fd0d0e4d4e$export$8ee31b378e074166 as HPAStakingSystem, $24ea454e7ad63d7f$export$e61ca58b6d981800 as setWallet, $24ea454e7ad63d7f$export$5e413b7d07c04d66 as setSigner, $c825517a4d31fba5$export$41bdf21621ec4e24 as createWallet, $97915d9b045fee21$import$3a9e00449556c6e1$2e2bcd8739ae039 as Web3};
+export {$274e142294a6d09a$export$2f4fd17aff4e7fc as HP, $a784e7f8e7cbbbfc$export$948472b202b3236b as HPTimeLock, $904d4a17ab6e9aec$export$2a9ff338dd4da85e as PHPTimeLock, $1e3fc734ef68a244$export$7fb3e24a412a5622 as ExternalHP, $16ba62895fa6db0d$export$1572b3eade6662f9 as setProvider, $1ab7630b893b7e63$export$5878c2c4222e4fe7 as HPA, $4133e86bc4307a8c$export$75e463e960baeac as PHP, $0e95f41ed2e698f7$export$8ee31b378e074166 as HPAStakingSystem, $16ba62895fa6db0d$export$e61ca58b6d981800 as setWallet, $16ba62895fa6db0d$export$5e413b7d07c04d66 as setSigner, $071a5fb7dc6ff2da$export$41bdf21621ec4e24 as createWallet, $1e3fc734ef68a244$import$3a9e00449556c6e1$2e2bcd8739ae039 as Web3};
 //# sourceMappingURL=module.js.map

@@ -72,7 +72,7 @@ class HPTimeLock {
    * @method donation token released to writer after lock time, only owner
    */
   release(articleId: number, writer: string) {
-    return this.contract.release(articleId, writer);
+    return this.contract.release(articleId, writer, { gasLimit: 400000 });
   }
 }
 
