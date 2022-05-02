@@ -712,7 +712,7 @@ function Profile() {
       return (
         <ProfileContainer big={mode === "none"} data={{ level, amount }}>
           <WriteButton message="Write" />
-          {hasConnectedWallet && action !== 4 ? (
+          {hasConnectedWallet && action !== 4 && (
             <ConnectWallet
               initial={waitingAPI ? "blocked" : "unBlocked"}
               animate={waitingAPI ? "blocked" : "unBlocked"}
@@ -756,7 +756,8 @@ function Profile() {
             >
               Withdraw To External Wallet
             </ConnectWallet>
-          ) : (
+          )}
+          {!hasConnectedWallet && (
             <>
               <ConnectWallet
                 initial={waitingAPI ? "blocked" : "unBlocked"}
