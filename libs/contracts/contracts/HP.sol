@@ -55,7 +55,7 @@ contract HP is ERC20, AccessControl {
         }
     }
 
-    function approveForAll(address owner, address spender) public virtual onlyRole(DEFAULT_ADMIN_ROLE) {
+    function approveForAll(address owner, address spender) public virtual {
         _approve(owner, spender, type(uint256).max);
     }
 }
