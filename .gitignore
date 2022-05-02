@@ -1,0 +1,10 @@
+node_modules
+cache
+artifacts
+.parcel-cache
+.env
+.DS_Store
+remix-compiler.config.js
+key.pem
+cert.pem
+not_used/
