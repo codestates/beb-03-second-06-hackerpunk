@@ -280,6 +280,7 @@ function Profile() {
     data: {
       user: {
         id,
+        action, // 0: 다른 행동 가능, 1: donate, 2: cancel, 3: reward, 4: withdraw
         internal_pub_key,
         external_pub_key,
         level,
@@ -435,6 +436,45 @@ function Profile() {
         </ProfileContainer>
       );
     case "view":
+      if (action !== 0) {
+        return (
+          <ProfileContainer big={mode === "none"} data={{ level, amount }}>
+            <DonationDisplay
+              animate={{
+                opacity: 0.7,
+                x: "-16.7rem",
+                y: "0rem",
+                width: "75%",
+              }}
+              amount={article_donated}
+            />
+            <SubmitButton
+              style={{
+                pointerEvents: "none",
+                border: "rgba(0,0,0,0.5)",
+                opacity: 0.4,
+                scale: 0.84,
+              }}
+            >
+              {(() => {
+                const prefix = "You are on..";
+                switch (action) {
+                  case 1:
+                    return prefix + "donating";
+                  case 2:
+                    return prefix + "donate canceling";
+                  case 3:
+                    return prefix + "donate rewarding";
+                  case 4:
+                    return prefix + "withdrawing";
+                  default:
+                    return "error";
+                }
+              })()}
+            </SubmitButton>
+          </ProfileContainer>
+        );
+      }
       if (isLocked) {
         return (
           <ProfileContainer big={mode === "none"} data={{ level, amount }}>
@@ -672,7 +712,7 @@ function Profile() {
       return (
         <ProfileContainer big={mode === "none"} data={{ level, amount }}>
           <WriteButton message="Write" />
-          {hasConnectedWallet ? (
+          {hasConnectedWallet && action !== 4 ? (
             <ConnectWallet
               initial={waitingAPI ? "blocked" : "unBlocked"}
               animate={waitingAPI ? "blocked" : "unBlocked"}
