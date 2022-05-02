@@ -14,6 +14,12 @@ const withdraw = async (req, res) => {
             console.log('fail, need amount');
             return;
         }
+
+        if (amount < 0.5){
+            res.status(400).json({message: 'fail, minimum withdraw amount is 0.5'});
+            console.log('fail, minimum withdraw amount is 0.5');
+            return;
+        }
     
         const accessTokenData = isAuthorized(req);
         if (!accessTokenData){
@@ -32,11 +38,11 @@ const withdraw = async (req, res) => {
                     return;
                 }
                 const provider = hackerpunk.setProvider(process.env.INFURA_ROPSTEN);
-                const wallet = hackerpunk.setWallet(user.servUserPrivKey);
+                const wallet = hackerpunk.setWallet(process.env.MASTER_ADDRESS_PRIVATEKEY);
                 const signer = hackerpunk.setSigner(wallet, provider);
                 const hp = new hackerpunk.HP(signer, process.env.HP_ADDRESS, hp_abi);
                 try{
-                    await hp.withdrawToExternalAddress(signer, user.userPubKey, String(amount));
+                    await hp.withdrawToExternalAddress(user.servUserPubKey, user.userPubKey, String(amount * (10 ** 18)));
                 }
                 catch(err){
                     res.status(500).json({message: 'fail, withdraw'});

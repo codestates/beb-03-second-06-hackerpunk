@@ -11,7 +11,7 @@ const hptl_abi = require('../abi/hptimelock_abi.json');
 const cutting = function (num) {
     let res;
     if (num.length < 16){
-      res= '0';
+      res= '0.000';
     }
     else if (num.length > 18){
        res = num.slice(0,-18) + '.' + num.slice(-18, -15);
@@ -27,6 +27,32 @@ const cutting = function (num) {
     }
     return res;
 };
+
+const calc = function (start, end){
+    if (start > end){
+        return '0'
+    }
+    let sec = parseInt((end - start)/1000);
+    let day = parseInt(sec/60/60/24);
+    sec = sec - (day * 60 * 60 * 24);
+    let hour = parseInt(sec/60/60);
+    sec = sec - (hour * 60 * 60);
+    let min = parseInt(sec/60);
+    sec = sec - (min * 60);
+
+    day = day + 'D '
+    if (hour < 10){
+        hour = '0' + hour;
+    }
+    if (min < 10){
+        min = '0' + min;
+    }
+    if (sec < 10){
+        sec = '0' + sec;
+    }
+
+    return day + hour + ':' + min + ':' + sec;
+}
 
 const create = async (req, res) => {
     try{
@@ -48,9 +74,14 @@ const create = async (req, res) => {
         const articleModel = new articles();
         articleModel.no = await articles.countDocuments({}) + 1;
         articleModel.author = id;
+
+        const tempUser = await users.findOne({"userId": id});
+        articleModel.authorPubKey = tempUser.servUserPubKey;
+        
         articleModel.title = article_title;
         articleModel.views = 0;
         articleModel.content = article_content;
+        articleModel.donateEnd = 0;
         articleModel.deleted = 0;
     
         await articleModel
@@ -140,6 +171,18 @@ const read = async (req, res) => {
                             const hptl = new hackerpunk.HPTimeLock(signer, process.env.HPTL_ADDRESS, hptl_abi);
                             const donated = await hptl.getDonationBalance(req.query.article_id);
 
+                            let donateStatus;
+                            let remainTime = calc(Date.now(), article.donateEnd);
+                            if (article.donateEnd == 0){
+                                donateStatus = 0;
+                            }
+                            else if (article.donateEnd > Date.now()){
+                                donateStatus = 1;
+                            }
+                            else {
+                                donateStatus = 2;
+                            }
+
                             res.status(200).json({"max_article_id": maxNum,
                                                     "article_id": article.no,
                                                     "article_author": article.author,
@@ -147,6 +190,8 @@ const read = async (req, res) => {
                                                     "article_views": article.views,
                                                     "article_content": article.content,
                                                     "article_donated": Number(cutting(donated.toString())),
+                                                    "article_donate_status": donateStatus,
+                                                    "article_donate_remain_time": remainTime,
                                                     "article_created_at": article.createdAt,
                                                     "article_updated_at": article.updatedAt,
                                                     "article_comments": box
@@ -205,19 +250,37 @@ const read = async (req, res) => {
 
             await articles
                 .find({"author": id})
-                .then((results) => {
+                .then( async (results) => {
                     let idx = 1;
                     for (const elem of results){
                         if (elem.deleted){
                             continue;
                         }
                         let temp = {};
+
+                        let on = false;
+                        if (elem.donateEnd < Date.now()){
+                            let user;
+                            try{
+                                user = await users.findOne({"userId": id});
+                            }
+                            catch(err){
+                                res.status(400).json({messsage: 'fail'});
+                                console.error(err);
+                                return;
+                            }
+                            if (!user.rewardedArticles.includes(elem.no)){
+                                on = true;
+                            }
+                        }
+
                         temp.new_id = idx;
                         idx++;
                         temp.article_id = elem.no;
                         temp.article_author = elem.author;
                         temp.article_title = elem.title;
                         temp.article_views = elem.views;
+                        temp.article_reward = on;// reward를 받을 수 있는데, 아직 신청하지 않은 아티클이면 true, 아니면 false
                         temp.article_created_at = elem.createdAt;
                         temp.article_updated_at = elem.updatedAt;
                         userBox.push(temp);
@@ -236,9 +299,28 @@ const read = async (req, res) => {
                 const wallet = hackerpunk.setWallet(process.env.MASTER_ADDRESS_PRIVATEKEY);
                 const signer = hackerpunk.setSigner(wallet, provider);
                 const hp = new hackerpunk.HP(signer, process.env.HP_ADDRESS, hp_abi);
-                console.log(user.servUserPubKey);
+
                 let tempAmount = await hp.balanceOf(user.servUserPubKey);
                 let tempLevel = parseInt(user.userDonated / 50);
+
+                let tempDonateArticles = user.donateArticles;
+                tempDonateArticles = tempDonateArticles.filter( async (item_id) => { // item이 article_id에 해당
+                    try{
+                        const hptl = new hackerpunk.HPTimeLock(signer, process.env.HPTL_ADDRESS, hptl_abi);
+                        let flag = await hptl.checkDonationStatus(Number(item_id));
+                        if (flag == 2){
+                            return false;
+                        }
+                        else if (flag == 1){
+                            return true;
+                        }
+                    }
+                    catch(err){
+                        res.status(500).json({message: 'fail'});
+                        console.error(err);
+                        return;
+                    }
+                });
         
                 box['user'] = {'id': user.userId,
                             'email': user.userEmail,
@@ -246,6 +328,7 @@ const read = async (req, res) => {
                             'external_pub_key': user.userPubKey,
                             'amount': Number(cutting(tempAmount.toString())), 
                             'level': tempLevel,
+                            'donate_article_id': tempDonateArticles,
                             'user_article': userBox
                             };
             }
@@ -274,12 +357,42 @@ const read = async (req, res) => {
                     let idx = 1;
                     for (const elem of results){
                         let temp = {};
+
+                        let donateStatus;
+                        let remainTime = calc(Date.now(), elem.donateEnd);
+                        if (elem.donateEnd == 0){
+                            donateStatus = 0;
+                        }
+                        else if (elem.donateEnd > Date.now()){
+                            donateStatus = 1;
+                        }
+                        else {
+                            const provider = hackerpunk.setProvider(process.env.INFURA_ROPSTEN);
+                            const wallet = hackerpunk.setWallet(process.env.MASTER_ADDRESS_PRIVATEKEY);
+                            const signer = hackerpunk.setSigner(wallet, provider);
+                            const hptl = new hackerpunk.HPTimeLock(signer, process.env.HPTL_ADDRESS, hptl_abi);
+                            let flag = await hptl.checkDonationStatus(Number(elem.no));
+                            if (flag == 1){
+                                donateStatus = 2;
+                            }
+                            else if (flag == 2){
+                                donateStatus = 3;
+                            }
+                            else {
+                                res.status(500).json({message: 'fail'});
+                                console.log('fail');
+                                return;
+                            }
+                        }
+
                         temp.new_id = idx;
                         idx++;
                         temp.article_id = elem.no;
                         temp.article_author = elem.author;
                         temp.article_title = elem.title;
                         temp.article_views = elem.views;
+                        temp.article_donate_status = donateStatus;
+                        temp.article_donate_remain_time = remainTime;
                         temp.article_created_at = elem.createdAt;
                         temp.article_updated_at = elem.updatedAt;
                         article_box.push(temp);
@@ -330,6 +443,11 @@ const update = async (req, res) => {
             if (article.author !== id || article.deleted){
                 res.status(400).json({message: 'fail, wrong author or deleted article'});
                 console.log('fail, wrong author or deleted article');
+                return;
+            }
+            if (article.donateEnd !== 0){
+                res.status(400).json({message: 'fail, article has got the donation'});
+                console.log('fail, article has got the donation');
                 return;
             }
             article.title = String(article_title);
@@ -386,7 +504,22 @@ const del = async (req, res) => {
             const wallet = hackerpunk.setWallet(process.env.MASTER_ADDRESS_PRIVATEKEY);
             const signer = hackerpunk.setSigner(wallet, provider);
             const hptl = new hackerpunk.HPTimeLock(signer, process.env.HPTL_ADDRESS, hptl_abi);
-            await hptl.revokeAll(Number(article_id), user.servUserPubKey);
+            
+            let status = await hptl.checkDonationStatus(Number(article_id));
+            if (status == 1){
+                let donatorKeys = await hptl.getDonators(Number(article_id));
+                for (const donatorKey of donatorKeys){
+                    const donator = await users.findOne({"servUserPubKey": donatorKey});
+
+                    let temp = donator.donateArticles;
+                    donator.donateArticles = temp.filter((item) => {
+                        return item !== Number(article_id);
+                    });
+                    await donator.save();
+                }
+
+                await hptl.revokeAll(Number(article_id), user.servUserPubKey);
+            }
         
             let temp = user.userArticles;
             user.userArticles = temp.filter((item) => {
