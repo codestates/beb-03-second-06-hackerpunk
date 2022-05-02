@@ -74,6 +74,10 @@ const create = async (req, res) => {
         const articleModel = new articles();
         articleModel.no = await articles.countDocuments({}) + 1;
         articleModel.author = id;
+
+        const tempUser = await users.findOne({"userId": id});
+        articleModel.authorPubKey = tempUser.servUserPubKey;
+        
         articleModel.title = article_title;
         articleModel.views = 0;
         articleModel.content = article_content;

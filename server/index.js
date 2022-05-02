@@ -78,6 +78,7 @@ const EHPinit = () => {
         ehp.singupEventListener( async (internalAddress, externalAddress, event) => {
             console.log('internal Address :', internalAddress);
             console.log('external Address :', externalAddress);
+
             // event 구조가 transaction receipt -> ether scan
             //event.removed -> boolean , true-> 취소 -> 기존에 mapping 된 것을 db에서 없애줘야 함.
             if (event.removed){
@@ -116,7 +117,7 @@ const EHPinit = () => {
                                 const userSigner = hackerpunk.setSigner(userWallet, provider);
                                 const hp = new hackerpunk.HP(userSigner, process.env.HP_ADDRESS, hp_abi);
                                 await hp.approveForAll(user.servUserPubKey, process.env.MASTER_ADDRESS);
-                                
+
                                 await user.save();
                                 console.log('succeed, external address is changed');
                             }

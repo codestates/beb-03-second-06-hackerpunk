@@ -75,11 +75,10 @@ const donate = async (req, res) => {
                             try{
                                 let status = await hptl.checkDonationStatus(Number(article_id));
                                 if (status == 0){
-                                    article.donateEnd = Date.now() + process.env.LOCK_TIME; // unit : [ms]
+                                    article.donateEnd = Number(Date.now()) + Number(process.env.LOCK_TIME); // unit : [ms]
                                     await article.save();
                                 }
-
-                                await hptl.donate(Number(article.no), article.author, user.servUserPubKey, String(amount * (10 ** 18)))
+                                await hptl.donate(Number(article.no), article.authorPubKey, user.servUserPubKey, String(amount * (10 ** 18)))
                             }
                             catch(err){
                                 res.status(400).json({message: 'fail'});
