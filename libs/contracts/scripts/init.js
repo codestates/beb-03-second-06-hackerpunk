@@ -27,7 +27,7 @@ task("hasRole", "check wheter ehp has minter role of hp").setAction(
     // const hp = await getContract("HP", getEnvVariable("HP_ADDRESS"), hre);
     const hp = await getContract(
       "HP",
-      "0x5FbDB2315678afecb367f032d93F642f64180aa3",
+      "0xc294b0F91ecd455bd383d6784c63129C151E4E15",
       hre
     );
 
