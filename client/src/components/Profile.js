@@ -26,6 +26,7 @@ import CancelButton from "./writing/CancelButton";
 
 import TokenIcon from "../assets/images/hptoken.png";
 import useErrorBang from "../hooks/useErrorBang";
+import useRerender from "../hooks/useRerender";
 
 // wow
 const LOCKED_COLOR = "#F66B0E";
@@ -264,11 +265,7 @@ function Profile() {
 
   const params = useParams();
 
-  const [_refresh, _setRefresh] = useState(false);
-  const refresh = () => {
-    cache.clear();
-    _setRefresh(!_refresh);
-  };
+  const rerender = useRerender(() => cache.clear());
 
   const paramArticleId = ~~params["*"];
 
@@ -604,7 +601,7 @@ function Profile() {
                     article_id,
                   },
                 }}
-                succeedCallback={refresh}
+                succeedCallback={rerender}
                 onClick={() => {
                   if (article_id > 0) {
                     return window.confirm(
@@ -636,7 +633,7 @@ function Profile() {
                       mode: "none",
                     })
                   );
-                  refresh();
+                  rerender();
                 }}
                 onClick={() => {
                   const getDonationAmount = +window.prompt(
