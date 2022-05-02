@@ -313,6 +313,8 @@ function Profile() {
     condition: paramArticleId > 0,
   });
 
+  console.log();
+
   const canBeLocked = article_donate_status === 2;
   const isLocked = article_donate_status === 3;
   const didIDonate = donate_article_id.find((v) => v === article_id);
@@ -482,6 +484,7 @@ function Profile() {
                   },
                 }}
                 succeedCallback={() => {
+                  cache.clear();
                   dispatch(addValues({ mode: "none" }));
                   if (paramArticleId > 0) navigate("../");
                 }}
@@ -510,6 +513,7 @@ function Profile() {
                   },
                 }}
                 succeedCallback={() => {
+                  cache.clear();
                   navigate("./");
                   // dispatch(addValues({ mode: "none" }));
                   // if (paramArticleId > 0) navigate("../");
@@ -599,6 +603,7 @@ function Profile() {
                   },
                 }}
                 succeedCallback={() => {
+                  cache.clear();
                   navigate("./");
                   // dispatch(addValues({ mode: "none" }));
                 }}
