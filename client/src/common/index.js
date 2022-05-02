@@ -52,6 +52,7 @@ import useFetch from "../hooks/useFetch";
 import useInitialEffect from "../hooks/useInitialEffect";
 import useErrorBang from "../hooks/useErrorBang";
 import useFocus from "../hooks/useFocus";
+import useRerender from "../hooks/useRerender";
 
 import validate from "./functions/validate";
 import getToken, { getTokenHeader } from "./functions/getToken";
@@ -89,6 +90,7 @@ export {
   useInitialEffect,
   useErrorBang,
   useFocus,
+  useRerender,
 };
 
 // React
