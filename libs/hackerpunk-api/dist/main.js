@@ -1,6 +1,6 @@
-var $8zHUo$ethlightwallet = require("eth-lightwallet");
-var $8zHUo$ethers = require("ethers");
-var $8zHUo$web3 = require("web3");
+var $gJAYX$ethlightwallet = require("eth-lightwallet");
+var $gJAYX$ethers = require("ethers");
+var $gJAYX$web3 = require("web3");
 
 function $parcel$export(e, n, v, s) {
   Object.defineProperty(e, n, {get: v, set: s, enumerable: true, configurable: true});
@@ -9,27 +9,27 @@ function $parcel$interopDefault(a) {
   return a && a.__esModule ? a.default : a;
 }
 
-$parcel$export(module.exports, "HP", () => $4f2d27e7bb08be92$export$2f4fd17aff4e7fc);
-$parcel$export(module.exports, "HPTimeLock", () => $c6d12b18f5e7b653$export$948472b202b3236b);
-$parcel$export(module.exports, "PHPTimeLock", () => $072f7a5feedb334e$export$2a9ff338dd4da85e);
-$parcel$export(module.exports, "ExternalHP", () => $1bdf165e5fb3c2c0$export$7fb3e24a412a5622);
-$parcel$export(module.exports, "setProvider", () => $844002365fcdc02f$export$1572b3eade6662f9);
-$parcel$export(module.exports, "HPA", () => $2dacf9daeccfc13d$export$5878c2c4222e4fe7);
-$parcel$export(module.exports, "PHP", () => $2c5e294af188e6fb$export$75e463e960baeac);
-$parcel$export(module.exports, "HPAStakingSystem", () => $0f2effce3e5d2a70$export$8ee31b378e074166);
-$parcel$export(module.exports, "setWallet", () => $844002365fcdc02f$export$e61ca58b6d981800);
-$parcel$export(module.exports, "setSigner", () => $844002365fcdc02f$export$5e413b7d07c04d66);
-$parcel$export(module.exports, "createWallet", () => $a3136578afa07f27$export$41bdf21621ec4e24);
-$parcel$export(module.exports, "Web3", () => $1bdf165e5fb3c2c0$import$3a9e00449556c6e1$2e2bcd8739ae039);
+$parcel$export(module.exports, "HP", () => $66ec7714dfad2aaf$export$2f4fd17aff4e7fc);
+$parcel$export(module.exports, "HPTimeLock", () => $173a09415a6ad615$export$948472b202b3236b);
+$parcel$export(module.exports, "PHPTimeLock", () => $9c077f1e4e11a250$export$2a9ff338dd4da85e);
+$parcel$export(module.exports, "ExternalHP", () => $775a755fb28206d5$export$7fb3e24a412a5622);
+$parcel$export(module.exports, "setProvider", () => $7b0583252e69edd9$export$1572b3eade6662f9);
+$parcel$export(module.exports, "HPA", () => $dd2e1ff74c333f27$export$5878c2c4222e4fe7);
+$parcel$export(module.exports, "PHP", () => $0f30121649b6d524$export$75e463e960baeac);
+$parcel$export(module.exports, "HPAStakingSystem", () => $283dd824d7ccf09e$export$8ee31b378e074166);
+$parcel$export(module.exports, "setWallet", () => $7b0583252e69edd9$export$e61ca58b6d981800);
+$parcel$export(module.exports, "setSigner", () => $7b0583252e69edd9$export$5e413b7d07c04d66);
+$parcel$export(module.exports, "createWallet", () => $a68fe1f7d0a2113a$export$41bdf21621ec4e24);
+$parcel$export(module.exports, "Web3", () => $775a755fb28206d5$import$3a9e00449556c6e1$2e2bcd8739ae039);
 
 /**
  * @method: returns address and privateKey
  * @param {string} pwd user password
  * @return {Promise} object of address, privateKey and mnemonic
- */ const $a3136578afa07f27$export$41bdf21621ec4e24 = (pwd)=>{
+ */ const $a68fe1f7d0a2113a$export$41bdf21621ec4e24 = (pwd)=>{
     return new Promise((resolve, reject)=>{
-        let secretSeed = $8zHUo$ethlightwallet.keystore.generateRandomSeed();
-        $8zHUo$ethlightwallet.keystore.createVault({
+        let secretSeed = $gJAYX$ethlightwallet.keystore.generateRandomSeed();
+        $gJAYX$ethlightwallet.keystore.createVault({
             password: pwd,
             seedPhrase: secretSeed,
             hdPathString: "m/0'/0'/0'"
@@ -52,11 +52,11 @@ $parcel$export(module.exports, "Web3", () => $1bdf165e5fb3c2c0$import$3a9e004495
 
 
 
-class $4f2d27e7bb08be92$export$2f4fd17aff4e7fc {
+class $66ec7714dfad2aaf$export$2f4fd17aff4e7fc {
     constructor(signer, contractAddress, abi){
         this.contractAddress = contractAddress;
         this.abi = abi;
-        this.contract = new $8zHUo$ethers.ethers.Contract(this.contractAddress, this.abi, signer);
+        this.contract = new $gJAYX$ethers.ethers.Contract(this.contractAddress, this.abi, signer);
     }
     /**
    * @method change signer of contract
@@ -128,18 +128,20 @@ class $4f2d27e7bb08be92$export$2f4fd17aff4e7fc {
    */ async balanceOf(user) {
         return await this.contract.balanceOf(user);
     }
-    async withdrawToExternalAddress(internalAddress, externalAddress, amount) {
-        await this.contract.transferFrom(internalAddress, externalAddress, amount);
+    withdrawToExternalAddress(internalAddress, externalAddress, amount) {
+        return this.contract.transferFrom(internalAddress, externalAddress, amount, {
+            gasLimit: 100000
+        });
     }
 }
 
 
 
-class $c6d12b18f5e7b653$export$948472b202b3236b {
+class $173a09415a6ad615$export$948472b202b3236b {
     constructor(signer, contractAddress, abi){
         this.contractAddress = contractAddress;
         this.abi = abi;
-        this.contract = new $8zHUo$ethers.ethers.Contract(this.contractAddress, this.abi, signer);
+        this.contract = new $gJAYX$ethers.ethers.Contract(this.contractAddress, this.abi, signer);
     }
     /**
    * @method change signer of contract
@@ -183,13 +185,15 @@ class $c6d12b18f5e7b653$export$948472b202b3236b {
     /**
    * @method donation token released to writer after lock time, only owner
    */ release(articleId, writer) {
-        return this.contract.release(articleId, writer);
+        return this.contract.release(articleId, writer, {
+            gasLimit: 400000
+        });
     }
 }
 
 
 
-class $072f7a5feedb334e$export$2a9ff338dd4da85e extends $c6d12b18f5e7b653$export$948472b202b3236b {
+class $9c077f1e4e11a250$export$2a9ff338dd4da85e extends $173a09415a6ad615$export$948472b202b3236b {
     constructor(signer, contractAddress, abi){
         super(signer, contractAddress, abi);
     }
@@ -198,11 +202,11 @@ class $072f7a5feedb334e$export$2a9ff338dd4da85e extends $c6d12b18f5e7b653$export
 
 
 
-class $1bdf165e5fb3c2c0$export$7fb3e24a412a5622 {
+class $775a755fb28206d5$export$7fb3e24a412a5622 {
     constructor(signer, contractAddress, abi){
         this.contractAddress = contractAddress;
         this.abi = abi;
-        this.contract = new $8zHUo$ethers.ethers.Contract(this.contractAddress, this.abi, signer);
+        this.contract = new $gJAYX$ethers.ethers.Contract(this.contractAddress, this.abi, signer);
     }
     /**
    * @method change signer of contract
@@ -243,7 +247,7 @@ class $1bdf165e5fb3c2c0$export$7fb3e24a412a5622 {
    * @param provider url
    */ async getSignature(provider, internalAddress, privateKey) {
         let sign, hashedMessage;
-        const web3 = new ($parcel$interopDefault($8zHUo$web3))(new ($parcel$interopDefault($8zHUo$web3)).providers.HttpProvider(provider));
+        const web3 = new ($parcel$interopDefault($gJAYX$web3))(new ($parcel$interopDefault($gJAYX$web3)).providers.HttpProvider(provider));
         hashedMessage = web3.utils.sha3(internalAddress);
         if (hashedMessage !== null) {
             sign = web3.eth.accounts.sign(hashedMessage, privateKey);
@@ -265,11 +269,11 @@ class $1bdf165e5fb3c2c0$export$7fb3e24a412a5622 {
 
 
 
-class $2dacf9daeccfc13d$export$5878c2c4222e4fe7 {
+class $dd2e1ff74c333f27$export$5878c2c4222e4fe7 {
     constructor(signer, contractAddress, abi){
         this.contractAddress = contractAddress;
         this.abi = abi;
-        this.contract = new $8zHUo$ethers.ethers.Contract(this.contractAddress, this.abi, signer);
+        this.contract = new $gJAYX$ethers.ethers.Contract(this.contractAddress, this.abi, signer);
     }
     /**
    * @method change signer of contract
@@ -291,11 +295,11 @@ class $2dacf9daeccfc13d$export$5878c2c4222e4fe7 {
 
 
 
-class $2c5e294af188e6fb$export$75e463e960baeac {
+class $0f30121649b6d524$export$75e463e960baeac {
     constructor(signer, contractAddress, abi){
         this.contractAddress = contractAddress;
         this.abi = abi;
-        this.contract = new $8zHUo$ethers.ethers.Contract(this.contractAddress, this.abi, signer);
+        this.contract = new $gJAYX$ethers.ethers.Contract(this.contractAddress, this.abi, signer);
     }
     /**
    * @method change signer of contract
@@ -310,11 +314,11 @@ class $2c5e294af188e6fb$export$75e463e960baeac {
 
 
 
-class $0f2effce3e5d2a70$export$8ee31b378e074166 {
+class $283dd824d7ccf09e$export$8ee31b378e074166 {
     constructor(signer, contractAddress, abi){
         this.contractAddress = contractAddress;
         this.abi = abi;
-        this.contract = new $8zHUo$ethers.ethers.Contract(this.contractAddress, this.abi, signer);
+        this.contract = new $gJAYX$ethers.ethers.Contract(this.contractAddress, this.abi, signer);
     }
     /**
    * @method change signer of contract
@@ -339,21 +343,21 @@ class $0f2effce3e5d2a70$export$8ee31b378e074166 {
 
 
 
-const $844002365fcdc02f$export$1572b3eade6662f9 = (network, provider, key)=>{
+const $7b0583252e69edd9$export$1572b3eade6662f9 = (network, provider, key)=>{
     let options;
     if (provider !== undefined) options = {
         [provider]: key
     };
-    if (network === undefined) return $8zHUo$ethers.ethers.getDefaultProvider("homestead", options);
+    if (network === undefined) return $gJAYX$ethers.ethers.getDefaultProvider("homestead", options);
     else {
-        if (network.startsWith("wss") || network.startsWith("http")) return $8zHUo$ethers.ethers.getDefaultProvider(network);
-        else return $8zHUo$ethers.ethers.getDefaultProvider(network, options);
+        if (network.startsWith("wss") || network.startsWith("http")) return $gJAYX$ethers.ethers.getDefaultProvider(network);
+        else return $gJAYX$ethers.ethers.getDefaultProvider(network, options);
     }
 };
-const $844002365fcdc02f$export$e61ca58b6d981800 = (privateKey)=>{
-    return new $8zHUo$ethers.ethers.Wallet(privateKey);
+const $7b0583252e69edd9$export$e61ca58b6d981800 = (privateKey)=>{
+    return new $gJAYX$ethers.ethers.Wallet(privateKey);
 };
-const $844002365fcdc02f$export$5e413b7d07c04d66 = (wallet, provider)=>{
+const $7b0583252e69edd9$export$5e413b7d07c04d66 = (wallet, provider)=>{
     return wallet.connect(provider);
 };
 

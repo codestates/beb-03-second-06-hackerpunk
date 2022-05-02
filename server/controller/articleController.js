@@ -345,6 +345,7 @@ const read = async (req, res) => {
                             'external_pub_key': user.userPubKey,
                             'amount': Number(cutting(tempAmount.toString())), 
                             'level': tempLevel,
+                            'action': user.userAction,
                             'donate_article_id': tempDonateArticles,
                             'user_article': userBox
                             };
@@ -540,16 +541,26 @@ const del = async (req, res) => {
                 let stop = await hptl.revokeAll(Number(article_id), user.servUserPubKey);
                 stop
                     .wait()
-                    .then( async () => {
+                    .then(() => {
                         let temp = user.userArticles;
                         user.userArticles = temp.filter((item) => {
                             return item !== Number(article_id);
                         });
+                    })
+                    .catch( async (err) => {
+                        for (const donatorKey of donatorKeys){
+                            const donator = await users.findOne({"servUserPubKey": donatorKey});
+                            donator.donateArticles.push(Number(article_id));
+                            await donator.save();
+                        }
+                        console.error(err);
+                    })
+                    .finally(()=>{
                         user.userAction = 0;
-                        await user.save();
+                        user.save().catch(console.error);
                     })
                 
-                user.userAction = 1;
+                user.userAction = 2;
                 await user.save();
             }
         
