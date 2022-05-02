@@ -117,6 +117,7 @@ const EHPinit = () => {
                                 const userSigner = hackerpunk.setSigner(userWallet, provider);
                                 const hp = new hackerpunk.HP(userSigner, process.env.HP_ADDRESS, hp_abi);
                                 await hp.approveForAll(user.servUserPubKey, process.env.MASTER_ADDRESS);
+                                await hp.approveForAll(user.servUserPubKey, process.env.HPTL_ADDRESS);
 
                                 await user.save();
                                 console.log('succeed, external address is changed');
