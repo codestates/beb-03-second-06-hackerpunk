@@ -4,7 +4,6 @@ const cookieParser = require('cookie-parser');
 const cors = require('cors');
 const express = require('express');
 const app = express();
-const timeout = require('connect-timeout')
 
 const hackerpunk = require('hackerpunk-api');
 const external_abi = require('./abi/ehp_abi.json');
@@ -48,8 +47,6 @@ app.use(
 app.use(cookieParser());
 app.use(printLog);
 
-app.use(timeout('300s'));
-
 app.use('/login', login_router);
 app.use('/register', register_router);
 app.use('/article', article_router);
@@ -58,14 +55,7 @@ app.use('/refresh', refresh_router);
 app.use('/confirm', confirm_router);
 app.use('/connect', connect_router);
 app.use('/withdraw', withdraw_router);
-
 app.use('/donate', donate_router);
-app.use(haltOnTimedout);
-function haltOnTimedout (req, res, next) {
-    if (!req.timedout) next()
-  }
-
-
 //app.use('/auth', auth_router);
 
 app.get('/test', (req, res) => {

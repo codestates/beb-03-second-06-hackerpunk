@@ -49,8 +49,8 @@ const withdraw = async (req, res) => {
                     console.log('fail, withdraw');
                     return;
                 }
-                res.status(200).json({message: 'succeed, withdraw'});
-                console.log('succeed, withdraw');
+                res.status(200).json({message: 'wait, withdraw processing'});
+                console.log('wait, withdraw processing');
                 return;
             })
             .catch((err) => {

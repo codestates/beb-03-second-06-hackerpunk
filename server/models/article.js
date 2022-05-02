@@ -11,7 +11,8 @@ const commentSchema = new mongoose.Schema({
 
 const articleSchema = new mongoose.Schema({
     no: Number, // article_id
-    author: String, // article_author
+    author: String, // article_author_id
+    authorPubKey: String, // article_author_servUserPubKey
     title: String, // article_title
     views: {type: Number, default:0}, // article_views
     content: String,

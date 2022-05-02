@@ -57,6 +57,7 @@ const confirm = async (req, res) => {
                         userModel.userEmail = String(email);
                         const today = new Date();
                         userModel.userDate = today.getFullYear() + '.' + (today.getMonth()+1) + '.' + today.getDate();
+                        userModel.userAction = 0;
                         userModel.userDonated = 0;
                         userModel.userPubKey = '0x0';
     

@@ -59,6 +59,12 @@ const donate = async (req, res) => {
                     return;
                 }
 
+                if (user.userAction){
+                    res.status(400).json({message: 'fail, Now processing... please wait'});
+                    console.log('fail, Now processing... please wait');
+                    return;
+                }
+
                 await articles
                         .findOne({'no': article_id})
                         .then( async (article) => {
@@ -78,8 +84,15 @@ const donate = async (req, res) => {
                                     article.donateEnd = Number(Date.now()) + Number(process.env.LOCK_TIME); // unit : [ms]
                                     await article.save();
                                 }
+                                
                                 let stop = await hptl.donate(Number(article.no), article.authorPubKey, user.servUserPubKey, String(amount * (10 ** 18)));
-                                await stop.wait();
+                                stop
+                                    .wait()
+                                    .then( async ()=> {
+                                        user.userAction = 0;
+                                        user.donateArticles.push(Number(article_id));
+                                        await user.save();
+                                    });
                             }
                             catch(err){
                                 res.status(400).json({message: 'fail'});
@@ -94,11 +107,10 @@ const donate = async (req, res) => {
                             return;
                         })
                 
-                user.donateArticles.push(Number(article_id));
+                user.userAction = 1;
                 await user.save();
-                
-                res.status(200).json({messsage: 'succeed, donate'});
-                console.log('succeed, donate');
+                res.status(200).json({messsage: 'wait, donate processing... '});
+                console.log('wait, donate prcoessing... ');
                 return;
             })
             .catch((err)=>{
@@ -141,6 +153,13 @@ const cancel = async (req, res) => {
                     console.log('fail, no matching user');
                     return;
                 }
+
+                if (user.userAction){
+                    res.status(400).json({message: 'fail, Now processing... please wait'});
+                    console.log('fail, Now processing... please wait');
+                    return;
+                }
+
                 const provider = hackerpunk.setProvider(process.env.INFURA_ROPSTEN);
                 const wallet = hackerpunk.setWallet(process.env.MASTER_ADDRESS_PRIVATEKEY);
                 const signer = hackerpunk.setSigner(wallet, provider);
@@ -148,13 +167,17 @@ const cancel = async (req, res) => {
     
                 try{
                     let stop = await hptl.revokeDonate(Number(article_id), user.servUserPubKey);
-                    await stop.wait();
+                    stop
+                        .wait()
+                        .then( async () => {
+                            let temp = user.donateArticles;
+                            user.donateArticles = temp.filter((item) => {
+                                return item !== Number(article_id);
+                            });
+                            user.userAction = 0;
+                            await user.save();
+                        });
 
-                    let temp = user.donateArticles;
-                    user.donateArticles = temp.filter((item) => {
-                        return item !== Number(article_id);
-                    });
-                    await user.save();
                 }
                 catch(err){
                     res.status(400).json({message: 'fail, cancel'});
@@ -162,8 +185,10 @@ const cancel = async (req, res) => {
                     return;
                 }
                 
-                res.status(200).json({messsage: 'succeed, cancel'});
-                console.log('succeed, cancel');
+                user.userAction = 1;
+                await user.save();
+                res.status(200).json({messsage: 'wait, cancel processing'});
+                console.log('wait, cancel processing');
                 return;
             })
             .catch((err)=>{
@@ -204,6 +229,13 @@ const reward = async (req, res) => {
                     console.log('fail, no matching user');
                     return;
                 }
+
+                if (user.userAction){
+                    res.status(400).json({message: 'fail, Now processing... please wait'});
+                    console.log('fail, Now processing... please wait');
+                    return;
+                }
+
                 const provider = hackerpunk.setProvider(process.env.INFURA_ROPSTEN);
                 const wallet = hackerpunk.setWallet(process.env.MASTER_ADDRESS_PRIVATEKEY);
                 const signer = hackerpunk.setSigner(wallet, provider);
@@ -211,11 +243,16 @@ const reward = async (req, res) => {
     
                 try{
                     let stop = await hptl.release(Number(article_id), user.servUserPubKey);
-                    await stop.wait();
-                    const totalDonated = await hptl.getDonationBalance(Number(article_id));
-                    user.userDonated = user.userDonated + Number(cutting(totalDonated.toString()));
-                    user.rewardedArticles.push(Number(article_id));
-                    await user.save();
+                    stop
+                        .wait()
+                        .then( async () => {
+                            const totalDonated = await hptl.getDonationBalance(Number(article_id));
+                            user.userDonated = user.userDonated + Number(cutting(totalDonated.toString()));
+                            user.rewardedArticles.push(Number(article_id));
+                            user.userAction = 0;
+                            await user.save();
+                        });
+
                 }
                 catch(err){
                     res.status(400).json({message: 'fail, reward'});
@@ -223,8 +260,10 @@ const reward = async (req, res) => {
                     return;
                 }
     
-                res.status(200).json({messsage: 'succeed, reward'});
-                console.log('succeed, reward');
+                user.userAction = 1;
+                await user.save();
+                res.status(200).json({messsage: 'wait, reward processing'});
+                console.log('wait, reward processing');
                 return;
             })
             .catch((err)=>{

@@ -180,7 +180,22 @@ const read = async (req, res) => {
                                 donateStatus = 1;
                             }
                             else {
-                                donateStatus = 2;
+                                const provider = hackerpunk.setProvider(process.env.INFURA_ROPSTEN);
+                                const wallet = hackerpunk.setWallet(process.env.MASTER_ADDRESS_PRIVATEKEY);
+                                const signer = hackerpunk.setSigner(wallet, provider);
+                                const hptl = new hackerpunk.HPTimeLock(signer, process.env.HPTL_ADDRESS, hptl_abi);
+                                let flag = await hptl.checkDonationStatus(Number(article.no));
+                                if (flag == 1){
+                                    donateStatus = 2;
+                                }
+                                else if (flag == 2){
+                                    donateStatus = 3;
+                                }
+                                else {
+                                    res.status(500).json({message: 'fail'});
+                                    console.log('fail');
+                                    return;
+                                }
                             }
 
                             res.status(200).json({"max_article_id": maxNum,
@@ -523,14 +538,21 @@ const del = async (req, res) => {
                 }
 
                 let stop = await hptl.revokeAll(Number(article_id), user.servUserPubKey);
-                await stop.wait();
+                stop
+                    .wait()
+                    .then( async () => {
+                        let temp = user.userArticles;
+                        user.userArticles = temp.filter((item) => {
+                            return item !== Number(article_id);
+                        });
+                        user.userAction = 0;
+                        await user.save();
+                    })
+                
+                user.userAction = 1;
+                await user.save();
             }
         
-            let temp = user.userArticles;
-            user.userArticles = temp.filter((item) => {
-                return item !== Number(article_id);
-            });
-            await user.save();
         }
         catch(err){
             res.status(500).json({message: 'fail'});
@@ -538,8 +560,9 @@ const del = async (req, res) => {
             return;
         }
 
-        res.status(200).json({message:'succeed, delete'});
-        console.log('succeed, delete');
+
+        res.status(200).json({message:'wait, delete processing'});
+        console.log('wait, delete processing');
         return;
     }
     catch(err){
