@@ -33,46 +33,43 @@ const Container = styled(Div)`
 `;
 
 function Posts(props) {
-  const { cache } = useSWRConfig();
+  // const { cache } = useSWRConfig();
   const {
     data: { posts },
   } = useFetch({
     key: "get_user_posts",
   });
 
-  const [refresh, setRefresh] = useState(false);
-  const rerender = useRerender(() => {
-    cache.clear();
-    setRefresh(true);
-    setTimeout(() => setRefresh(false), 2000);
-  });
+  // const [refresh, setRefresh] = useState(false);
+  // const rerender = useRerender(() => {
+  //   cache.clear();
+  //   setRefresh(true);
+  //   setTimeout(() => setRefresh(false), 2000);
+  // });
 
-  console.count();
+  // const ref = useRef();
+  // useEffect(() => {
+  //   const target = ref;
+  //   const wheelHandler = (e) => {
+  //     const dy = e.deltaY,
+  //       top = e.target.scrollTop;
 
-  const ref = useRef();
-  useEffect(() => {
-    const target = ref;
-    const wheelHandler = (e) => {
-      const dy = e.deltaY,
-        top = e.target.scrollTop;
+  //     if (refresh === false && dy < 0 && top === 0) {
+  //       rerender();
+  //     }
+  //   };
+  //   if (target && target.current) {
+  //     target.current.addEventListener("wheel", wheelHandler);
+  //     return () => {
+  //       target.current.removeEventListener("wheel", wheelHandler);
+  //     };
+  //   }
 
-      if (refresh === false && dy < 0 && top === 0) {
-        console.log(dy, top);
-        rerender();
-      }
-    };
-    if (target && target.current) {
-      target.current.addEventListener("wheel", wheelHandler);
-      return () => {
-        target.current.removeEventListener("wheel", wheelHandler);
-      };
-    }
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  //   // eslint-disable-next-line react-hooks/exhaustive-deps
+  // }, []);
 
   return (
-    <Container ref={ref} {...props}>
+    <Container {...props}>
       {posts.map((data) => {
         return <Post key={data.article_id} data={data} />;
       })}
