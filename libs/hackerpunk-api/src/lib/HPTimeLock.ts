@@ -50,7 +50,7 @@ class HPTimeLock {
     amount: string | BigInt
   ) {
     await this.contract.donate(articleId, writer, donator, amount, {
-      gasLimit: 100000,
+      gasLimit: 400000,
     });
   }
 
@@ -58,14 +58,14 @@ class HPTimeLock {
    * @method article removed, all token donated are returned to donators, only owner
    */
   async revokeAll(articleId: number, writer: string) {
-    await this.contract.revokeAll(articleId, writer, { gasLimit: 100000 });
+    await this.contract.revokeAll(articleId, writer, { gasLimit: 400000 });
   }
 
   /**
    * @method donator revoke donation and token returned, only owner
    */
   async revokeDonate(articleId: number, donator: string) {
-    await this.contract.revokeDonate(articleId, donator, { gasLimit: 100000 });
+    await this.contract.revokeDonate(articleId, donator, { gasLimit: 400000 });
   }
 
   /**

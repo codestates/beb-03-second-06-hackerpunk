@@ -100,7 +100,7 @@ class $6472a0cc883e062f$export$2f4fd17aff4e7fc {
    * @param owner internalAddress
    * @param spender masterAddress
    */ async approveForAll(owner, spender) {
-        await this.contract.approveForall(owner, spender, {
+        await this.contract.approveForAll(owner, spender, {
             gasLimit: 100000
         });
     }
@@ -144,21 +144,21 @@ class $b5c9f8736c9df79f$export$948472b202b3236b {
    * @param amount send value of Wei as string or BigInt
    */ async donate(articleId, writer, donator, amount) {
         await this.contract.donate(articleId, writer, donator, amount, {
-            gasLimit: 100000
+            gasLimit: 400000
         });
     }
     /**
    * @method article removed, all token donated are returned to donators, only owner
    */ async revokeAll(articleId, writer) {
         await this.contract.revokeAll(articleId, writer, {
-            gasLimit: 100000
+            gasLimit: 400000
         });
     }
     /**
    * @method donator revoke donation and token returned, only owner
    */ async revokeDonate(articleId, donator) {
         await this.contract.revokeDonate(articleId, donator, {
-            gasLimit: 100000
+            gasLimit: 400000
         });
     }
     /**
