@@ -77,7 +77,7 @@ const create = async (req, res) => {
 
         const tempUser = await users.findOne({"userId": id});
         articleModel.authorPubKey = tempUser.servUserPubKey;
-        
+
         articleModel.title = article_title;
         articleModel.views = 0;
         articleModel.content = article_content;
@@ -287,6 +287,7 @@ const read = async (req, res) => {
                     }
                 })
                 .catch((err) => {
+                    console.log('111111');
                     res.status(500).json({message: 'fail'});
                     console.error(err);
                     return;
@@ -316,6 +317,7 @@ const read = async (req, res) => {
                         }
                     }
                     catch(err){
+                        console.log('222222');
                         res.status(500).json({message: 'fail'});
                         console.error(err);
                         return;
@@ -379,6 +381,7 @@ const read = async (req, res) => {
                                 donateStatus = 3;
                             }
                             else {
+                                console.log('333333');
                                 res.status(500).json({message: 'fail'});
                                 console.log('fail');
                                 return;
@@ -403,6 +406,7 @@ const read = async (req, res) => {
                     return;
                 })
                 .catch((err) => {
+                    console.log('444444');
                     res.status(500).json({message: 'fail'});
                     console.error(err);
                     return;
@@ -518,7 +522,8 @@ const del = async (req, res) => {
                     await donator.save();
                 }
 
-                await hptl.revokeAll(Number(article_id), user.servUserPubKey);
+                let stop = await hptl.revokeAll(Number(article_id), user.servUserPubKey);
+                await stop.wait();
             }
         
             let temp = user.userArticles;

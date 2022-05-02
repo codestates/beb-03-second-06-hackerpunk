@@ -78,7 +78,8 @@ const donate = async (req, res) => {
                                     article.donateEnd = Number(Date.now()) + Number(process.env.LOCK_TIME); // unit : [ms]
                                     await article.save();
                                 }
-                                await hptl.donate(Number(article.no), article.authorPubKey, user.servUserPubKey, String(amount * (10 ** 18)))
+                                let stop = await hptl.donate(Number(article.no), article.authorPubKey, user.servUserPubKey, String(amount * (10 ** 18)));
+                                await stop.wait();
                             }
                             catch(err){
                                 res.status(400).json({message: 'fail'});
@@ -146,7 +147,8 @@ const cancel = async (req, res) => {
                 const hptl = new hackerpunk.HPTimeLock(signer, process.env.HPTL_ADDRESS, hptl_abi);
     
                 try{
-                    await hptl.revokeDonate(Number(article_id), user.servUserPubKey);
+                    let stop = await hptl.revokeDonate(Number(article_id), user.servUserPubKey);
+                    await stop.wait();
 
                     let temp = user.donateArticles;
                     user.donateArticles = temp.filter((item) => {
@@ -208,7 +210,8 @@ const reward = async (req, res) => {
                 const hptl = new hackerpunk.HPTimeLock(signer, process.env.HPTL_ADDRESS, hptl_abi);
     
                 try{
-                    await hptl.release(Number(article_id), user.servUserPubKey);
+                    let stop = await hptl.release(Number(article_id), user.servUserPubKey);
+                    await stop.wait();
                     const totalDonated = await hptl.getDonationBalance(Number(article_id));
                     user.userDonated = user.userDonated + Number(cutting(totalDonated.toString()));
                     user.rewardedArticles.push(Number(article_id));
