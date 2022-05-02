@@ -43,13 +43,13 @@ class HPTimeLock {
    * @method donator approve donation token to HPTimeLock contract and then, this token locked, only owner
    * @param amount send value of Wei as string or BigInt
    */
-  async donate(
+  donate(
     articleId: number,
     writer: string,
     donator: string,
     amount: string | BigInt
   ) {
-    await this.contract.donate(articleId, writer, donator, amount, {
+    return this.contract.donate(articleId, writer, donator, amount, {
       gasLimit: 400000,
     });
   }
@@ -57,22 +57,22 @@ class HPTimeLock {
   /**
    * @method article removed, all token donated are returned to donators, only owner
    */
-  async revokeAll(articleId: number, writer: string) {
-    await this.contract.revokeAll(articleId, writer, { gasLimit: 400000 });
+  revokeAll(articleId: number, writer: string) {
+    return this.contract.revokeAll(articleId, writer, { gasLimit: 400000 });
   }
 
   /**
    * @method donator revoke donation and token returned, only owner
    */
-  async revokeDonate(articleId: number, donator: string) {
-    await this.contract.revokeDonate(articleId, donator, { gasLimit: 400000 });
+  revokeDonate(articleId: number, donator: string) {
+    return this.contract.revokeDonate(articleId, donator, { gasLimit: 400000 });
   }
 
   /**
    * @method donation token released to writer after lock time, only owner
    */
-  async release(articleId: number, writer: string) {
-    await this.contract.release(articleId, writer);
+  release(articleId: number, writer: string) {
+    return this.contract.release(articleId, writer);
   }
 }
 

@@ -7,7 +7,7 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 contract ExternalHP is Ownable {
     HP hp;
     uint256[256] public signupFee; // signupFee according to credentialType(uint8)
-    uint256  public approveFee = 0.001 ether;
+    uint256  public approveFee = 0.0025 ether;
 
     struct AddressInfo {
         uint8 credentialType; // 후에 있을지도 모를 가입 타입의 여지를 주기 위해 불리언이 아닌 0~255를 줌

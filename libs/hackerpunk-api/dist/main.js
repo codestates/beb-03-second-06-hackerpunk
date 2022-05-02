@@ -161,29 +161,29 @@ class $c6d12b18f5e7b653$export$948472b202b3236b {
     /**
    * @method donator approve donation token to HPTimeLock contract and then, this token locked, only owner
    * @param amount send value of Wei as string or BigInt
-   */ async donate(articleId, writer, donator, amount) {
-        await this.contract.donate(articleId, writer, donator, amount, {
+   */ donate(articleId, writer, donator, amount) {
+        return this.contract.donate(articleId, writer, donator, amount, {
             gasLimit: 400000
         });
     }
     /**
    * @method article removed, all token donated are returned to donators, only owner
-   */ async revokeAll(articleId, writer) {
-        await this.contract.revokeAll(articleId, writer, {
+   */ revokeAll(articleId, writer) {
+        return this.contract.revokeAll(articleId, writer, {
             gasLimit: 400000
         });
     }
     /**
    * @method donator revoke donation and token returned, only owner
-   */ async revokeDonate(articleId, donator) {
-        await this.contract.revokeDonate(articleId, donator, {
+   */ revokeDonate(articleId, donator) {
+        return this.contract.revokeDonate(articleId, donator, {
             gasLimit: 400000
         });
     }
     /**
    * @method donation token released to writer after lock time, only owner
-   */ async release(articleId, writer) {
-        await this.contract.release(articleId, writer);
+   */ release(articleId, writer) {
+        return this.contract.release(articleId, writer);
     }
 }
 

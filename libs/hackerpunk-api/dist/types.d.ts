@@ -77,19 +77,19 @@ export class HPTimeLock {
      * @method donator approve donation token to HPTimeLock contract and then, this token locked, only owner
      * @param amount send value of Wei as string or BigInt
      */
-    donate(articleId: number, writer: string, donator: string, amount: string | BigInt): Promise<void>;
+    donate(articleId: number, writer: string, donator: string, amount: string | BigInt): any;
     /**
      * @method article removed, all token donated are returned to donators, only owner
      */
-    revokeAll(articleId: number, writer: string): Promise<void>;
+    revokeAll(articleId: number, writer: string): any;
     /**
      * @method donator revoke donation and token returned, only owner
      */
-    revokeDonate(articleId: number, donator: string): Promise<void>;
+    revokeDonate(articleId: number, donator: string): any;
     /**
      * @method donation token released to writer after lock time, only owner
      */
-    release(articleId: number, writer: string): Promise<void>;
+    release(articleId: number, writer: string): any;
 }
 export class PHPTimeLock extends HPTimeLock {
     constructor(signer: ethers.Signer, contractAddress: string, abi: ethers.ContractInterface);
