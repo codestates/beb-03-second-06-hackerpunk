@@ -345,6 +345,7 @@ const read = async (req, res) => {
                             'external_pub_key': user.userPubKey,
                             'amount': Number(cutting(tempAmount.toString())), 
                             'level': tempLevel,
+                            'action': user.userAction,
                             'donate_article_id': tempDonateArticles,
                             'user_article': userBox
                             };

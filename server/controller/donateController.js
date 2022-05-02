@@ -185,7 +185,7 @@ const cancel = async (req, res) => {
                     return;
                 }
                 
-                user.userAction = 1;
+                user.userAction = 2;
                 await user.save();
                 res.status(200).json({messsage: 'wait, cancel processing'});
                 console.log('wait, cancel processing');
@@ -260,7 +260,7 @@ const reward = async (req, res) => {
                     return;
                 }
     
-                user.userAction = 1;
+                user.userAction = 3;
                 await user.save();
                 res.status(200).json({messsage: 'wait, reward processing'});
                 console.log('wait, reward processing');

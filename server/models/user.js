@@ -6,7 +6,7 @@ const userSchema = new mongoose.Schema({
     userEmail: String,
     userDate: String,
 
-    userAction: Boolean, // 0(false): 다른 행동 가능, 1(true): 다른 행동 불가능(현재 donate 관려된 액션 하나가 처리 중이라서)
+    userAction: Number, // 0: 다른 행동 가능, 1: donate, 2: cancel, 3: reward, 4: withdraw
     
     userDonated: Number, // calculate the level with donated tokens amount
 
