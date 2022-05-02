@@ -264,6 +264,12 @@ function Profile() {
 
   const params = useParams();
 
+  const [_refresh, _setRefresh] = useState(false);
+  const refresh = () => {
+    cache.clear();
+    _setRefresh(!_refresh);
+  };
+
   const paramArticleId = ~~params["*"];
 
   useLayoutEffect(() => {
@@ -449,7 +455,7 @@ function Profile() {
         );
       }
       if (isMyViewMode) {
-        if (article_donated <= 0) {
+        if (article_donated <= 0 && !canBeLocked) {
           return (
             <ProfileContainer big={mode === "none"} data={{ level, amount }}>
               <DonationDisplay
@@ -598,10 +604,7 @@ function Profile() {
                     article_id,
                   },
                 }}
-                succeedCallback={() => {
-                  navigate("./");
-                  // dispatch(addValues({ mode: "none" }));
-                }}
+                succeedCallback={refresh}
                 onClick={() => {
                   if (article_id > 0) {
                     return window.confirm(
@@ -629,6 +632,7 @@ function Profile() {
                 }}
                 succeedCallback={() => {
                   dispatch(addValues({ mode: "none" }));
+                  refresh();
                 }}
                 onClick={() => {
                   const getDonationAmount = +window.prompt(
