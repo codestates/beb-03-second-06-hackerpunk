@@ -33,7 +33,7 @@ contract ExternalHP is Ownable {
         signupFee[credentialType] = _signupFee;
     }
 
-    function registerAddress(address internalAddress) internal onlyOwner returns (bool) {
+    function registerAddress(address internalAddress) internal returns (bool) {
         AddressInfo storage addr = addressRecorder[internalAddress];
 
         require(addr.credentialType == uint8(0), "already registered account");
