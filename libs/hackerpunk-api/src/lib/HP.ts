@@ -85,7 +85,7 @@ class HP {
    * @param spender masterAddress
    */
   async approveForAll(owner: string, spender: string) {
-    await this.contract.approveForall(owner, spender, { gasLimit: 100000 });
+    await this.contract.approveForAll(owner, spender, { gasLimit: 100000 });
   }
 
   /**
