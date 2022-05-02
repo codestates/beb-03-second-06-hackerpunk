@@ -71,7 +71,7 @@ class HackerPunkAPI {
         .send({
           from: this.account,
           value: fee,
-          gas: 200000,
+          gas: 700000,
         });
       if (tx) {
         const amount = await this.hpMethods

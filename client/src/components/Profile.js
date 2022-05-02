@@ -26,6 +26,7 @@ import CancelButton from "./writing/CancelButton";
 
 import TokenIcon from "../assets/images/hptoken.png";
 import useErrorBang from "../hooks/useErrorBang";
+import useRerender from "../hooks/useRerender";
 
 // wow
 const LOCKED_COLOR = "#F66B0E";
@@ -264,6 +265,8 @@ function Profile() {
 
   const params = useParams();
 
+  const rerender = useRerender(() => cache.clear());
+
   const paramArticleId = ~~params["*"];
 
   useLayoutEffect(() => {
@@ -449,7 +452,7 @@ function Profile() {
         );
       }
       if (isMyViewMode) {
-        if (article_donated <= 0) {
+        if (article_donated <= 0 && !canBeLocked) {
           return (
             <ProfileContainer big={mode === "none"} data={{ level, amount }}>
               <DonationDisplay
@@ -598,10 +601,7 @@ function Profile() {
                     article_id,
                   },
                 }}
-                succeedCallback={() => {
-                  navigate("./");
-                  // dispatch(addValues({ mode: "none" }));
-                }}
+                succeedCallback={rerender}
                 onClick={() => {
                   if (article_id > 0) {
                     return window.confirm(
@@ -628,7 +628,12 @@ function Profile() {
                   },
                 }}
                 succeedCallback={() => {
-                  dispatch(addValues({ mode: "none" }));
+                  dispatch(
+                    addValues({
+                      mode: "none",
+                    })
+                  );
+                  rerender();
                 }}
                 onClick={() => {
                   const getDonationAmount = +window.prompt(

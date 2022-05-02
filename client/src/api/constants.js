@@ -8,8 +8,8 @@ export const url = (...args) => {
   return BASE_URL + args.join("/");
 };
 
-export const CONTRACT_ADDR = "0x15341C93220040198102Ff63D7041041A473ad10";
+export const CONTRACT_ADDR = "0x72c65a200Ef2Acb48C511e66a0CF31b380DA7dB4";
 
-export const HP_CONTRACT_ADDR = "0xc294b0F91ecd455bd383d6784c63129C151E4E15";
+export const HP_CONTRACT_ADDR = "0x4f669Db16F03Ae324a83EC5BcE73aFeB28cf3878";
 
 export const EXTERNAL_WALLET_TIER = 1;
