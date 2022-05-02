@@ -88,13 +88,14 @@ const donate = async (req, res) => {
                                 let stop = await hptl.donate(Number(article.no), article.authorPubKey, user.servUserPubKey, String(amount * (10 ** 18)));
                                 stop
                                     .wait()
-                                    .then()
+                                    .then(()=>{
+                                        user.donateArticles.push(Number(article_id));
+                                    })
                                     .catch((err) => {
                                         console.error(err);
                                     })
                                     .finally(() => {
                                         user.userAction = 0;
-                                        user.donateArticles.push(Number(article_id));
                                         user.save().catch(console.error);
                                     });
                             }
@@ -173,13 +174,14 @@ const cancel = async (req, res) => {
                     let stop = await hptl.revokeDonate(Number(article_id), user.servUserPubKey);
                     stop
                         .wait()
-                        .then()
-                        .catch(console.error)
-                        .finally(() => {
+                        .then(()=>{
                             let temp = user.donateArticles;
                             user.donateArticles = temp.filter((item) => {
                                 return item !== Number(article_id);
                             });
+                        })
+                        .catch(console.error)
+                        .finally(() => {
                             user.userAction = 0;
                             user.save().catch(console.error);
                         })
@@ -250,19 +252,15 @@ const reward = async (req, res) => {
                     let stop = await hptl.release(Number(article_id), user.servUserPubKey);
                     stop
                         .wait()
-                        .then()
+                        .then(async () => {
+                            const totalDonated = await hptl.getDonationBalance(Number(article_id));
+                            user.userDonated = user.userDonated + Number(cutting(totalDonated.toString()));
+                            user.rewardedArticles.push(Number(article_id));
+                        })
                         .catch(console.error)
-                        .finally( async () => {
-                            try{
-                                const totalDonated = await hptl.getDonationBalance(Number(article_id));
-                                user.userDonated = user.userDonated + Number(cutting(totalDonated.toString()));
-                                user.rewardedArticles.push(Number(article_id));
+                        .finally(() => {
                                 user.userAction = 0;
-                                await user.save();
-                            }
-                            catch(err){
-                                console.error(err);
-                            }
+                                user.save().catch(console.error);
                         })
                 }
                 catch(err){
