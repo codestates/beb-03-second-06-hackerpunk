@@ -332,6 +332,7 @@ function Profile() {
     editingTitle,
     editingContent,
     waitingAPI,
+    donating,
   } = useSelector((state) => state.values);
 
   const connectWallet = async () => {
@@ -618,7 +619,7 @@ function Profile() {
               </SubmitButton>
             </ProfileContainer>
           );
-        } else {
+        } else if (donating[article_id] === false) {
           return (
             <ProfileContainer big={mode === "none"} data={{ level, amount }}>
               <DonationDisplay amount={article_donated} />
@@ -631,7 +632,12 @@ function Profile() {
                   },
                 }}
                 succeedCallback={() => {
-                  dispatch(addValues({ mode: "none" }));
+                  dispatch(
+                    addValues({
+                      mode: "none",
+                      donating: { [article_id]: true },
+                    })
+                  );
                   refresh();
                 }}
                 onClick={() => {

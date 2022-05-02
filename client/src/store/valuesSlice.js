@@ -7,6 +7,7 @@ const initialState = {
   editingTitle: "",
   editingContent: "",
   waitingAPI: false,
+  donating: {},
 };
 
 export const valuesSlice = createSlice({
