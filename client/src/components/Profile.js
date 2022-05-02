@@ -619,7 +619,7 @@ function Profile() {
               </SubmitButton>
             </ProfileContainer>
           );
-        } else if (donating[article_id] === false) {
+        } else if (!donating[article_id]) {
           return (
             <ProfileContainer big={mode === "none"} data={{ level, amount }}>
               <DonationDisplay amount={article_donated} />
